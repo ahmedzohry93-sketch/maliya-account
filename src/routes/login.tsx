@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
-import { Sun, Moon, Languages, Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Sun, Moon, Languages, Mail, Lock, ArrowRight, Eye, EyeOff, User, Info } from "lucide-react";
 import logoUrl from "@/assets/logo.png";
 
 export const Route = createFileRoute("/login")({
@@ -20,8 +20,10 @@ function LoginPage() {
   const navigate = useNavigate();
   const { t, lang, setLang, dir } = useI18n();
   const { theme, toggle } = useTheme();
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -29,10 +31,29 @@ function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      toast.success(t("auth.success"));
-      navigate({ to: "/dashboard" });
+      if (mode === "signup") {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/dashboard`,
+            data: { full_name: fullName || email },
+          },
+        });
+        if (error) throw error;
+        if (data.session) {
+          toast.success(t("auth.signup.success"));
+          navigate({ to: "/dashboard" });
+        } else {
+          toast.success(t("auth.signup.confirm"));
+          setMode("signin");
+        }
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        toast.success(t("auth.success"));
+        navigate({ to: "/dashboard" });
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t("auth.error"));
     } finally {
@@ -101,12 +122,51 @@ function LoginPage() {
         </div>
 
         <div className="bg-card/85 backdrop-blur-2xl border rounded-3xl p-8 shadow-2xl shadow-primary/10">
+          <div className="grid grid-cols-2 gap-1 p-1 mb-6 rounded-xl bg-muted/60 border">
+            {(["signin", "signup"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => setMode(m)}
+                className={`py-2 rounded-lg text-sm font-semibold transition ${
+                  mode === m
+                    ? "bg-card shadow-sm text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t(m === "signin" ? "auth.tab.signin" : "auth.tab.signup")}
+              </button>
+            ))}
+          </div>
+
           <div className="mb-6 text-center">
-            <h2 className="text-2xl font-bold tracking-tight">{t("auth.login.title")}</h2>
-            <p className="text-sm text-muted-foreground mt-1.5">{t("auth.login.subtitle")}</p>
+            <h2 className="text-2xl font-bold tracking-tight">
+              {t(mode === "signin" ? "auth.login.title" : "auth.signup.title")}
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1.5">
+              {t(mode === "signin" ? "auth.login.subtitle" : "auth.signup.subtitle")}
+            </p>
           </div>
 
           <form onSubmit={submit} className="space-y-4">
+            {mode === "signup" && (
+              <div>
+                <label className="block text-xs font-semibold mb-1.5 text-muted-foreground">
+                  {t("auth.full_name")}
+                </label>
+                <div className="relative">
+                  <User className="absolute top-1/2 -translate-y-1/2 start-3.5 w-4 h-4 text-muted-foreground" />
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required
+                    className="w-full ps-10 pe-3 py-3 rounded-xl border bg-background/60 focus:ring-2 focus:ring-ring focus:border-ring outline-none transition"
+                  />
+                </div>
+              </div>
+            )}
+
             <div>
               <label className="block text-xs font-semibold mb-1.5 text-muted-foreground">
                 {t("auth.email")}
@@ -139,6 +199,7 @@ function LoginPage() {
                   minLength={6}
                   className="w-full ps-10 pe-11 py-3 rounded-xl border bg-background/60 focus:ring-2 focus:ring-ring focus:border-ring outline-none transition"
                   dir="ltr"
+                  autoComplete={mode === "signup" ? "new-password" : "current-password"}
                 />
                 <button
                   type="button"
@@ -152,16 +213,23 @@ function LoginPage() {
               </div>
             </div>
 
+            {mode === "signup" && (
+              <p className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 border rounded-xl p-3">
+                <Info className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                <span>{t("auth.first_user_hint")}</span>
+              </p>
+            )}
+
             <button
               type="submit"
               disabled={loading}
               className="group w-full py-3 rounded-xl bg-gradient-to-r from-primary to-primary/85 text-primary-foreground font-semibold hover:shadow-lg hover:shadow-primary/25 disabled:opacity-60 transition-all flex items-center justify-center gap-2 mt-2"
             >
               {loading ? (
-                t("auth.signing_in")
+                t(mode === "signin" ? "auth.signing_in" : "auth.signing_up")
               ) : (
                 <>
-                  <span>{t("auth.signin")}</span>
+                  <span>{t(mode === "signin" ? "auth.signin" : "auth.signup")}</span>
                   <ArrowRight className="w-4 h-4 rtl:rotate-180 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 transition" />
                 </>
               )}
