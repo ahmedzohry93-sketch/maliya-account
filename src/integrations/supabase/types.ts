@@ -85,6 +85,198 @@ export type Database = {
         }
         Relationships: []
       }
+      invoice_lines: {
+        Row: {
+          cost_per_unit: number
+          description: string | null
+          id: string
+          invoice_id: string
+          line_order: number
+          product_id: string | null
+          quantity: number
+          total: number
+          unit_price: number
+        }
+        Insert: {
+          cost_per_unit?: number
+          description?: string | null
+          id?: string
+          invoice_id: string
+          line_order?: number
+          product_id?: string | null
+          quantity?: number
+          total?: number
+          unit_price?: number
+        }
+        Update: {
+          cost_per_unit?: number
+          description?: string | null
+          id?: string
+          invoice_id?: string
+          line_order?: number
+          product_id?: string | null
+          quantity?: number
+          total?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_lines_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_lines_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          cogs_account_id: string | null
+          counter_account_id: string | null
+          created_at: string
+          created_by: string | null
+          discount_account_id: string | null
+          discount_amount: number
+          discount_type: string
+          discount_value: number
+          due_date: string | null
+          id: string
+          inventory_account_id: string | null
+          invoice_date: string
+          invoice_no: number
+          journal_entry_id: string | null
+          notes: string | null
+          partner_account_id: string | null
+          partner_id: string
+          reference: string | null
+          status: Database["public"]["Enums"]["invoice_status"]
+          subtotal: number
+          tax: number
+          tax_account_id: string | null
+          total: number
+          type: Database["public"]["Enums"]["invoice_type"]
+          updated_at: string
+        }
+        Insert: {
+          cogs_account_id?: string | null
+          counter_account_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          discount_account_id?: string | null
+          discount_amount?: number
+          discount_type?: string
+          discount_value?: number
+          due_date?: string | null
+          id?: string
+          inventory_account_id?: string | null
+          invoice_date?: string
+          invoice_no?: number
+          journal_entry_id?: string | null
+          notes?: string | null
+          partner_account_id?: string | null
+          partner_id: string
+          reference?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal?: number
+          tax?: number
+          tax_account_id?: string | null
+          total?: number
+          type: Database["public"]["Enums"]["invoice_type"]
+          updated_at?: string
+        }
+        Update: {
+          cogs_account_id?: string | null
+          counter_account_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          discount_account_id?: string | null
+          discount_amount?: number
+          discount_type?: string
+          discount_value?: number
+          due_date?: string | null
+          id?: string
+          inventory_account_id?: string | null
+          invoice_date?: string
+          invoice_no?: number
+          journal_entry_id?: string | null
+          notes?: string | null
+          partner_account_id?: string | null
+          partner_id?: string
+          reference?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal?: number
+          tax?: number
+          tax_account_id?: string | null
+          total?: number
+          type?: Database["public"]["Enums"]["invoice_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_cogs_account_id_fkey"
+            columns: ["cogs_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_counter_account_id_fkey"
+            columns: ["counter_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_discount_account_id_fkey"
+            columns: ["discount_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_inventory_account_id_fkey"
+            columns: ["inventory_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_journal_entry_id_fkey"
+            columns: ["journal_entry_id"]
+            isOneToOne: false
+            referencedRelation: "journal_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_partner_account_id_fkey"
+            columns: ["partner_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_tax_account_id_fkey"
+            columns: ["tax_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       journal_entries: {
         Row: {
           approved_at: string | null
@@ -136,6 +328,7 @@ export type Database = {
           entry_id: string
           id: string
           line_order: number
+          partner_id: string | null
         }
         Insert: {
           account_id: string
@@ -145,6 +338,7 @@ export type Database = {
           entry_id: string
           id?: string
           line_order?: number
+          partner_id?: string | null
         }
         Update: {
           account_id?: string
@@ -154,6 +348,7 @@ export type Database = {
           entry_id?: string
           id?: string
           line_order?: number
+          partner_id?: string | null
         }
         Relationships: [
           {
@@ -168,6 +363,13 @@ export type Database = {
             columns: ["entry_id"]
             isOneToOne: false
             referencedRelation: "journal_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journal_lines_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
             referencedColumns: ["id"]
           },
         ]
@@ -214,6 +416,102 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number
+          cash_account_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          invoice_id: string | null
+          journal_entry_id: string | null
+          kind: Database["public"]["Enums"]["payment_kind"]
+          method: string | null
+          notes: string | null
+          partner_account_id: string
+          partner_id: string
+          payment_date: string
+          payment_no: number
+          reference: string | null
+          status: Database["public"]["Enums"]["invoice_status"]
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          cash_account_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          invoice_id?: string | null
+          journal_entry_id?: string | null
+          kind: Database["public"]["Enums"]["payment_kind"]
+          method?: string | null
+          notes?: string | null
+          partner_account_id: string
+          partner_id: string
+          payment_date?: string
+          payment_no?: number
+          reference?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          cash_account_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          invoice_id?: string | null
+          journal_entry_id?: string | null
+          kind?: Database["public"]["Enums"]["payment_kind"]
+          method?: string | null
+          notes?: string | null
+          partner_account_id?: string
+          partner_id?: string
+          payment_date?: string
+          payment_no?: number
+          reference?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_cash_account_id_fkey"
+            columns: ["cash_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_journal_entry_id_fkey"
+            columns: ["journal_entry_id"]
+            isOneToOne: false
+            referencedRelation: "journal_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_partner_account_id_fkey"
+            columns: ["partner_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       permissions: {
         Row: {
           category: string
@@ -235,6 +533,51 @@ export type Database = {
           id?: string
           key?: string
           label?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          cost_price: number
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          sale_price: number
+          sku: string | null
+          stock_qty: number
+          tracks_inventory: boolean
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          cost_price?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          sale_price?: number
+          sku?: string | null
+          stock_qty?: number
+          tracks_inventory?: boolean
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cost_price?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          sale_price?: number
+          sku?: string | null
+          stock_qty?: number
+          tracks_inventory?: boolean
+          unit?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -316,6 +659,54 @@ export type Database = {
         }
         Relationships: []
       }
+      stock_moves: {
+        Row: {
+          created_at: string
+          id: string
+          invoice_id: string | null
+          move_date: string
+          notes: string | null
+          product_id: string
+          qty: number
+          unit_cost: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invoice_id?: string | null
+          move_date?: string
+          notes?: string | null
+          product_id: string
+          qty: number
+          unit_cost?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invoice_id?: string | null
+          move_date?: string
+          notes?: string | null
+          product_id?: string
+          qty?: number
+          unit_cost?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_moves_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_moves_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           assigned_at: string
@@ -361,8 +752,11 @@ export type Database = {
     }
     Enums: {
       account_type: "asset" | "liability" | "equity" | "revenue" | "expense"
+      invoice_status: "draft" | "posted" | "cancelled"
+      invoice_type: "sale" | "purchase"
       journal_status: "draft" | "posted" | "cancelled"
       partner_type: "customer" | "supplier" | "both"
+      payment_kind: "receipt" | "payment"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -491,8 +885,11 @@ export const Constants = {
   public: {
     Enums: {
       account_type: ["asset", "liability", "equity", "revenue", "expense"],
+      invoice_status: ["draft", "posted", "cancelled"],
+      invoice_type: ["sale", "purchase"],
       journal_status: ["draft", "posted", "cancelled"],
       partner_type: ["customer", "supplier", "both"],
+      payment_kind: ["receipt", "payment"],
     },
   },
 } as const
