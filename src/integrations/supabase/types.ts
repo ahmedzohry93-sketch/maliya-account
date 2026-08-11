@@ -85,6 +85,51 @@ export type Database = {
         }
         Relationships: []
       }
+      company_settings: {
+        Row: {
+          address: string | null
+          created_at: string
+          currency: string
+          email: string | null
+          footer_note: string | null
+          id: string
+          logo_path: string | null
+          name: string
+          name_en: string | null
+          phone: string | null
+          tax_number: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          currency?: string
+          email?: string | null
+          footer_note?: string | null
+          id?: string
+          logo_path?: string | null
+          name?: string
+          name_en?: string | null
+          phone?: string | null
+          tax_number?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          currency?: string
+          email?: string | null
+          footer_note?: string | null
+          id?: string
+          logo_path?: string | null
+          name?: string
+          name_en?: string | null
+          phone?: string | null
+          tax_number?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       invoice_lines: {
         Row: {
           cost_per_unit: number
@@ -749,6 +794,15 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      log_audit: {
+        Args: {
+          _action: string
+          _details?: Json
+          _entity: string
+          _entity_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       account_type: "asset" | "liability" | "equity" | "revenue" | "expense"
