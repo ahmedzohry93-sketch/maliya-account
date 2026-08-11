@@ -1,0 +1,30 @@
+// Order matters for restore: parents before children.
+export const BACKUP_TABLES = [
+  "roles",
+  "permissions",
+  "role_permissions",
+  "profiles",
+  "user_roles",
+  "company_settings",
+  "accounts",
+  "partners",
+  "products",
+  "bank_accounts",
+  "bank_matching_rules",
+  "bank_reconciliation_settings",
+  "journal_entries",
+  "journal_lines",
+  "invoices",
+  "invoice_lines",
+  "payments",
+  "stock_moves",
+  "checks",
+  "recurring_obligations",
+  "bank_reconciliations",
+  "bank_statement_lines",
+  "bank_reconciliation_matches",
+  "audit_logs",
+  "backup_settings",
+] as const;
+
+export const FILE_BUCKETS = ["company-assets"] as const;
