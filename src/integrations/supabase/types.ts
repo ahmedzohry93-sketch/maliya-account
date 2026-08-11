@@ -111,27 +111,39 @@ export type Database = {
           action: string
           created_at: string
           details: Json | null
+          device: string | null
           entity: string
           entity_id: string | null
           id: string
+          ip_address: string | null
+          new_value: Json | null
+          old_value: Json | null
           user_id: string | null
         }
         Insert: {
           action: string
           created_at?: string
           details?: Json | null
+          device?: string | null
           entity: string
           entity_id?: string | null
           id?: string
+          ip_address?: string | null
+          new_value?: Json | null
+          old_value?: Json | null
           user_id?: string | null
         }
         Update: {
           action?: string
           created_at?: string
           details?: Json | null
+          device?: string | null
           entity?: string
           entity_id?: string | null
           id?: string
+          ip_address?: string | null
+          new_value?: Json | null
+          old_value?: Json | null
           user_id?: string | null
         }
         Relationships: []
@@ -566,6 +578,8 @@ export type Database = {
       checks: {
         Row: {
           amount: number
+          archived_at: string | null
+          archived_by: string | null
           bank_account_id: string | null
           bank_name: string | null
           branch: string | null
@@ -573,9 +587,13 @@ export type Database = {
           created_at: string
           created_by: string | null
           currency: string
+          deleted_at: string | null
+          deleted_by: string | null
           direction: Database["public"]["Enums"]["check_direction"]
           due_date: string
           id: string
+          is_archived: boolean
+          is_deleted: boolean
           issue_date: string
           notes: string | null
           partner_id: string | null
@@ -584,6 +602,8 @@ export type Database = {
         }
         Insert: {
           amount?: number
+          archived_at?: string | null
+          archived_by?: string | null
           bank_account_id?: string | null
           bank_name?: string | null
           branch?: string | null
@@ -591,9 +611,13 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           currency?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
           direction: Database["public"]["Enums"]["check_direction"]
           due_date: string
           id?: string
+          is_archived?: boolean
+          is_deleted?: boolean
           issue_date?: string
           notes?: string | null
           partner_id?: string | null
@@ -602,6 +626,8 @@ export type Database = {
         }
         Update: {
           amount?: number
+          archived_at?: string | null
+          archived_by?: string | null
           bank_account_id?: string | null
           bank_name?: string | null
           branch?: string | null
@@ -609,9 +635,13 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           currency?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
           direction?: Database["public"]["Enums"]["check_direction"]
           due_date?: string
           id?: string
+          is_archived?: boolean
+          is_deleted?: boolean
           issue_date?: string
           notes?: string | null
           partner_id?: string | null
@@ -684,6 +714,8 @@ export type Database = {
         Row: {
           accum_dep_account_id: string | null
           acquisition_date: string
+          archived_at: string | null
+          archived_by: string | null
           asset_account_id: string | null
           category: string | null
           code: string | null
@@ -691,11 +723,15 @@ export type Database = {
           created_at: string
           created_by: string | null
           declining_rate: number
+          deleted_at: string | null
+          deleted_by: string | null
           dep_expense_account_id: string | null
           disposal_amount: number | null
           disposal_date: string | null
           id: string
           in_service_date: string | null
+          is_archived: boolean
+          is_deleted: boolean
           method: Database["public"]["Enums"]["depreciation_method"]
           name: string
           notes: string | null
@@ -707,6 +743,8 @@ export type Database = {
         Insert: {
           accum_dep_account_id?: string | null
           acquisition_date?: string
+          archived_at?: string | null
+          archived_by?: string | null
           asset_account_id?: string | null
           category?: string | null
           code?: string | null
@@ -714,11 +752,15 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           declining_rate?: number
+          deleted_at?: string | null
+          deleted_by?: string | null
           dep_expense_account_id?: string | null
           disposal_amount?: number | null
           disposal_date?: string | null
           id?: string
           in_service_date?: string | null
+          is_archived?: boolean
+          is_deleted?: boolean
           method?: Database["public"]["Enums"]["depreciation_method"]
           name: string
           notes?: string | null
@@ -730,6 +772,8 @@ export type Database = {
         Update: {
           accum_dep_account_id?: string | null
           acquisition_date?: string
+          archived_at?: string | null
+          archived_by?: string | null
           asset_account_id?: string | null
           category?: string | null
           code?: string | null
@@ -737,11 +781,15 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           declining_rate?: number
+          deleted_at?: string | null
+          deleted_by?: string | null
           dep_expense_account_id?: string | null
           disposal_amount?: number | null
           disposal_date?: string | null
           id?: string
           in_service_date?: string | null
+          is_archived?: boolean
+          is_deleted?: boolean
           method?: Database["public"]["Enums"]["depreciation_method"]
           name?: string
           notes?: string | null
@@ -827,10 +875,14 @@ export type Database = {
       }
       invoices: {
         Row: {
+          archived_at: string | null
+          archived_by: string | null
           cogs_account_id: string | null
           counter_account_id: string | null
           created_at: string
           created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
           discount_account_id: string | null
           discount_amount: number
           discount_type: string
@@ -840,6 +892,8 @@ export type Database = {
           inventory_account_id: string | null
           invoice_date: string
           invoice_no: number
+          is_archived: boolean
+          is_deleted: boolean
           journal_entry_id: string | null
           notes: string | null
           partner_account_id: string | null
@@ -854,10 +908,14 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          archived_at?: string | null
+          archived_by?: string | null
           cogs_account_id?: string | null
           counter_account_id?: string | null
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           discount_account_id?: string | null
           discount_amount?: number
           discount_type?: string
@@ -867,6 +925,8 @@ export type Database = {
           inventory_account_id?: string | null
           invoice_date?: string
           invoice_no?: number
+          is_archived?: boolean
+          is_deleted?: boolean
           journal_entry_id?: string | null
           notes?: string | null
           partner_account_id?: string | null
@@ -881,10 +941,14 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          archived_at?: string | null
+          archived_by?: string | null
           cogs_account_id?: string | null
           counter_account_id?: string | null
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           discount_account_id?: string | null
           discount_amount?: number
           discount_type?: string
@@ -894,6 +958,8 @@ export type Database = {
           inventory_account_id?: string | null
           invoice_date?: string
           invoice_no?: number
+          is_archived?: boolean
+          is_deleted?: boolean
           journal_entry_id?: string | null
           notes?: string | null
           partner_account_id?: string | null
@@ -970,12 +1036,18 @@ export type Database = {
         Row: {
           approved_at: string | null
           approved_by: string | null
+          archived_at: string | null
+          archived_by: string | null
           created_at: string
           created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
           description: string | null
           entry_date: string
           entry_no: number
           id: string
+          is_archived: boolean
+          is_deleted: boolean
           reference: string | null
           status: Database["public"]["Enums"]["journal_status"]
           updated_at: string
@@ -983,12 +1055,18 @@ export type Database = {
         Insert: {
           approved_at?: string | null
           approved_by?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           description?: string | null
           entry_date?: string
           entry_no?: number
           id?: string
+          is_archived?: boolean
+          is_deleted?: boolean
           reference?: string | null
           status?: Database["public"]["Enums"]["journal_status"]
           updated_at?: string
@@ -996,12 +1074,18 @@ export type Database = {
         Update: {
           approved_at?: string | null
           approved_by?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           description?: string | null
           entry_date?: string
           entry_no?: number
           id?: string
+          is_archived?: boolean
+          is_deleted?: boolean
           reference?: string | null
           status?: Database["public"]["Enums"]["journal_status"]
           updated_at?: string
@@ -1066,11 +1150,17 @@ export type Database = {
       partners: {
         Row: {
           address: string | null
+          archived_at: string | null
+          archived_by: string | null
           code: string | null
           created_at: string
+          deleted_at: string | null
+          deleted_by: string | null
           email: string | null
           id: string
           is_active: boolean
+          is_archived: boolean
+          is_deleted: boolean
           name: string
           phone: string | null
           tax_number: string | null
@@ -1079,11 +1169,17 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
           code?: string | null
           created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
           email?: string | null
           id?: string
           is_active?: boolean
+          is_archived?: boolean
+          is_deleted?: boolean
           name: string
           phone?: string | null
           tax_number?: string | null
@@ -1092,11 +1188,17 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
           code?: string | null
           created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
           email?: string | null
           id?: string
           is_active?: boolean
+          is_archived?: boolean
+          is_deleted?: boolean
           name?: string
           phone?: string | null
           tax_number?: string | null
@@ -1108,11 +1210,17 @@ export type Database = {
       payments: {
         Row: {
           amount: number
+          archived_at: string | null
+          archived_by: string | null
           cash_account_id: string
           created_at: string
           created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
           id: string
           invoice_id: string | null
+          is_archived: boolean
+          is_deleted: boolean
           journal_entry_id: string | null
           kind: Database["public"]["Enums"]["payment_kind"]
           method: string | null
@@ -1127,11 +1235,17 @@ export type Database = {
         }
         Insert: {
           amount: number
+          archived_at?: string | null
+          archived_by?: string | null
           cash_account_id: string
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           id?: string
           invoice_id?: string | null
+          is_archived?: boolean
+          is_deleted?: boolean
           journal_entry_id?: string | null
           kind: Database["public"]["Enums"]["payment_kind"]
           method?: string | null
@@ -1146,11 +1260,17 @@ export type Database = {
         }
         Update: {
           amount?: number
+          archived_at?: string | null
+          archived_by?: string | null
           cash_account_id?: string
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           id?: string
           invoice_id?: string | null
+          is_archived?: boolean
+          is_deleted?: boolean
           journal_entry_id?: string | null
           kind?: Database["public"]["Enums"]["payment_kind"]
           method?: string | null
@@ -1227,10 +1347,16 @@ export type Database = {
       }
       products: {
         Row: {
+          archived_at: string | null
+          archived_by: string | null
           cost_price: number
           created_at: string
+          deleted_at: string | null
+          deleted_by: string | null
           id: string
           is_active: boolean
+          is_archived: boolean
+          is_deleted: boolean
           name: string
           notes: string | null
           sale_price: number
@@ -1241,10 +1367,16 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          archived_at?: string | null
+          archived_by?: string | null
           cost_price?: number
           created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
           id?: string
           is_active?: boolean
+          is_archived?: boolean
+          is_deleted?: boolean
           name: string
           notes?: string | null
           sale_price?: number
@@ -1255,10 +1387,16 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          archived_at?: string | null
+          archived_by?: string | null
           cost_price?: number
           created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
           id?: string
           is_active?: boolean
+          is_archived?: boolean
+          is_deleted?: boolean
           name?: string
           notes?: string | null
           sale_price?: number
@@ -1298,13 +1436,19 @@ export type Database = {
         Row: {
           active: boolean
           amount: number
+          archived_at: string | null
+          archived_by: string | null
           category: Database["public"]["Enums"]["obligation_category"]
           created_at: string
           created_by: string | null
           currency: string
+          deleted_at: string | null
+          deleted_by: string | null
           end_date: string | null
           frequency: Database["public"]["Enums"]["obligation_frequency"]
           id: string
+          is_archived: boolean
+          is_deleted: boolean
           name: string
           next_due_date: string
           notes: string | null
@@ -1316,13 +1460,19 @@ export type Database = {
         Insert: {
           active?: boolean
           amount?: number
+          archived_at?: string | null
+          archived_by?: string | null
           category?: Database["public"]["Enums"]["obligation_category"]
           created_at?: string
           created_by?: string | null
           currency?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
           end_date?: string | null
           frequency?: Database["public"]["Enums"]["obligation_frequency"]
           id?: string
+          is_archived?: boolean
+          is_deleted?: boolean
           name: string
           next_due_date: string
           notes?: string | null
@@ -1334,13 +1484,19 @@ export type Database = {
         Update: {
           active?: boolean
           amount?: number
+          archived_at?: string | null
+          archived_by?: string | null
           category?: Database["public"]["Enums"]["obligation_category"]
           created_at?: string
           created_by?: string | null
           currency?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
           end_date?: string | null
           frequency?: Database["public"]["Enums"]["obligation_frequency"]
           id?: string
+          is_archived?: boolean
+          is_deleted?: boolean
           name?: string
           next_due_date?: string
           notes?: string | null
@@ -1500,15 +1656,29 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
-      log_audit: {
-        Args: {
-          _action: string
-          _details?: Json
-          _entity: string
-          _entity_id: string
-        }
-        Returns: undefined
-      }
+      log_audit:
+        | {
+            Args: {
+              _action: string
+              _details?: Json
+              _entity: string
+              _entity_id: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              _action: string
+              _details?: Json
+              _device?: string
+              _entity: string
+              _entity_id: string
+              _ip_address?: string
+              _new_value?: Json
+              _old_value?: Json
+            }
+            Returns: undefined
+          }
     }
     Enums: {
       account_type: "asset" | "liability" | "equity" | "revenue" | "expense"
