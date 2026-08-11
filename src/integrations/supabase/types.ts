@@ -85,6 +85,346 @@ export type Database = {
         }
         Relationships: []
       }
+      bank_accounts: {
+        Row: {
+          account_number: string | null
+          bank_name: string | null
+          created_at: string
+          currency: string
+          gl_account_id: string | null
+          iban: string | null
+          id: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          opening_balance: number
+          updated_at: string
+        }
+        Insert: {
+          account_number?: string | null
+          bank_name?: string | null
+          created_at?: string
+          currency?: string
+          gl_account_id?: string | null
+          iban?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          opening_balance?: number
+          updated_at?: string
+        }
+        Update: {
+          account_number?: string | null
+          bank_name?: string | null
+          created_at?: string
+          currency?: string
+          gl_account_id?: string | null
+          iban?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          opening_balance?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_accounts_gl_account_id_fkey"
+            columns: ["gl_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bank_matching_rules: {
+        Row: {
+          auto_create_entry: boolean
+          category: Database["public"]["Enums"]["bank_line_category"] | null
+          condition_field: Database["public"]["Enums"]["bank_rule_field"]
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          operator: Database["public"]["Enums"]["bank_rule_operator"]
+          priority: number
+          target_account_id: string | null
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          auto_create_entry?: boolean
+          category?: Database["public"]["Enums"]["bank_line_category"] | null
+          condition_field?: Database["public"]["Enums"]["bank_rule_field"]
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          operator?: Database["public"]["Enums"]["bank_rule_operator"]
+          priority?: number
+          target_account_id?: string | null
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          auto_create_entry?: boolean
+          category?: Database["public"]["Enums"]["bank_line_category"] | null
+          condition_field?: Database["public"]["Enums"]["bank_rule_field"]
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          operator?: Database["public"]["Enums"]["bank_rule_operator"]
+          priority?: number
+          target_account_id?: string | null
+          updated_at?: string
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_matching_rules_target_account_id_fkey"
+            columns: ["target_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bank_reconciliation_matches: {
+        Row: {
+          amount: number
+          confidence: number
+          created_at: string
+          created_by: string | null
+          id: string
+          journal_line_id: string
+          match_type: Database["public"]["Enums"]["bank_match_type"]
+          statement_line_id: string
+        }
+        Insert: {
+          amount: number
+          confidence?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          journal_line_id: string
+          match_type?: Database["public"]["Enums"]["bank_match_type"]
+          statement_line_id: string
+        }
+        Update: {
+          amount?: number
+          confidence?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          journal_line_id?: string
+          match_type?: Database["public"]["Enums"]["bank_match_type"]
+          statement_line_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_reconciliation_matches_journal_line_id_fkey"
+            columns: ["journal_line_id"]
+            isOneToOne: false
+            referencedRelation: "journal_lines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_reconciliation_matches_statement_line_id_fkey"
+            columns: ["statement_line_id"]
+            isOneToOne: false
+            referencedRelation: "bank_statement_lines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bank_reconciliation_settings: {
+        Row: {
+          amount_tolerance: number
+          created_at: string
+          date_tolerance_days: number
+          default_charges_account_id: string | null
+          default_fx_diff_account_id: string | null
+          default_interest_account_id: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          amount_tolerance?: number
+          created_at?: string
+          date_tolerance_days?: number
+          default_charges_account_id?: string | null
+          default_fx_diff_account_id?: string | null
+          default_interest_account_id?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          amount_tolerance?: number
+          created_at?: string
+          date_tolerance_days?: number
+          default_charges_account_id?: string | null
+          default_fx_diff_account_id?: string | null
+          default_interest_account_id?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_reconciliation_settings_default_charges_account_id_fkey"
+            columns: ["default_charges_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_reconciliation_settings_default_fx_diff_account_id_fkey"
+            columns: ["default_fx_diff_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_reconciliation_settings_default_interest_account_id_fkey"
+            columns: ["default_interest_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bank_reconciliations: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          bank_account_id: string
+          book_balance: number
+          closed_at: string | null
+          created_at: string
+          created_by: string | null
+          difference: number
+          id: string
+          notes: string | null
+          period_from: string
+          period_to: string
+          statement_balance: number
+          status: Database["public"]["Enums"]["bank_recon_status"]
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          bank_account_id: string
+          book_balance?: number
+          closed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          difference?: number
+          id?: string
+          notes?: string | null
+          period_from: string
+          period_to: string
+          statement_balance?: number
+          status?: Database["public"]["Enums"]["bank_recon_status"]
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          bank_account_id?: string
+          book_balance?: number
+          closed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          difference?: number
+          id?: string
+          notes?: string | null
+          period_from?: string
+          period_to?: string
+          statement_balance?: number
+          status?: Database["public"]["Enums"]["bank_recon_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_reconciliations_bank_account_id_fkey"
+            columns: ["bank_account_id"]
+            isOneToOne: false
+            referencedRelation: "bank_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bank_statement_lines: {
+        Row: {
+          balance: number | null
+          category: Database["public"]["Enums"]["bank_line_category"] | null
+          created_at: string
+          credit: number
+          debit: number
+          description: string | null
+          id: string
+          journal_entry_id: string | null
+          line_order: number
+          match_confidence: number
+          match_status: Database["public"]["Enums"]["bank_line_match_status"]
+          reconciliation_id: string
+          reference: string | null
+          txn_date: string
+          updated_at: string
+        }
+        Insert: {
+          balance?: number | null
+          category?: Database["public"]["Enums"]["bank_line_category"] | null
+          created_at?: string
+          credit?: number
+          debit?: number
+          description?: string | null
+          id?: string
+          journal_entry_id?: string | null
+          line_order?: number
+          match_confidence?: number
+          match_status?: Database["public"]["Enums"]["bank_line_match_status"]
+          reconciliation_id: string
+          reference?: string | null
+          txn_date: string
+          updated_at?: string
+        }
+        Update: {
+          balance?: number | null
+          category?: Database["public"]["Enums"]["bank_line_category"] | null
+          created_at?: string
+          credit?: number
+          debit?: number
+          description?: string | null
+          id?: string
+          journal_entry_id?: string | null
+          line_order?: number
+          match_confidence?: number
+          match_status?: Database["public"]["Enums"]["bank_line_match_status"]
+          reconciliation_id?: string
+          reference?: string | null
+          txn_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_statement_lines_journal_entry_id_fkey"
+            columns: ["journal_entry_id"]
+            isOneToOne: false
+            referencedRelation: "journal_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_statement_lines_reconciliation_id_fkey"
+            columns: ["reconciliation_id"]
+            isOneToOne: false
+            referencedRelation: "bank_reconciliations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_settings: {
         Row: {
           address: string | null
@@ -783,6 +1123,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_book_balance: {
+        Args: { _from: string; _gl_account_id: string; _to: string }
+        Returns: number
+      }
       get_user_permissions: {
         Args: { _user_id: string }
         Returns: {
@@ -806,6 +1150,34 @@ export type Database = {
     }
     Enums: {
       account_type: "asset" | "liability" | "equity" | "revenue" | "expense"
+      bank_line_category:
+        | "outstanding_check"
+        | "deposit_in_transit"
+        | "bank_charge"
+        | "bank_interest"
+        | "direct_deposit"
+        | "returned_check"
+        | "fx_difference"
+        | "other"
+      bank_line_match_status: "unmatched" | "matched" | "partial" | "ignored"
+      bank_match_type: "auto" | "manual" | "split" | "merge"
+      bank_recon_status:
+        | "draft"
+        | "imported"
+        | "matching"
+        | "matched"
+        | "reviewed"
+        | "approved"
+        | "closed"
+      bank_rule_field: "description" | "reference" | "amount"
+      bank_rule_operator:
+        | "contains"
+        | "equals"
+        | "starts_with"
+        | "ends_with"
+        | "regex"
+        | "greater_than"
+        | "less_than"
       invoice_status: "draft" | "posted" | "cancelled"
       invoice_type: "sale" | "purchase"
       journal_status: "draft" | "posted" | "cancelled"
@@ -939,6 +1311,37 @@ export const Constants = {
   public: {
     Enums: {
       account_type: ["asset", "liability", "equity", "revenue", "expense"],
+      bank_line_category: [
+        "outstanding_check",
+        "deposit_in_transit",
+        "bank_charge",
+        "bank_interest",
+        "direct_deposit",
+        "returned_check",
+        "fx_difference",
+        "other",
+      ],
+      bank_line_match_status: ["unmatched", "matched", "partial", "ignored"],
+      bank_match_type: ["auto", "manual", "split", "merge"],
+      bank_recon_status: [
+        "draft",
+        "imported",
+        "matching",
+        "matched",
+        "reviewed",
+        "approved",
+        "closed",
+      ],
+      bank_rule_field: ["description", "reference", "amount"],
+      bank_rule_operator: [
+        "contains",
+        "equals",
+        "starts_with",
+        "ends_with",
+        "regex",
+        "greater_than",
+        "less_than",
+      ],
       invoice_status: ["draft", "posted", "cancelled"],
       invoice_type: ["sale", "purchase"],
       journal_status: ["draft", "posted", "cancelled"],
