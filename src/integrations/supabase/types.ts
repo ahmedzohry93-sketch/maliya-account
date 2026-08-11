@@ -425,6 +425,78 @@ export type Database = {
           },
         ]
       }
+      checks: {
+        Row: {
+          amount: number
+          bank_account_id: string | null
+          bank_name: string | null
+          branch: string | null
+          check_number: string
+          created_at: string
+          created_by: string | null
+          currency: string
+          direction: Database["public"]["Enums"]["check_direction"]
+          due_date: string
+          id: string
+          issue_date: string
+          notes: string | null
+          partner_id: string | null
+          status: Database["public"]["Enums"]["check_status"]
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          bank_account_id?: string | null
+          bank_name?: string | null
+          branch?: string | null
+          check_number: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          direction: Database["public"]["Enums"]["check_direction"]
+          due_date: string
+          id?: string
+          issue_date?: string
+          notes?: string | null
+          partner_id?: string | null
+          status?: Database["public"]["Enums"]["check_status"]
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          bank_account_id?: string | null
+          bank_name?: string | null
+          branch?: string | null
+          check_number?: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          direction?: Database["public"]["Enums"]["check_direction"]
+          due_date?: string
+          id?: string
+          issue_date?: string
+          notes?: string | null
+          partner_id?: string | null
+          status?: Database["public"]["Enums"]["check_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checks_bank_account_id_fkey"
+            columns: ["bank_account_id"]
+            isOneToOne: false
+            referencedRelation: "bank_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checks_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_settings: {
         Row: {
           address: string | null
@@ -990,6 +1062,63 @@ export type Database = {
         }
         Relationships: []
       }
+      recurring_obligations: {
+        Row: {
+          active: boolean
+          amount: number
+          category: Database["public"]["Enums"]["obligation_category"]
+          created_at: string
+          created_by: string | null
+          currency: string
+          end_date: string | null
+          frequency: Database["public"]["Enums"]["obligation_frequency"]
+          id: string
+          name: string
+          next_due_date: string
+          notes: string | null
+          payment_method: string | null
+          start_date: string
+          updated_at: string
+          vendor: string | null
+        }
+        Insert: {
+          active?: boolean
+          amount?: number
+          category?: Database["public"]["Enums"]["obligation_category"]
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          end_date?: string | null
+          frequency?: Database["public"]["Enums"]["obligation_frequency"]
+          id?: string
+          name: string
+          next_due_date: string
+          notes?: string | null
+          payment_method?: string | null
+          start_date?: string
+          updated_at?: string
+          vendor?: string | null
+        }
+        Update: {
+          active?: boolean
+          amount?: number
+          category?: Database["public"]["Enums"]["obligation_category"]
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          end_date?: string | null
+          frequency?: Database["public"]["Enums"]["obligation_frequency"]
+          id?: string
+          name?: string
+          next_due_date?: string
+          notes?: string | null
+          payment_method?: string | null
+          start_date?: string
+          updated_at?: string
+          vendor?: string | null
+        }
+        Relationships: []
+      }
       role_permissions: {
         Row: {
           permission_id: string
@@ -1123,6 +1252,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      advance_recurring_due: { Args: { _id: string }; Returns: string }
       get_book_balance: {
         Args: { _from: string; _gl_account_id: string; _to: string }
         Returns: number
@@ -1178,9 +1308,31 @@ export type Database = {
         | "regex"
         | "greater_than"
         | "less_than"
+      check_direction: "incoming" | "outgoing"
+      check_status:
+        | "pending"
+        | "under_collection"
+        | "cleared"
+        | "returned"
+        | "cancelled"
       invoice_status: "draft" | "posted" | "cancelled"
       invoice_type: "sale" | "purchase"
       journal_status: "draft" | "posted" | "cancelled"
+      obligation_category:
+        | "rent"
+        | "loan"
+        | "utility"
+        | "payroll"
+        | "insurance"
+        | "subscription"
+        | "fees"
+        | "other"
+      obligation_frequency:
+        | "daily"
+        | "weekly"
+        | "monthly"
+        | "quarterly"
+        | "yearly"
       partner_type: "customer" | "supplier" | "both"
       payment_kind: "receipt" | "payment"
     }
@@ -1342,9 +1494,34 @@ export const Constants = {
         "greater_than",
         "less_than",
       ],
+      check_direction: ["incoming", "outgoing"],
+      check_status: [
+        "pending",
+        "under_collection",
+        "cleared",
+        "returned",
+        "cancelled",
+      ],
       invoice_status: ["draft", "posted", "cancelled"],
       invoice_type: ["sale", "purchase"],
       journal_status: ["draft", "posted", "cancelled"],
+      obligation_category: [
+        "rent",
+        "loan",
+        "utility",
+        "payroll",
+        "insurance",
+        "subscription",
+        "fees",
+        "other",
+      ],
+      obligation_frequency: [
+        "daily",
+        "weekly",
+        "monthly",
+        "quarterly",
+        "yearly",
+      ],
       partner_type: ["customer", "supplier", "both"],
       payment_kind: ["receipt", "payment"],
     },
