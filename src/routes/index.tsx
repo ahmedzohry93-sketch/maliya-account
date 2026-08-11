@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/")({
   },
   component: () => (
     <div className="min-h-screen flex items-center justify-center">
-      <Link to="/login" className="text-primary">انتقال...</Link>
+      <span className="text-primary">انتقال...</span>
     </div>
   ),
 });
