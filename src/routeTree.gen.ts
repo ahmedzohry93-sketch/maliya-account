@@ -9,186 +9,61 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AppUsersRouteImport } from './routes/_app.users'
-import { Route as AppTrialBalanceRouteImport } from './routes/_app.trial-balance'
-import { Route as AppTradingAccountRouteImport } from './routes/_app.trading-account'
-import { Route as AppSuppliersStatementRouteImport } from './routes/_app.suppliers-statement'
-import { Route as AppSuppliersRouteImport } from './routes/_app.suppliers'
-import { Route as AppSettingsRouteImport } from './routes/_app.settings'
-import { Route as AppRolesRouteImport } from './routes/_app.roles'
-import { Route as AppRecurringObligationsRouteImport } from './routes/_app.recurring-obligations'
-import { Route as AppProductsRouteImport } from './routes/_app.products'
-import { Route as AppPartnersRouteImport } from './routes/_app.partners'
-import { Route as AppLedgerRouteImport } from './routes/_app.ledger'
-import { Route as AppJournalRouteImport } from './routes/_app.journal'
-import { Route as AppIncomeStatementRouteImport } from './routes/_app.income-statement'
-import { Route as AppFinanceDashboardRouteImport } from './routes/_app.finance-dashboard'
-import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
-import { Route as AppCustomersStatementRouteImport } from './routes/_app.customers-statement'
-import { Route as AppCustomersRouteImport } from './routes/_app.customers'
-import { Route as AppChecksRouteImport } from './routes/_app.checks'
-import { Route as AppCashFlowRouteImport } from './routes/_app.cash-flow'
-import { Route as AppBankReconciliationRouteImport } from './routes/_app.bank-reconciliation'
-import { Route as AppBankMatchingRulesRouteImport } from './routes/_app.bank-matching-rules'
-import { Route as AppBankAccountsRouteImport } from './routes/_app.bank-accounts'
-import { Route as AppBalanceSheetRouteImport } from './routes/_app.balance-sheet'
-import { Route as AppBackupRouteImport } from './routes/_app.backup'
-import { Route as AppAuditLogRouteImport } from './routes/_app.audit-log'
-import { Route as AppAssetsRouteImport } from './routes/_app.assets'
-import { Route as AppArchiveRouteImport } from './routes/_app.archive'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppAccountsRouteImport } from './routes/_app.accounts'
+import { Route as AppArchiveRouteImport } from './routes/_app.archive'
+import { Route as AppAssetsRouteImport } from './routes/_app.assets'
+import { Route as AppAuditLogRouteImport } from './routes/_app.audit-log'
+import { Route as AppBackupRouteImport } from './routes/_app.backup'
+import { Route as AppBalanceSheetRouteImport } from './routes/_app.balance-sheet'
+import { Route as AppBankAccountsRouteImport } from './routes/_app.bank-accounts'
+import { Route as AppBankMatchingRulesRouteImport } from './routes/_app.bank-matching-rules'
+import { Route as AppBankReconciliationRouteImport } from './routes/_app.bank-reconciliation'
+import { Route as AppCashFlowRouteImport } from './routes/_app.cash-flow'
+import { Route as AppChecksRouteImport } from './routes/_app.checks'
+import { Route as AppCustomersRouteImport } from './routes/_app.customers'
+import { Route as AppCustomersStatementRouteImport } from './routes/_app.customers-statement'
+import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
+import { Route as AppFinanceDashboardRouteImport } from './routes/_app.finance-dashboard'
+import { Route as AppIncomeStatementRouteImport } from './routes/_app.income-statement'
+import { Route as AppJournalRouteImport } from './routes/_app.journal'
+import { Route as AppLedgerRouteImport } from './routes/_app.ledger'
+import { Route as AppPartnersRouteImport } from './routes/_app.partners'
+import { Route as AppProductsRouteImport } from './routes/_app.products'
+import { Route as AppRecurringObligationsRouteImport } from './routes/_app.recurring-obligations'
+import { Route as AppRolesRouteImport } from './routes/_app.roles'
+import { Route as AppSettingsRouteImport } from './routes/_app.settings'
+import { Route as AppSuppliersRouteImport } from './routes/_app.suppliers'
+import { Route as AppSuppliersStatementRouteImport } from './routes/_app.suppliers-statement'
+import { Route as AppTradingAccountRouteImport } from './routes/_app.trading-account'
+import { Route as AppTrialBalanceRouteImport } from './routes/_app.trial-balance'
+import { Route as AppUsersRouteImport } from './routes/_app.users'
 import { Route as AppBankReconciliationIndexRouteImport } from './routes/_app.bank-reconciliation.index'
-import { Route as AppJournalEntryIdRouteImport } from './routes/_app.journal-entry.$id'
-import { Route as AppBankReconciliationReportsRouteImport } from './routes/_app.bank-reconciliation.reports'
-import { Route as AppBankReconciliationNewRouteImport } from './routes/_app.bank-reconciliation.new'
 import { Route as AppBankReconciliationIdRouteImport } from './routes/_app.bank-reconciliation.$id'
+import { Route as AppBankReconciliationNewRouteImport } from './routes/_app.bank-reconciliation.new'
+import { Route as AppBankReconciliationReportsRouteImport } from './routes/_app.bank-reconciliation.reports'
+import { Route as AppJournalEntryIdRouteImport } from './routes/_app.journal-entry.$id'
 import { Route as ApiPublicHooksDailyBackupRouteImport } from './routes/api/public/hooks/daily-backup'
 
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppUsersRoute = AppUsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppTrialBalanceRoute = AppTrialBalanceRouteImport.update({
-  id: '/trial-balance',
-  path: '/trial-balance',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppTradingAccountRoute = AppTradingAccountRouteImport.update({
-  id: '/trading-account',
-  path: '/trading-account',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSuppliersStatementRoute = AppSuppliersStatementRouteImport.update({
-  id: '/suppliers-statement',
-  path: '/suppliers-statement',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSuppliersRoute = AppSuppliersRouteImport.update({
-  id: '/suppliers',
-  path: '/suppliers',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSettingsRoute = AppSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppRolesRoute = AppRolesRouteImport.update({
-  id: '/roles',
-  path: '/roles',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppRecurringObligationsRoute = AppRecurringObligationsRouteImport.update({
-  id: '/recurring-obligations',
-  path: '/recurring-obligations',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppProductsRoute = AppProductsRouteImport.update({
-  id: '/products',
-  path: '/products',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppPartnersRoute = AppPartnersRouteImport.update({
-  id: '/partners',
-  path: '/partners',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppLedgerRoute = AppLedgerRouteImport.update({
-  id: '/ledger',
-  path: '/ledger',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppJournalRoute = AppJournalRouteImport.update({
-  id: '/journal',
-  path: '/journal',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppIncomeStatementRoute = AppIncomeStatementRouteImport.update({
-  id: '/income-statement',
-  path: '/income-statement',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppFinanceDashboardRoute = AppFinanceDashboardRouteImport.update({
-  id: '/finance-dashboard',
-  path: '/finance-dashboard',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppDashboardRoute = AppDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppCustomersStatementRoute = AppCustomersStatementRouteImport.update({
-  id: '/customers-statement',
-  path: '/customers-statement',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppCustomersRoute = AppCustomersRouteImport.update({
-  id: '/customers',
-  path: '/customers',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppChecksRoute = AppChecksRouteImport.update({
-  id: '/checks',
-  path: '/checks',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppCashFlowRoute = AppCashFlowRouteImport.update({
-  id: '/cash-flow',
-  path: '/cash-flow',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppBankReconciliationRoute = AppBankReconciliationRouteImport.update({
-  id: '/bank-reconciliation',
-  path: '/bank-reconciliation',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppBankMatchingRulesRoute = AppBankMatchingRulesRouteImport.update({
-  id: '/bank-matching-rules',
-  path: '/bank-matching-rules',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppBankAccountsRoute = AppBankAccountsRouteImport.update({
-  id: '/bank-accounts',
-  path: '/bank-accounts',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppBalanceSheetRoute = AppBalanceSheetRouteImport.update({
-  id: '/balance-sheet',
-  path: '/balance-sheet',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppBackupRoute = AppBackupRouteImport.update({
-  id: '/backup',
-  path: '/backup',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAuditLogRoute = AppAuditLogRouteImport.update({
-  id: '/audit-log',
-  path: '/audit-log',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAssetsRoute = AppAssetsRouteImport.update({
-  id: '/assets',
-  path: '/assets',
+const AppAccountsRoute = AppAccountsRouteImport.update({
+  id: '/accounts',
+  path: '/accounts',
   getParentRoute: () => AppRoute,
 } as any)
 const AppArchiveRoute = AppArchiveRouteImport.update({
@@ -196,9 +71,134 @@ const AppArchiveRoute = AppArchiveRouteImport.update({
   path: '/archive',
   getParentRoute: () => AppRoute,
 } as any)
-const AppAccountsRoute = AppAccountsRouteImport.update({
-  id: '/accounts',
-  path: '/accounts',
+const AppAssetsRoute = AppAssetsRouteImport.update({
+  id: '/assets',
+  path: '/assets',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAuditLogRoute = AppAuditLogRouteImport.update({
+  id: '/audit-log',
+  path: '/audit-log',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBackupRoute = AppBackupRouteImport.update({
+  id: '/backup',
+  path: '/backup',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBalanceSheetRoute = AppBalanceSheetRouteImport.update({
+  id: '/balance-sheet',
+  path: '/balance-sheet',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBankAccountsRoute = AppBankAccountsRouteImport.update({
+  id: '/bank-accounts',
+  path: '/bank-accounts',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBankMatchingRulesRoute = AppBankMatchingRulesRouteImport.update({
+  id: '/bank-matching-rules',
+  path: '/bank-matching-rules',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBankReconciliationRoute = AppBankReconciliationRouteImport.update({
+  id: '/bank-reconciliation',
+  path: '/bank-reconciliation',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCashFlowRoute = AppCashFlowRouteImport.update({
+  id: '/cash-flow',
+  path: '/cash-flow',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppChecksRoute = AppChecksRouteImport.update({
+  id: '/checks',
+  path: '/checks',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCustomersRoute = AppCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCustomersStatementRoute = AppCustomersStatementRouteImport.update({
+  id: '/customers-statement',
+  path: '/customers-statement',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDashboardRoute = AppDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFinanceDashboardRoute = AppFinanceDashboardRouteImport.update({
+  id: '/finance-dashboard',
+  path: '/finance-dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppIncomeStatementRoute = AppIncomeStatementRouteImport.update({
+  id: '/income-statement',
+  path: '/income-statement',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppJournalRoute = AppJournalRouteImport.update({
+  id: '/journal',
+  path: '/journal',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLedgerRoute = AppLedgerRouteImport.update({
+  id: '/ledger',
+  path: '/ledger',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPartnersRoute = AppPartnersRouteImport.update({
+  id: '/partners',
+  path: '/partners',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProductsRoute = AppProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRecurringObligationsRoute = AppRecurringObligationsRouteImport.update({
+  id: '/recurring-obligations',
+  path: '/recurring-obligations',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRolesRoute = AppRolesRouteImport.update({
+  id: '/roles',
+  path: '/roles',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuppliersRoute = AppSuppliersRouteImport.update({
+  id: '/suppliers',
+  path: '/suppliers',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuppliersStatementRoute = AppSuppliersStatementRouteImport.update({
+  id: '/suppliers-statement',
+  path: '/suppliers-statement',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTradingAccountRoute = AppTradingAccountRouteImport.update({
+  id: '/trading-account',
+  path: '/trading-account',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrialBalanceRoute = AppTrialBalanceRouteImport.update({
+  id: '/trial-balance',
+  path: '/trial-balance',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppUsersRoute = AppUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
   getParentRoute: () => AppRoute,
 } as any)
 const AppBankReconciliationIndexRoute =
@@ -207,27 +207,27 @@ const AppBankReconciliationIndexRoute =
     path: '/',
     getParentRoute: () => AppBankReconciliationRoute,
   } as any)
-const AppJournalEntryIdRoute = AppJournalEntryIdRouteImport.update({
-  id: '/journal-entry/$id',
-  path: '/journal-entry/$id',
-  getParentRoute: () => AppRoute,
+const AppBankReconciliationIdRoute = AppBankReconciliationIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppBankReconciliationRoute,
 } as any)
-const AppBankReconciliationReportsRoute =
-  AppBankReconciliationReportsRouteImport.update({
-    id: '/reports',
-    path: '/reports',
-    getParentRoute: () => AppBankReconciliationRoute,
-  } as any)
 const AppBankReconciliationNewRoute =
   AppBankReconciliationNewRouteImport.update({
     id: '/new',
     path: '/new',
     getParentRoute: () => AppBankReconciliationRoute,
   } as any)
-const AppBankReconciliationIdRoute = AppBankReconciliationIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AppBankReconciliationRoute,
+const AppBankReconciliationReportsRoute =
+  AppBankReconciliationReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AppBankReconciliationRoute,
+  } as any)
+const AppJournalEntryIdRoute = AppJournalEntryIdRouteImport.update({
+  id: '/journal-entry/$id',
+  path: '/journal-entry/$id',
+  getParentRoute: () => AppRoute,
 } as any)
 const ApiPublicHooksDailyBackupRoute =
   ApiPublicHooksDailyBackupRouteImport.update({
@@ -477,11 +477,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app': {
@@ -491,193 +491,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/users': {
-      id: '/_app/users'
-      path: '/users'
-      fullPath: '/users'
-      preLoaderRoute: typeof AppUsersRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/trial-balance': {
-      id: '/_app/trial-balance'
-      path: '/trial-balance'
-      fullPath: '/trial-balance'
-      preLoaderRoute: typeof AppTrialBalanceRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/trading-account': {
-      id: '/_app/trading-account'
-      path: '/trading-account'
-      fullPath: '/trading-account'
-      preLoaderRoute: typeof AppTradingAccountRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/suppliers-statement': {
-      id: '/_app/suppliers-statement'
-      path: '/suppliers-statement'
-      fullPath: '/suppliers-statement'
-      preLoaderRoute: typeof AppSuppliersStatementRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/suppliers': {
-      id: '/_app/suppliers'
-      path: '/suppliers'
-      fullPath: '/suppliers'
-      preLoaderRoute: typeof AppSuppliersRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/settings': {
-      id: '/_app/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AppSettingsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/roles': {
-      id: '/_app/roles'
-      path: '/roles'
-      fullPath: '/roles'
-      preLoaderRoute: typeof AppRolesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/recurring-obligations': {
-      id: '/_app/recurring-obligations'
-      path: '/recurring-obligations'
-      fullPath: '/recurring-obligations'
-      preLoaderRoute: typeof AppRecurringObligationsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/products': {
-      id: '/_app/products'
-      path: '/products'
-      fullPath: '/products'
-      preLoaderRoute: typeof AppProductsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/partners': {
-      id: '/_app/partners'
-      path: '/partners'
-      fullPath: '/partners'
-      preLoaderRoute: typeof AppPartnersRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/ledger': {
-      id: '/_app/ledger'
-      path: '/ledger'
-      fullPath: '/ledger'
-      preLoaderRoute: typeof AppLedgerRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/journal': {
-      id: '/_app/journal'
-      path: '/journal'
-      fullPath: '/journal'
-      preLoaderRoute: typeof AppJournalRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/income-statement': {
-      id: '/_app/income-statement'
-      path: '/income-statement'
-      fullPath: '/income-statement'
-      preLoaderRoute: typeof AppIncomeStatementRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/finance-dashboard': {
-      id: '/_app/finance-dashboard'
-      path: '/finance-dashboard'
-      fullPath: '/finance-dashboard'
-      preLoaderRoute: typeof AppFinanceDashboardRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/dashboard': {
-      id: '/_app/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AppDashboardRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/customers-statement': {
-      id: '/_app/customers-statement'
-      path: '/customers-statement'
-      fullPath: '/customers-statement'
-      preLoaderRoute: typeof AppCustomersStatementRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/customers': {
-      id: '/_app/customers'
-      path: '/customers'
-      fullPath: '/customers'
-      preLoaderRoute: typeof AppCustomersRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/checks': {
-      id: '/_app/checks'
-      path: '/checks'
-      fullPath: '/checks'
-      preLoaderRoute: typeof AppChecksRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/cash-flow': {
-      id: '/_app/cash-flow'
-      path: '/cash-flow'
-      fullPath: '/cash-flow'
-      preLoaderRoute: typeof AppCashFlowRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/bank-reconciliation': {
-      id: '/_app/bank-reconciliation'
-      path: '/bank-reconciliation'
-      fullPath: '/bank-reconciliation'
-      preLoaderRoute: typeof AppBankReconciliationRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/bank-matching-rules': {
-      id: '/_app/bank-matching-rules'
-      path: '/bank-matching-rules'
-      fullPath: '/bank-matching-rules'
-      preLoaderRoute: typeof AppBankMatchingRulesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/bank-accounts': {
-      id: '/_app/bank-accounts'
-      path: '/bank-accounts'
-      fullPath: '/bank-accounts'
-      preLoaderRoute: typeof AppBankAccountsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/balance-sheet': {
-      id: '/_app/balance-sheet'
-      path: '/balance-sheet'
-      fullPath: '/balance-sheet'
-      preLoaderRoute: typeof AppBalanceSheetRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/backup': {
-      id: '/_app/backup'
-      path: '/backup'
-      fullPath: '/backup'
-      preLoaderRoute: typeof AppBackupRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/audit-log': {
-      id: '/_app/audit-log'
-      path: '/audit-log'
-      fullPath: '/audit-log'
-      preLoaderRoute: typeof AppAuditLogRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/assets': {
-      id: '/_app/assets'
-      path: '/assets'
-      fullPath: '/assets'
-      preLoaderRoute: typeof AppAssetsRouteImport
+    '/_app/accounts': {
+      id: '/_app/accounts'
+      path: '/accounts'
+      fullPath: '/accounts'
+      preLoaderRoute: typeof AppAccountsRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/archive': {
@@ -687,11 +512,186 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppArchiveRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/accounts': {
-      id: '/_app/accounts'
-      path: '/accounts'
-      fullPath: '/accounts'
-      preLoaderRoute: typeof AppAccountsRouteImport
+    '/_app/assets': {
+      id: '/_app/assets'
+      path: '/assets'
+      fullPath: '/assets'
+      preLoaderRoute: typeof AppAssetsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/audit-log': {
+      id: '/_app/audit-log'
+      path: '/audit-log'
+      fullPath: '/audit-log'
+      preLoaderRoute: typeof AppAuditLogRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/backup': {
+      id: '/_app/backup'
+      path: '/backup'
+      fullPath: '/backup'
+      preLoaderRoute: typeof AppBackupRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/balance-sheet': {
+      id: '/_app/balance-sheet'
+      path: '/balance-sheet'
+      fullPath: '/balance-sheet'
+      preLoaderRoute: typeof AppBalanceSheetRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/bank-accounts': {
+      id: '/_app/bank-accounts'
+      path: '/bank-accounts'
+      fullPath: '/bank-accounts'
+      preLoaderRoute: typeof AppBankAccountsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/bank-matching-rules': {
+      id: '/_app/bank-matching-rules'
+      path: '/bank-matching-rules'
+      fullPath: '/bank-matching-rules'
+      preLoaderRoute: typeof AppBankMatchingRulesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/bank-reconciliation': {
+      id: '/_app/bank-reconciliation'
+      path: '/bank-reconciliation'
+      fullPath: '/bank-reconciliation'
+      preLoaderRoute: typeof AppBankReconciliationRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/cash-flow': {
+      id: '/_app/cash-flow'
+      path: '/cash-flow'
+      fullPath: '/cash-flow'
+      preLoaderRoute: typeof AppCashFlowRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/checks': {
+      id: '/_app/checks'
+      path: '/checks'
+      fullPath: '/checks'
+      preLoaderRoute: typeof AppChecksRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/customers': {
+      id: '/_app/customers'
+      path: '/customers'
+      fullPath: '/customers'
+      preLoaderRoute: typeof AppCustomersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/customers-statement': {
+      id: '/_app/customers-statement'
+      path: '/customers-statement'
+      fullPath: '/customers-statement'
+      preLoaderRoute: typeof AppCustomersStatementRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/dashboard': {
+      id: '/_app/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/finance-dashboard': {
+      id: '/_app/finance-dashboard'
+      path: '/finance-dashboard'
+      fullPath: '/finance-dashboard'
+      preLoaderRoute: typeof AppFinanceDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/income-statement': {
+      id: '/_app/income-statement'
+      path: '/income-statement'
+      fullPath: '/income-statement'
+      preLoaderRoute: typeof AppIncomeStatementRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/journal': {
+      id: '/_app/journal'
+      path: '/journal'
+      fullPath: '/journal'
+      preLoaderRoute: typeof AppJournalRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/ledger': {
+      id: '/_app/ledger'
+      path: '/ledger'
+      fullPath: '/ledger'
+      preLoaderRoute: typeof AppLedgerRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/partners': {
+      id: '/_app/partners'
+      path: '/partners'
+      fullPath: '/partners'
+      preLoaderRoute: typeof AppPartnersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/products': {
+      id: '/_app/products'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof AppProductsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/recurring-obligations': {
+      id: '/_app/recurring-obligations'
+      path: '/recurring-obligations'
+      fullPath: '/recurring-obligations'
+      preLoaderRoute: typeof AppRecurringObligationsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/roles': {
+      id: '/_app/roles'
+      path: '/roles'
+      fullPath: '/roles'
+      preLoaderRoute: typeof AppRolesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/suppliers': {
+      id: '/_app/suppliers'
+      path: '/suppliers'
+      fullPath: '/suppliers'
+      preLoaderRoute: typeof AppSuppliersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/suppliers-statement': {
+      id: '/_app/suppliers-statement'
+      path: '/suppliers-statement'
+      fullPath: '/suppliers-statement'
+      preLoaderRoute: typeof AppSuppliersStatementRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/trading-account': {
+      id: '/_app/trading-account'
+      path: '/trading-account'
+      fullPath: '/trading-account'
+      preLoaderRoute: typeof AppTradingAccountRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/trial-balance': {
+      id: '/_app/trial-balance'
+      path: '/trial-balance'
+      fullPath: '/trial-balance'
+      preLoaderRoute: typeof AppTrialBalanceRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/users': {
+      id: '/_app/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AppUsersRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/bank-reconciliation/': {
@@ -701,18 +701,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppBankReconciliationIndexRouteImport
       parentRoute: typeof AppBankReconciliationRoute
     }
-    '/_app/journal-entry/$id': {
-      id: '/_app/journal-entry/$id'
-      path: '/journal-entry/$id'
-      fullPath: '/journal-entry/$id'
-      preLoaderRoute: typeof AppJournalEntryIdRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/bank-reconciliation/reports': {
-      id: '/_app/bank-reconciliation/reports'
-      path: '/reports'
-      fullPath: '/bank-reconciliation/reports'
-      preLoaderRoute: typeof AppBankReconciliationReportsRouteImport
+    '/_app/bank-reconciliation/$id': {
+      id: '/_app/bank-reconciliation/$id'
+      path: '/$id'
+      fullPath: '/bank-reconciliation/$id'
+      preLoaderRoute: typeof AppBankReconciliationIdRouteImport
       parentRoute: typeof AppBankReconciliationRoute
     }
     '/_app/bank-reconciliation/new': {
@@ -722,12 +715,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppBankReconciliationNewRouteImport
       parentRoute: typeof AppBankReconciliationRoute
     }
-    '/_app/bank-reconciliation/$id': {
-      id: '/_app/bank-reconciliation/$id'
-      path: '/$id'
-      fullPath: '/bank-reconciliation/$id'
-      preLoaderRoute: typeof AppBankReconciliationIdRouteImport
+    '/_app/bank-reconciliation/reports': {
+      id: '/_app/bank-reconciliation/reports'
+      path: '/reports'
+      fullPath: '/bank-reconciliation/reports'
+      preLoaderRoute: typeof AppBankReconciliationReportsRouteImport
       parentRoute: typeof AppBankReconciliationRoute
+    }
+    '/_app/journal-entry/$id': {
+      id: '/_app/journal-entry/$id'
+      path: '/journal-entry/$id'
+      fullPath: '/journal-entry/$id'
+      preLoaderRoute: typeof AppJournalEntryIdRouteImport
+      parentRoute: typeof AppRoute
     }
     '/api/public/hooks/daily-backup': {
       id: '/api/public/hooks/daily-backup'
@@ -833,3 +833,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
