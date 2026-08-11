@@ -1659,29 +1659,19 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
-      log_audit:
-        | {
-            Args: {
-              _action: string
-              _details?: Json
-              _entity: string
-              _entity_id: string
-            }
-            Returns: undefined
-          }
-        | {
-            Args: {
-              _action: string
-              _details?: Json
-              _device?: string
-              _entity: string
-              _entity_id: string
-              _ip_address?: string
-              _new_value?: Json
-              _old_value?: Json
-            }
-            Returns: undefined
-          }
+      log_audit: {
+        Args: {
+          _action: string
+          _details?: Json
+          _device?: string
+          _entity: string
+          _entity_id: string
+          _ip_address?: string
+          _new_value?: Json
+          _old_value?: Json
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       account_type: "asset" | "liability" | "equity" | "revenue" | "expense"

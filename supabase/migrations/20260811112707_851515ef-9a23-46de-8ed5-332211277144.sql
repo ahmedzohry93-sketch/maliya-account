@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.log_audit(text, text, uuid, jsonb);
