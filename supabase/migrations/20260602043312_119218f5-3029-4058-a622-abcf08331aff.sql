@@ -1,0 +1,1 @@
+ALTER TABLE journal_entries ADD COLUMN IF NOT EXISTS entry_type text DEFAULT 'general';
