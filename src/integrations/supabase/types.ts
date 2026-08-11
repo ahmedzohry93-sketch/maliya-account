@@ -1045,6 +1045,7 @@ export type Database = {
           description: string | null
           entry_date: string
           entry_no: number
+          entry_type: string
           id: string
           is_archived: boolean
           is_deleted: boolean
@@ -1064,6 +1065,7 @@ export type Database = {
           description?: string | null
           entry_date?: string
           entry_no?: number
+          entry_type?: string
           id?: string
           is_archived?: boolean
           is_deleted?: boolean
@@ -1083,6 +1085,7 @@ export type Database = {
           description?: string | null
           entry_date?: string
           entry_no?: number
+          entry_type?: string
           id?: string
           is_archived?: boolean
           is_deleted?: boolean
