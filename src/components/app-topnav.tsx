@@ -1,10 +1,10 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard, BookOpen, ListTree, ScrollText, Scale, ShieldCheck, UserCog,
   Activity, Archive, LogOut, Wallet, TrendingUp, Landmark, Users, Truck, Droplets,
   ShoppingCart, Settings, Package, Building2, DatabaseBackup, Boxes,
-  Calendar, ChevronDown, MoreHorizontal, Menu, X,
+  Calendar, ChevronDown, Menu, X,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/lib/i18n";
