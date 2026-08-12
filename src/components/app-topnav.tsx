@@ -102,37 +102,8 @@ export function AppTopNav() {
     .map((g) => ({ ...g, items: g.items.filter((i) => !i.perm || permissions.has(i.perm)) }))
     .filter((g) => g.items.length > 0);
 
-  const barRef = useRef<HTMLDivElement>(null);
-  const measureRef = useRef<HTMLDivElement>(null);
-  const [visibleCount, setVisibleCount] = useState(groups.length);
   const [open, setOpen] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  useLayoutEffect(() => {
-    const bar = barRef.current;
-    const measure = measureRef.current;
-    if (!bar || !measure) return;
-    const recompute = () => {
-      const widths = Array.from(measure.children).map((c) => (c as HTMLElement).offsetWidth + 4);
-      const avail = bar.clientWidth;
-      const moreW = 110;
-      let used = 0;
-      let count = 0;
-      for (let i = 0; i < widths.length; i++) {
-        const remaining = widths.length - i - 1;
-        const need = used + widths[i] + (remaining > 0 ? moreW : 0);
-        if (need <= avail) {
-          used += widths[i];
-          count++;
-        } else break;
-      }
-      setVisibleCount(count);
-    };
-    recompute();
-    const ro = new ResizeObserver(recompute);
-    ro.observe(bar);
-    return () => ro.disconnect();
-  }, [groups.length, t]);
 
   useEffect(() => {
     const close = () => setOpen(null);
@@ -148,38 +119,20 @@ export function AppTopNav() {
   const isActiveItem = (to: string) => pathname === to || pathname.startsWith(to + "/");
   const isActiveGroup = (g: Group) => g.items.some((i) => isActiveItem(i.to));
 
-  const visible = groups.slice(0, visibleCount);
-  const overflow = groups.slice(visibleCount);
-
   return (
     <div className="border-b bg-card">
-      {/* Hidden measurement row */}
-      <div
-        ref={measureRef}
-        aria-hidden
-        className="pointer-events-none invisible absolute -z-10 flex whitespace-nowrap"
-      >
-        {groups.map((g) => (
-          <span key={g.titleKey} className="px-3 py-2 text-[13px] font-medium inline-flex items-center gap-2">
-            <span className="w-4 h-4" />
-            {t(g.titleKey)}
-            <span className="w-3.5 h-3.5" />
-          </span>
-        ))}
-      </div>
-
       <div className="flex items-center gap-1 px-2 md:px-4">
         {/* Mobile toggle */}
         <button
           onClick={(e) => { e.stopPropagation(); setMobileOpen((v) => !v); }}
-          className="lg:hidden my-1.5 grid h-9 w-9 place-items-center rounded-lg border hover:bg-muted"
+          className="md:hidden my-1.5 grid h-9 w-9 place-items-center rounded-lg border hover:bg-muted"
           aria-label={t("nav.more")}
         >
           {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
         </button>
 
-        <div ref={barRef} className="hidden lg:flex min-w-0 flex-1 items-center overflow-hidden">
-          {visible.map((g) => (
+        <div className="hidden md:flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto overflow-y-visible py-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {groups.map((g) => (
             <GroupButton
               key={g.titleKey}
               group={g}
@@ -189,43 +142,9 @@ export function AppTopNav() {
               onToggle={() => setOpen((o) => (o === g.titleKey ? null : g.titleKey))}
             />
           ))}
-          {overflow.length > 0 && (
-            <div className="relative">
-              <button
-                onClick={(e) => { e.stopPropagation(); setOpen((o) => (o === "__more" ? null : "__more")); }}
-                className={cn(
-                  "inline-flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-medium transition-colors",
-                  overflow.some(isActiveGroup)
-                    ? "bg-primary/10 text-primary"
-                    : "text-foreground/75 hover:bg-muted",
-                )}
-              >
-                <MoreHorizontal className="w-4 h-4" />
-                {t("nav.more")}
-                <ChevronDown className="w-3.5 h-3.5 opacity-60" />
-              </button>
-              {open === "__more" && (
-                <div
-                  onClick={(e) => e.stopPropagation()}
-                  className="absolute top-full z-50 mt-1 end-0 min-w-[240px] rounded-xl border bg-popover p-1.5 shadow-lg"
-                >
-                  {overflow.map((g) => (
-                    <div key={g.titleKey} className="py-1">
-                      <div className="px-2.5 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                        {t(g.titleKey)}
-                      </div>
-                      {g.items.map((it) => (
-                        <NavItemLink key={it.to} item={it} active={isActiveItem(it.to)} />
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
         </div>
 
-        <div className="flex-1 lg:hidden" />
+        <div className="flex-1 md:hidden" />
 
         <button
           onClick={() => signOut()}
@@ -238,13 +157,13 @@ export function AppTopNav() {
 
       {/* Mobile stacked menu */}
       {mobileOpen && (
-        <div className="lg:hidden max-h-[70vh] overflow-y-auto border-t px-3 py-2 space-y-3">
+        <div className="md:hidden max-h-[70vh] overflow-y-auto border-t px-3 py-2 space-y-3">
           {groups.map((g) => (
             <div key={g.titleKey}>
               <div className="px-1 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                 {t(g.titleKey)}
               </div>
-              <div className="grid grid-cols-2 gap-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                 {g.items.map((it) => (
                   <NavItemLink key={it.to} item={it} active={isActiveItem(it.to)} />
                 ))}
