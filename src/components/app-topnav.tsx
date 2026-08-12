@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   LayoutDashboard, BookOpen, ListTree, ScrollText, Scale, ShieldCheck, UserCog,
   Activity, Archive, LogOut, Wallet, TrendingUp, Landmark, Users, Truck, Droplets,
@@ -104,16 +105,27 @@ export function AppTopNav() {
 
   const [open, setOpen] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileGroup, setMobileGroup] = useState<string | null>(null);
 
   useEffect(() => {
-    const close = () => setOpen(null);
-    document.addEventListener("click", close);
-    return () => document.removeEventListener("click", close);
+    const onDown = (e: MouseEvent | TouchEvent) => {
+      const el = e.target as HTMLElement | null;
+      if (el?.closest("[data-nav-group]")) return;
+      setOpen(null);
+    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(null); };
+    document.addEventListener("pointerdown", onDown as EventListener);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown as EventListener);
+      document.removeEventListener("keydown", onKey);
+    };
   }, []);
 
   useEffect(() => {
     setOpen(null);
     setMobileOpen(false);
+    setMobileGroup(null);
   }, [pathname]);
 
   const isActiveItem = (to: string) => pathname === to || pathname.startsWith(to + "/");
@@ -124,7 +136,7 @@ export function AppTopNav() {
       <div className="flex items-center gap-1 px-2 md:px-4">
         {/* Mobile toggle */}
         <button
-          onClick={(e) => { e.stopPropagation(); setMobileOpen((v) => !v); }}
+          onClick={() => setMobileOpen((v) => !v)}
           className="md:hidden my-1.5 grid h-9 w-9 place-items-center rounded-lg border hover:bg-muted"
           aria-label={t("nav.more")}
         >
@@ -157,19 +169,30 @@ export function AppTopNav() {
 
       {/* Mobile stacked menu */}
       {mobileOpen && (
-        <div className="md:hidden max-h-[70vh] overflow-y-auto border-t px-3 py-2 space-y-3">
-          {groups.map((g) => (
-            <div key={g.titleKey}>
-              <div className="px-1 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                {t(g.titleKey)}
+        <div className="md:hidden max-h-[70vh] overflow-y-auto border-t px-3 py-2 space-y-1">
+          {groups.map((g) => {
+            const GIcon = g.icon;
+            const isOpen = mobileGroup === g.titleKey;
+            return (
+              <div key={g.titleKey} className="rounded-lg border">
+                <button
+                  onClick={() => setMobileGroup((o) => (o === g.titleKey ? null : g.titleKey))}
+                  className="flex w-full items-center gap-2 px-3 py-2.5 text-[13px] font-medium"
+                >
+                  <GIcon className="w-4 h-4 shrink-0" />
+                  <span className="min-w-0 flex-1 truncate text-start">{t(g.titleKey)}</span>
+                  <ChevronDown className={cn("w-4 h-4 shrink-0 opacity-60 transition-transform", isOpen && "rotate-180")} />
+                </button>
+                {isOpen && (
+                  <div className="border-t p-1 space-y-0.5">
+                    {g.items.map((it) => (
+                      <NavItemLink key={it.to} item={it} active={isActiveItem(it.to)} />
+                    ))}
+                  </div>
+                )}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                {g.items.map((it) => (
-                  <NavItemLink key={it.to} item={it} active={isActiveItem(it.to)} />
-                ))}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
@@ -187,10 +210,35 @@ function GroupButton({
 }) {
   const { t } = useI18n();
   const Icon = group.icon;
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+
+  useLayoutEffect(() => {
+    if (!open) { setPos(null); return; }
+    const place = () => {
+      const r = btnRef.current?.getBoundingClientRect();
+      if (!r) return;
+      const width = 250;
+      const rtl = document.documentElement.dir === "rtl";
+      let left = rtl ? r.right - width : r.left;
+      left = Math.min(Math.max(8, left), window.innerWidth - width - 8);
+      setPos({ top: r.bottom + 4, left });
+    };
+    place();
+    window.addEventListener("resize", place);
+    window.addEventListener("scroll", place, true);
+    return () => {
+      window.removeEventListener("resize", place);
+      window.removeEventListener("scroll", place, true);
+    };
+  }, [open]);
+
   return (
-    <div className="relative">
+    <div className="relative" data-nav-group>
       <button
-        onClick={(e) => { e.stopPropagation(); onToggle(); }}
+        ref={btnRef}
+        type="button"
+        onClick={onToggle}
         className={cn(
           "relative inline-flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-medium transition-colors",
           active ? "text-primary" : "text-foreground/75 hover:bg-muted",
@@ -202,16 +250,19 @@ function GroupButton({
         <ChevronDown className={cn("w-3.5 h-3.5 opacity-60 transition-transform", open && "rotate-180")} />
         {active && <span className="absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-primary" />}
       </button>
-      {open && (
-        <div
-          onClick={(e) => e.stopPropagation()}
-          className="absolute top-full z-50 mt-1 start-0 min-w-[240px] rounded-xl border bg-popover p-1.5 shadow-lg"
-        >
-          {group.items.map((it) => (
-            <NavItemLink key={it.to} item={it} active={isActiveItem(it.to)} />
-          ))}
-        </div>
-      )}
+      {open && pos && typeof document !== "undefined" &&
+        createPortal(
+          <div
+            data-nav-group
+            style={{ position: "fixed", top: pos.top, left: pos.left, width: 250 }}
+            className="z-[100] max-h-[70vh] overflow-y-auto rounded-xl border bg-popover p-1.5 shadow-lg"
+          >
+            {group.items.map((it) => (
+              <NavItemLink key={it.to} item={it} active={isActiveItem(it.to)} />
+            ))}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
