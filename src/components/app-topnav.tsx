@@ -131,7 +131,7 @@ export function AppTopNav() {
           {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
         </button>
 
-        <div className="hidden md:flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto overflow-y-visible py-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="hidden md:flex min-w-0 flex-1 flex-wrap items-center gap-0.5 py-0.5">
           {groups.map((g) => (
             <GroupButton
               key={g.titleKey}
