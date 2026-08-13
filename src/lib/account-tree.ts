@@ -69,5 +69,5 @@ export function ancestorCodes(accounts: AccountRow[], accountId: string): string
 }
 
 /** Account codes that represent receivables (customers) and payables (suppliers). */
-export const CUSTOMER_ROOT_CODES = ["112", "1121", "13230", "111"];
-export const SUPPLIER_ROOT_CODES = ["211", "14130", "21"];
+export const CUSTOMER_ROOT_CODES = ["112", "1121", "13230"];
+export const SUPPLIER_ROOT_CODES = ["211", "14130"];
