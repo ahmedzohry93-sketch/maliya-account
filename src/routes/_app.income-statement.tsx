@@ -3,8 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section } from "@/lib/export-utils";
-import { ReportShell, StatementCard, BandRow, LineRow, TotalRow } from "@/components/report-shell";
-
+import { ReportShell, StatementCard, BandRow, TotalRow, AccountTreeRows } from "@/components/report-shell";
+import { buildAccountTree, pruneEmpty, totalOf, flattenTree, type AccountRow } from "@/lib/account-tree";
 
 export const Route = createFileRoute("/_app/income-statement")({ component: IncomeStatementPage });
 
@@ -12,54 +12,47 @@ function IncomeStatementPage() {
   const { data } = useQuery({
     queryKey: ["income-statement"],
     queryFn: async () => {
-      const { data: accounts } = await supabase.from("accounts").select("id, code, name, type, parent_id").order("code");
+      const { data: accounts } = await supabase
+        .from("accounts")
+        .select("id, code, name, type, parent_id")
+        .order("code");
       const { data: lines } = await supabase
         .from("journal_lines")
         .select("account_id, debit, credit, journal_entries!inner(status)")
         .eq("journal_entries.status", "posted");
-      const parentIds = new Set((accounts ?? []).map((a) => a.parent_id).filter(Boolean));
-      const balByAcc = new Map<string, number>();
+      const bal = new Map<string, number>();
       (lines ?? []).forEach((l: any) => {
-        balByAcc.set(l.account_id, (balByAcc.get(l.account_id) ?? 0) + Number(l.debit) - Number(l.credit));
+        bal.set(l.account_id, (bal.get(l.account_id) ?? 0) + Number(l.debit) - Number(l.credit));
       });
-      const rows = (accounts ?? [])
-        .filter((a) => !parentIds.has(a.id))
-        .map((a) => {
-          const debitMinusCredit = balByAcc.get(a.id) ?? 0;
-          const bal = a.type === "revenue" ? -debitMinusCredit : debitMinusCredit;
-          return { ...a, balance: bal };
-        })
-        .filter((a) => (a.type === "revenue" || a.type === "expense") && a.balance !== 0);
-      return rows;
+      return { accounts: (accounts ?? []) as AccountRow[], bal };
     },
   });
 
-  const revenues = useMemo(() => (data ?? []).filter((a) => a.type === "revenue"), [data]);
-  const expenses = useMemo(() => (data ?? []).filter((a) => a.type === "expense"), [data]);
-  const totalRev = revenues.reduce((s, r) => s + r.balance, 0);
-  const totalExp = expenses.reduce((s, r) => s + r.balance, 0);
+  const accounts = data?.accounts ?? [];
+  const bal = data?.bal ?? new Map<string, number>();
+
+  const revenues = useMemo(
+    () => pruneEmpty(buildAccountTree(accounts.filter((a) => a.type === "revenue"), (a) => -(bal.get(a.id) ?? 0))),
+    [accounts, bal],
+  );
+  const expenses = useMemo(
+    () => pruneEmpty(buildAccountTree(accounts.filter((a) => a.type === "expense"), (a) => bal.get(a.id) ?? 0)),
+    [accounts, bal],
+  );
+
+  const totalRev = totalOf(revenues);
+  const totalExp = totalOf(expenses);
   const netIncome = totalRev - totalExp;
 
-  const sections = (): Section[] => [
-    {
-      title: "الإيرادات",
-      headers: ["الكود", "اسم الحساب", "المبلغ"],
-      rows: revenues.map((r) => [r.code, r.name, r.balance]),
-      totals: ["", "إجمالي الإيرادات", totalRev],
-    },
-    {
-      title: "المصروفات",
-      headers: ["الكود", "اسم الحساب", "المبلغ"],
-      rows: expenses.map((r) => [r.code, r.name, r.balance]),
-      totals: ["", "إجمالي المصروفات", totalExp],
-    },
-    {
-      title: "النتيجة",
-      headers: ["البيان", "", "المبلغ"],
-      rows: [],
-      totals: [netIncome >= 0 ? "صافي الربح" : "صافي الخسارة", "", Math.abs(netIncome)],
-    },
-  ];
+  const sections = (): Section[] => {
+    const rowsOf = (nodes: ReturnType<typeof pruneEmpty>) =>
+      flattenTree(nodes).map(({ node, depth }) => [node.code, `${"— ".repeat(depth)}${node.name}`, node.amount]);
+    return [
+      { title: "الإيرادات", headers: ["الكود", "اسم الحساب", "المبلغ"], rows: rowsOf(revenues), totals: ["", "إجمالي الإيرادات", totalRev] },
+      { title: "المصروفات", headers: ["الكود", "اسم الحساب", "المبلغ"], rows: rowsOf(expenses), totals: ["", "إجمالي المصروفات", totalExp] },
+      { title: "النتيجة", headers: ["البيان", "", "المبلغ"], rows: [], totals: [netIncome >= 0 ? "صافي الربح" : "صافي الخسارة", "", Math.abs(netIncome)] },
+    ];
+  };
 
   return (
     <ReportShell
@@ -70,18 +63,20 @@ function IncomeStatementPage() {
     >
       <StatementCard>
         <BandRow label="الإيرادات" />
-        {revenues.length === 0 && <LineRow label="لا توجد بيانات" value="—" muted />}
-        {revenues.map((r) => (
-          <LineRow key={r.id} code={r.code} label={r.name} value={r.balance} />
-        ))}
+        {revenues.length === 0 ? (
+          <div className="px-4 py-2 text-[13px] text-muted-foreground">لا توجد بيانات</div>
+        ) : (
+          <AccountTreeRows nodes={revenues} />
+        )}
         <TotalRow label="إجمالي الإيرادات" value={totalRev} tone="positive" />
 
         <BandRow label="المصروفات" />
-        {expenses.length === 0 && <LineRow label="لا توجد بيانات" value="—" muted />}
-        {expenses.map((r) => (
-          <LineRow key={r.id} code={r.code} label={r.name} value={-r.balance} />
-        ))}
-        <TotalRow label="إجمالي المصروفات" value={-totalExp} tone="negative" />
+        {expenses.length === 0 ? (
+          <div className="px-4 py-2 text-[13px] text-muted-foreground">لا توجد بيانات</div>
+        ) : (
+          <AccountTreeRows nodes={expenses} />
+        )}
+        <TotalRow label="إجمالي المصروفات" value={totalExp} tone="negative" />
 
         <TotalRow
           label={netIncome >= 0 ? "صافي الربح" : "صافي الخسارة"}
@@ -90,7 +85,7 @@ function IncomeStatementPage() {
           tone={netIncome >= 0 ? "positive" : "negative"}
         />
       </StatementCard>
+      <p className="text-[11px] text-muted-foreground">اضغط على الحساب الرئيسي لعرض الحسابات الفرعية بالتفصيل.</p>
     </ReportShell>
   );
 }
-
