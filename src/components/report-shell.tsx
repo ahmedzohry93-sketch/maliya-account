@@ -1,6 +1,7 @@
 import { type ReactNode, useState } from "react";
-import { Filter, Download, FileSpreadsheet, FileText } from "lucide-react";
+import { Filter, Download, FileSpreadsheet, FileText, ChevronDown, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { AccNode } from "@/lib/account-tree";
 
 export function money(n: number) {
   const v = Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -189,5 +190,49 @@ export function ReportTable({ head, children }: { head: ReactNode; children: Rea
         </table>
       </div>
     </div>
+  );
+}
+
+/** Collapsible account tree rows: a main account (e.g. Sales) expands into its sub-accounts. */
+export function AccountTreeRows({ nodes, depth = 0 }: { nodes: AccNode[]; depth?: number }) {
+  return (
+    <>
+      {nodes.map((n) => (
+        <AccountTreeRow key={n.id} node={n} depth={depth} />
+      ))}
+    </>
+  );
+}
+
+function AccountTreeRow({ node, depth }: { node: AccNode; depth: number }) {
+  const [open, setOpen] = useState(depth === 0);
+  const hasKids = node.children.length > 0;
+  const Chevron = open ? ChevronDown : ChevronLeft;
+  return (
+    <>
+      <div
+        role={hasKids ? "button" : undefined}
+        onClick={hasKids ? () => setOpen((o) => !o) : undefined}
+        className={cn(
+          "flex items-center gap-2 px-4 py-2 text-[13px]",
+          hasKids && "cursor-pointer hover:bg-muted/50",
+          depth === 0 && "font-bold",
+          depth === 1 && "font-semibold",
+        )}
+        style={{ paddingInlineStart: 16 + depth * 16 }}
+      >
+        {hasKids ? (
+          <Chevron className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
+        ) : (
+          <span className="w-3.5 shrink-0" />
+        )}
+        <span className="num w-14 shrink-0 text-[11px] text-muted-foreground">{node.code}</span>
+        <span className="min-w-0 flex-1 truncate">{node.name}</span>
+        <span className={cn("num tabular-nums shrink-0", node.amount < 0 && "text-destructive")}>
+          {money(node.amount)}
+        </span>
+      </div>
+      {open && hasKids && <AccountTreeRows nodes={node.children} depth={depth + 1} />}
+    </>
   );
 }
