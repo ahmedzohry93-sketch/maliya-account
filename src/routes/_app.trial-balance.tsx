@@ -9,13 +9,16 @@ import { ReportShell, ReportTable, money } from "@/components/report-shell";
 export const Route = createFileRoute("/_app/trial-balance")({ component: TrialBalancePage });
 
 function TrialBalancePage() {
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+
   const { data = [] } = useQuery({
-    queryKey: ["trial-balance"],
+    queryKey: ["trial-balance", from, to],
     queryFn: async () => {
       const { data: accounts } = await supabase.from("accounts").select("id, code, name, type").order("code");
-      const { data: lines } = await supabase
+      let q = supabase
         .from("journal_lines")
-        .select("account_id, debit, credit, journal_entries!inner(status)")
+        .select("account_id, debit, credit, journal_entries!inner(status, entry_date)")
         .eq("journal_entries.status", "posted");
       const map = new Map<string, { debit: number; credit: number }>();
       (lines ?? []).forEach((l: any) => {

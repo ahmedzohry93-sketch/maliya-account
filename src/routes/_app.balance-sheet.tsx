@@ -9,16 +9,19 @@ import { buildAccountTree, pruneEmpty, totalOf, flattenTree, type AccNode, type 
 export const Route = createFileRoute("/_app/balance-sheet")({ component: BalanceSheetPage });
 
 function BalanceSheetPage() {
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+
   const { data } = useQuery({
-    queryKey: ["balance-sheet"],
+    queryKey: ["balance-sheet", from, to],
     queryFn: async () => {
       const { data: accounts } = await supabase
         .from("accounts")
         .select("id, code, name, type, parent_id")
         .order("code");
-      const { data: lines } = await supabase
+      let q = supabase
         .from("journal_lines")
-        .select("account_id, debit, credit, journal_entries!inner(status)")
+        .select("account_id, debit, credit, journal_entries!inner(status, entry_date)")
         .eq("journal_entries.status", "posted");
       const bal = new Map<string, number>();
       (lines ?? []).forEach((l: any) => {

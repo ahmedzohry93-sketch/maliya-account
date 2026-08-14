@@ -9,16 +9,19 @@ import { buildAccountTree, pruneEmpty, totalOf, flattenTree, type AccountRow } f
 export const Route = createFileRoute("/_app/income-statement")({ component: IncomeStatementPage });
 
 function IncomeStatementPage() {
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+
   const { data } = useQuery({
-    queryKey: ["income-statement"],
+    queryKey: ["income-statement", from, to],
     queryFn: async () => {
       const { data: accounts } = await supabase
         .from("accounts")
         .select("id, code, name, type, parent_id")
         .order("code");
-      const { data: lines } = await supabase
+      let q = supabase
         .from("journal_lines")
-        .select("account_id, debit, credit, journal_entries!inner(status)")
+        .select("account_id, debit, credit, journal_entries!inner(status, entry_date)")
         .eq("journal_entries.status", "posted");
       const bal = new Map<string, number>();
       (lines ?? []).forEach((l: any) => {
