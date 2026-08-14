@@ -20,6 +20,9 @@ function TrialBalancePage() {
         .from("journal_lines")
         .select("account_id, debit, credit, journal_entries!inner(status, entry_date)")
         .eq("journal_entries.status", "posted");
+      if (from) q = q.gte("journal_entries.entry_date", from);
+      if (to) q = q.lte("journal_entries.entry_date", to);
+      const { data: lines } = await q;
       const map = new Map<string, { debit: number; credit: number }>();
       (lines ?? []).forEach((l: any) => {
         const cur = map.get(l.account_id) ?? { debit: 0, credit: 0 };

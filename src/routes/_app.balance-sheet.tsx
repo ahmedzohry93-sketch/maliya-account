@@ -23,6 +23,9 @@ function BalanceSheetPage() {
         .from("journal_lines")
         .select("account_id, debit, credit, journal_entries!inner(status, entry_date)")
         .eq("journal_entries.status", "posted");
+      if (from) q = q.gte("journal_entries.entry_date", from);
+      if (to) q = q.lte("journal_entries.entry_date", to);
+      const { data: lines } = await q;
       const bal = new Map<string, number>();
       (lines ?? []).forEach((l: any) => {
         bal.set(l.account_id, (bal.get(l.account_id) ?? 0) + Number(l.debit) - Number(l.credit));
