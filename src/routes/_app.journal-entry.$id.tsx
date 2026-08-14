@@ -18,6 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/lib/i18n";
 import { logAudit } from "@/lib/audit";
+import { ancestorCodes, CUSTOMER_ROOT_CODES, SUPPLIER_ROOT_CODES } from "@/lib/account-tree";
 
 export const Route = createFileRoute("/_app/journal-entry/$id")({
   component: JournalEntryPage,
@@ -362,10 +363,16 @@ function JournalEntryPage() {
               </thead>
               <tbody>
                 {lines.map((l, i) => {
-                  const selectedAcc = accounts.find((a) => a.id === l.account_id);
-                  const code = selectedAcc?.code ?? "";
-                  const requiredPartnerType = code.startsWith("111") ? "customer" : code.startsWith("211") ? "supplier" : null;
-                  const filteredPartners = requiredPartnerType ? partnersOpts.filter((p) => p.type === requiredPartnerType) : [];
+                  const chain = l.account_id
+                    ? ancestorCodes(accounts.map((a) => ({ ...a, type: "" })), l.account_id)
+                    : [];
+                  const isCustomerAcc = chain.some((c) => CUSTOMER_ROOT_CODES.includes(c));
+                  const isSupplierAcc = chain.some((c) => SUPPLIER_ROOT_CODES.includes(c));
+                  const filteredPartners = isCustomerAcc
+                    ? partnersOpts.filter((p) => p.type === "customer" || p.type === "both")
+                    : isSupplierAcc
+                      ? partnersOpts.filter((p) => p.type === "supplier" || p.type === "both")
+                      : partnersOpts;
                   return (
                     <tr key={i} className="border-t hover:bg-muted/20">
                       <td className="px-3 py-1.5 num text-xs text-muted-foreground">{i + 1}</td>
@@ -387,7 +394,7 @@ function JournalEntryPage() {
                         </select>
                       </td>
                       <td className="px-2 py-1.5">
-                        {requiredPartnerType ? (
+                        {l.account_id ? (
                           <select
                             value={l.partner_id ?? ""}
                             disabled={readonly}
