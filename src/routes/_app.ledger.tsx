@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { FileSpreadsheet, FileText } from "lucide-react";
@@ -114,7 +114,15 @@ function LedgerPage() {
             {rows.map((r) => (
               <tr key={r.id} className="border-t">
                 <td className="px-4 py-2.5 num">{r.journal_entries.entry_date}</td>
-                <td className="px-4 py-2.5 num">#{r.journal_entries.entry_no}</td>
+                <td className="px-4 py-2.5 num">
+                  <Link
+                    to="/journal-entry/$id"
+                    params={{ id: r.journal_entries.id }}
+                    className="text-primary hover:underline"
+                  >
+                    #{r.journal_entries.entry_no}
+                  </Link>
+                </td>
                 <td className="px-4 py-2.5">{r.description || r.journal_entries.description || "—"}</td>
                 <td className="px-4 py-2.5 num">{Number(r.debit) > 0 ? Number(r.debit).toFixed(2) : ""}</td>
                 <td className="px-4 py-2.5 num">{Number(r.credit) > 0 ? Number(r.credit).toFixed(2) : ""}</td>
