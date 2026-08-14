@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { FileSpreadsheet, FileText, Settings2 } from "lucide-react";
+import { Settings2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section as ExSection } from "@/lib/export-utils";
 import { useI18n } from "@/lib/i18n";
+import { ReportShell } from "@/components/report-shell";
 
 export const Route = createFileRoute("/_app/trading-account")({ component: TradingAccountPage });
 
