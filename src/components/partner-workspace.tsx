@@ -83,6 +83,7 @@ function PartnersList({ kind }: { kind: Kind }) {
   const qc = useQueryClient();
   const [editing, setEditing] = useState<Partner | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [q, setQ] = useState("");
 
   const { data: partners = [] } = useQuery({
     queryKey: ["partners", kind, "all"],
@@ -110,10 +111,25 @@ function PartnersList({ kind }: { kind: Kind }) {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const visible = partners.filter((p) => {
+    const s = q.trim().toLowerCase();
+    if (!s) return true;
+    return [p.code, p.name, p.phone, p.email].some((v) => (v ?? "").toLowerCase().includes(s));
+  });
+
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <p className="text-sm text-muted-foreground">{partners.length} طرف</p>
+      <div className="mb-4 grid gap-3 sm:flex sm:items-center sm:justify-between">
+        <div className="relative min-w-0 sm:w-72">
+          <Search className="pointer-events-none absolute start-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={kind === "customer" ? "بحث باسم/كود/هاتف العميل" : "بحث باسم/كود/هاتف المورد"}
+            className="w-full rounded-md border bg-background py-2 pe-3 ps-8 text-sm"
+          />
+        </div>
+        <p className="text-sm text-muted-foreground">{visible.length} طرف</p>
         <button onClick={() => { setEditing(null); setShowForm(true); }} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium">
           <Plus className="w-4 h-4" /> {kind === "customer" ? "عميل جديد" : "مورد جديد"}
         </button>
@@ -125,8 +141,8 @@ function PartnersList({ kind }: { kind: Kind }) {
             <tr><th className="text-start px-4 py-3">الكود</th><th className="text-start px-4 py-3">الاسم</th><th className="text-start px-4 py-3">الهاتف</th><th className="text-start px-4 py-3">البريد</th><th className="w-20"></th></tr>
           </thead>
           <tbody>
-            {partners.length === 0 && <tr><td colSpan={5} className="text-center py-10 text-muted-foreground">لا توجد بيانات</td></tr>}
-            {partners.map((p) => (
+            {visible.length === 0 && <tr><td colSpan={5} className="text-center py-10 text-muted-foreground">لا توجد بيانات</td></tr>}
+            {visible.map((p) => (
               <tr key={p.id} className="border-t">
                 <td className="px-4 py-2.5 num">{p.code || "—"}</td>
                 <td className="px-4 py-2.5 font-medium">{p.name}</td>
