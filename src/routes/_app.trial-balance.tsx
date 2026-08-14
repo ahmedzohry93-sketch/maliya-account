@@ -58,9 +58,21 @@ function TrialBalancePage() {
   return (
     <ReportShell
       title="ميزان المراجعة"
-      subtitle={`كما في ${new Date().toISOString().slice(0, 10)}`}
+      subtitle={`كما في ${to || new Date().toISOString().slice(0, 10)} · من ${from || "..."}`}
       onExcel={() => exportToExcel("trial-balance", "ميزان المراجعة", sections())}
       onPdf={() => exportToPDF("trial-balance", "ميزان المراجعة", sections())}
+      filters={
+        <div className="grid md:grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-medium block mb-1">من تاريخ</label>
+            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="inp" />
+          </div>
+          <div>
+            <label className="text-xs font-medium block mb-1">إلى تاريخ</label>
+            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="inp" />
+          </div>
+        </div>
+      }
     >
       <ReportTable
         head={

@@ -85,9 +85,21 @@ function BalanceSheetPage() {
   return (
     <ReportShell
       title="الميزانية العمومية"
-      subtitle={`كما في ${new Date().toISOString().slice(0, 10)}`}
+      subtitle={`كما في ${to || new Date().toISOString().slice(0, 10)} · من ${from || "..."}`}
       onExcel={() => exportToExcel("balance-sheet", "الميزانية العمومية", sections())}
       onPdf={() => exportToPDF("balance-sheet", "الميزانية العمومية", sections())}
+      filters={
+        <div className="grid md:grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-medium block mb-1">من تاريخ</label>
+            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="inp" />
+          </div>
+          <div>
+            <label className="text-xs font-medium block mb-1">إلى تاريخ</label>
+            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="inp" />
+          </div>
+        </div>
+      }
     >
       <div className="grid lg:grid-cols-2 gap-4 items-start">
         <StatementCard>
