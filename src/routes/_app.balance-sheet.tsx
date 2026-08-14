@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section } from "@/lib/export-utils";
 import { ReportShell, StatementCard, BandRow, LineRow, TotalRow, AccountTreeRows } from "@/components/report-shell";
