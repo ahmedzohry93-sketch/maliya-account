@@ -275,7 +275,7 @@ function TradingAccountPage() {
           {fmt(Math.abs(grossProfit))}
         </div>
       </div>
-    </div>
+    </ReportShell>
   );
 }
 
