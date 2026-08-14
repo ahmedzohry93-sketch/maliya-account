@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
-import { FileSpreadsheet, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF } from "@/lib/export-utils";
+import { ReportShell } from "@/components/report-shell";
 
 export const Route = createFileRoute("/_app/ledger")({ component: LedgerPage });
 
@@ -65,37 +65,31 @@ function LedgerPage() {
   const meta = accName ? { subtitle: `${accName.code} - ${accName.name}`, date: from && to ? `${from} → ${to}` : undefined } : undefined;
 
   return (
-    <div className="p-6 md:p-8 max-w-6xl">
-      <header className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">دفتر الأستاذ</h1>
-        <div className="flex gap-2">
-          <button disabled={!rows.length} onClick={() => exportToExcel("ledger", title, sections(), meta)} className="flex items-center gap-1.5 px-3 py-2 text-sm border rounded-md hover:bg-muted disabled:opacity-50">
-            <FileSpreadsheet className="w-4 h-4" /> Excel
-          </button>
-          <button disabled={!rows.length} onClick={() => exportToPDF("ledger", title, sections(), meta)} className="flex items-center gap-1.5 px-3 py-2 text-sm border rounded-md hover:bg-muted disabled:opacity-50">
-            <FileText className="w-4 h-4" /> PDF
-          </button>
+    <ReportShell
+      title="دفتر الأستاذ"
+      subtitle={accName ? `${accName.code} — ${accName.name} · من ${from || "..."} إلى ${to || "..."}` : `من ${from || "..."} إلى ${to || "..."}`}
+      onExcel={rows.length ? () => exportToExcel("ledger", title, sections(), meta) : undefined}
+      onPdf={rows.length ? () => exportToPDF("ledger", title, sections(), meta) : undefined}
+      filters={
+        <div className="grid md:grid-cols-3 gap-3">
+          <div>
+            <label className="text-xs font-medium block mb-1">الحساب</label>
+            <select value={accountId} onChange={(e) => setAccountId(e.target.value)} className="inp w-full">
+              <option value="">اختر حساب...</option>
+              {accounts.map((a: any) => <option key={a.id} value={a.id}>{a.code} — {a.name}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="text-xs font-medium block mb-1">من تاريخ</label>
+            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="inp" />
+          </div>
+          <div>
+            <label className="text-xs font-medium block mb-1">إلى تاريخ</label>
+            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="inp" />
+          </div>
         </div>
-      </header>
-
-      <div className="bg-card border rounded-lg p-4 mb-6 grid md:grid-cols-3 gap-3">
-        <div>
-          <label className="text-xs font-medium block mb-1">الحساب</label>
-          <select value={accountId} onChange={(e) => setAccountId(e.target.value)} className="w-full px-3 py-2 border rounded-md bg-background">
-            <option value="">اختر حساب...</option>
-            {accounts.map((a: any) => <option key={a.id} value={a.id}>{a.code} — {a.name}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="text-xs font-medium block mb-1">من تاريخ</label>
-          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="w-full px-3 py-2 border rounded-md bg-background" />
-        </div>
-        <div>
-          <label className="text-xs font-medium block mb-1">إلى تاريخ</label>
-          <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="w-full px-3 py-2 border rounded-md bg-background" />
-        </div>
-      </div>
-
+      }
+    >
       <div className="bg-card border rounded-lg overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-muted/50 text-xs">
@@ -132,6 +126,6 @@ function LedgerPage() {
           </tbody>
         </table>
       </div>
-    </div>
+    </ReportShell>
   );
 }

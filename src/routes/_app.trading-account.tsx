@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { FileSpreadsheet, FileText, Settings2 } from "lucide-react";
+import { Settings2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section as ExSection } from "@/lib/export-utils";
 import { useI18n } from "@/lib/i18n";
+import { ReportShell } from "@/components/report-shell";
 
 export const Route = createFileRoute("/_app/trading-account")({ component: TradingAccountPage });
 
@@ -180,45 +181,32 @@ function TradingAccountPage() {
   };
 
   return (
-    <div className="p-6 md:p-8 max-w-5xl">
-      <header className="flex flex-wrap items-center justify-between gap-3 mb-6">
-        <h1 className="text-2xl font-bold">{title}</h1>
-        <div className="flex flex-wrap gap-2 items-center">
-          <input
-            type="date"
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-            className="px-2 py-1.5 text-sm border rounded-md bg-background"
-            title={T("من تاريخ", "From")}
-          />
-          <input
-            type="date"
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-            className="px-2 py-1.5 text-sm border rounded-md bg-background"
-            title={T("إلى تاريخ", "To")}
-          />
-          <button
-            onClick={() => setShowConfig((v) => !v)}
-            className="flex items-center gap-1.5 px-3 py-2 text-sm border rounded-md hover:bg-muted"
-          >
-            <Settings2 className="w-4 h-4" /> {T("تعيين الحسابات", "Map Accounts")}
-          </button>
-          <button
-            onClick={() => exportToExcel("trading-account", title, exportSections())}
-            className="flex items-center gap-1.5 px-3 py-2 text-sm border rounded-md hover:bg-muted"
-          >
-            <FileSpreadsheet className="w-4 h-4" /> Excel
-          </button>
-          <button
-            onClick={() => exportToPDF("trading-account", title, exportSections())}
-            className="flex items-center gap-1.5 px-3 py-2 text-sm border rounded-md hover:bg-muted"
-          >
-            <FileText className="w-4 h-4" /> PDF
-          </button>
+    <ReportShell
+      title={title}
+      subtitle={`${T("من", "From")} ${from || "..."} ${T("إلى", "To")} ${to || "..."}`}
+      onExcel={() => exportToExcel("trading-account", title, exportSections())}
+      onPdf={() => exportToPDF("trading-account", title, exportSections())}
+      filters={
+        <div className="grid md:grid-cols-3 gap-3">
+          <div>
+            <label className="text-xs font-medium block mb-1">{T("من تاريخ", "From")}</label>
+            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="inp" />
+          </div>
+          <div>
+            <label className="text-xs font-medium block mb-1">{T("إلى تاريخ", "To")}</label>
+            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="inp" />
+          </div>
+          <div className="flex items-end">
+            <button
+              onClick={() => setShowConfig((v) => !v)}
+              className="flex items-center gap-1.5 px-3 py-2 text-sm border rounded-md hover:bg-muted w-full justify-center"
+            >
+              <Settings2 className="w-4 h-4" /> {T("تعيين الحسابات", "Map Accounts")}
+            </button>
+          </div>
         </div>
-      </header>
-
+      }
+    >
       {showConfig && (
         <MappingPanel
           accounts={accounts}
@@ -287,7 +275,7 @@ function TradingAccountPage() {
           {fmt(Math.abs(grossProfit))}
         </div>
       </div>
-    </div>
+    </ReportShell>
   );
 }
 

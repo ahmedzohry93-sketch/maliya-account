@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section } from "@/lib/export-utils";
 import { ReportShell, StatementCard, BandRow, LineRow, TotalRow, AccountTreeRows } from "@/components/report-shell";
@@ -9,17 +9,23 @@ import { buildAccountTree, pruneEmpty, totalOf, flattenTree, type AccNode, type 
 export const Route = createFileRoute("/_app/balance-sheet")({ component: BalanceSheetPage });
 
 function BalanceSheetPage() {
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+
   const { data } = useQuery({
-    queryKey: ["balance-sheet"],
+    queryKey: ["balance-sheet", from, to],
     queryFn: async () => {
       const { data: accounts } = await supabase
         .from("accounts")
         .select("id, code, name, type, parent_id")
         .order("code");
-      const { data: lines } = await supabase
+      let q = supabase
         .from("journal_lines")
-        .select("account_id, debit, credit, journal_entries!inner(status)")
+        .select("account_id, debit, credit, journal_entries!inner(status, entry_date)")
         .eq("journal_entries.status", "posted");
+      if (from) q = q.gte("journal_entries.entry_date", from);
+      if (to) q = q.lte("journal_entries.entry_date", to);
+      const { data: lines } = await q;
       const bal = new Map<string, number>();
       (lines ?? []).forEach((l: any) => {
         bal.set(l.account_id, (bal.get(l.account_id) ?? 0) + Number(l.debit) - Number(l.credit));
@@ -79,9 +85,21 @@ function BalanceSheetPage() {
   return (
     <ReportShell
       title="الميزانية العمومية"
-      subtitle={`كما في ${new Date().toISOString().slice(0, 10)}`}
+      subtitle={`كما في ${to || new Date().toISOString().slice(0, 10)} · من ${from || "..."}`}
       onExcel={() => exportToExcel("balance-sheet", "الميزانية العمومية", sections())}
       onPdf={() => exportToPDF("balance-sheet", "الميزانية العمومية", sections())}
+      filters={
+        <div className="grid md:grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-medium block mb-1">من تاريخ</label>
+            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="inp" />
+          </div>
+          <div>
+            <label className="text-xs font-medium block mb-1">إلى تاريخ</label>
+            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="inp" />
+          </div>
+        </div>
+      }
     >
       <div className="grid lg:grid-cols-2 gap-4 items-start">
         <StatementCard>
