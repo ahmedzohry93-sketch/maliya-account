@@ -54,6 +54,7 @@ function Dashboard() {
       const { data } = await supabase
         .from("invoices")
         .select("type, invoice_date, total, status")
+        .eq("status", "posted")
         .gte("invoice_date", startDate);
       const buckets = last12Months();
       const map = new Map(buckets.map((b) => [b.key, b]));
@@ -87,7 +88,7 @@ function Dashboard() {
       const [partners, products, entries] = await Promise.all([
         supabase.from("partners").select("id", { count: "exact", head: true }),
         supabase.from("products").select("id", { count: "exact", head: true }),
-        supabase.from("journal_entries").select("id", { count: "exact", head: true }),
+        supabase.from("journal_entries").select("id", { count: "exact", head: true }).eq("status", "posted"),
       ]);
       return {
         partners: partners.count ?? 0,
@@ -104,6 +105,7 @@ function Dashboard() {
       const { data } = await supabase
         .from("journal_entries")
         .select("entry_type")
+        .eq("status", "posted")
         .gte("entry_date", startDate);
       const counts: Record<string, number> = {};
       (data ?? []).forEach((r: any) => {
