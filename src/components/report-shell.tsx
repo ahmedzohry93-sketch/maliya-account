@@ -183,7 +183,7 @@ export function TotalRow({
 export function ReportTable({ head, children }: { head: ReactNode; children: ReactNode }) {
   return (
     <div className="rounded-xl border bg-card overflow-hidden shadow-sm">
-      <div className="overflow-x-auto -webkit-overflow-scrolling-touch">
+      <div className="overflow-x-auto">
         <table className="w-full text-[12px] md:text-[13px] min-w-[640px]">
           <thead className="bg-primary/8 text-[11px] font-bold text-primary">{head}</thead>
           {children}
