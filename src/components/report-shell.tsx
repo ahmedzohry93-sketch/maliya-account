@@ -31,7 +31,7 @@ export function ReportShell({
 }) {
   const [openFilters, setOpenFilters] = useState(false);
   return (
-    <div className="w-full min-w-0 p-4 md:p-6 space-y-4">
+    <div className="w-full min-w-0 p-3 md:p-6 space-y-4">
       <header className="flex flex-wrap items-center gap-3">
         <div className="min-w-0 order-2 sm:order-1 flex items-center gap-2">
           {filters && (
@@ -89,7 +89,7 @@ export function ReportShell({
         </div>
       )}
 
-      {filters && openFilters && <div className="rounded-xl border bg-card p-4">{filters}</div>}
+      {filters && openFilters && <div className="rounded-xl border bg-card p-3 md:p-4">{filters}</div>}
 
       {children}
     </div>
@@ -107,7 +107,7 @@ export function StatementCard({ children, className }: { children: ReactNode; cl
 
 export function BandRow({ label }: { label: string }) {
   return (
-    <div className="bg-primary/8 px-4 py-2 text-[13px] font-bold text-primary">{label}</div>
+    <div className="bg-primary/8 px-3 md:px-4 py-2 text-[12px] md:text-[13px] font-bold text-primary">{label}</div>
   );
 }
 
@@ -129,9 +129,9 @@ export function LineRow({
   const v = typeof value === "number" ? money(value) : value;
   const neg = typeof value === "number" && value < 0;
   return (
-    <div className={cn("flex items-center gap-3 px-4 py-2 text-[13px]", muted && "text-muted-foreground")}>
-      {code && <span className="num text-[11px] text-muted-foreground w-12 shrink-0">{code}</span>}
-      <span className={cn("flex-1 min-w-0 truncate", indent && "ps-4")}>{label}</span>
+    <div className={cn("flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 text-[12px] md:text-[13px]", muted && "text-muted-foreground")}>
+      {code && <span className="num text-[10px] md:text-[11px] text-muted-foreground w-10 md:w-12 shrink-0">{code}</span>}
+      <span className={cn("flex-1 min-w-0 truncate", indent && "ps-3 md:ps-4")}>{label}</span>
       <span
         className={cn(
           "num tabular-nums shrink-0",
@@ -160,7 +160,7 @@ export function TotalRow({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 px-4 py-2.5 text-[13px] font-bold border-t-2 border-border",
+        "flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2.5 text-[12px] md:text-[13px] font-bold border-t-2 border-border",
         strong ? "bg-primary/10 text-primary" : "bg-muted/50",
       )}
     >
@@ -183,8 +183,8 @@ export function TotalRow({
 export function ReportTable({ head, children }: { head: ReactNode; children: ReactNode }) {
   return (
     <div className="rounded-xl border bg-card overflow-hidden shadow-sm">
-      <div className="overflow-x-auto">
-        <table className="w-full text-[13px] min-w-[640px]">
+      <div className="overflow-x-auto -webkit-overflow-scrolling-touch">
+        <table className="w-full text-[12px] md:text-[13px] min-w-[640px]">
           <thead className="bg-primary/8 text-[11px] font-bold text-primary">{head}</thead>
           {children}
         </table>
@@ -214,19 +214,19 @@ function AccountTreeRow({ node, depth }: { node: AccNode; depth: number }) {
         role={hasKids ? "button" : undefined}
         onClick={hasKids ? () => setOpen((o) => !o) : undefined}
         className={cn(
-          "flex items-center gap-2 px-4 py-2 text-[13px]",
+          "flex items-center gap-2 px-3 md:px-4 py-2 text-[12px] md:text-[13px]",
           hasKids && "cursor-pointer hover:bg-muted/50",
           depth === 0 && "font-bold",
           depth === 1 && "font-semibold",
         )}
-        style={{ paddingInlineStart: 16 + depth * 16 }}
+        style={{ paddingInlineStart: 12 + depth * 12 }}
       >
         {hasKids ? (
           <Chevron className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
         ) : (
           <span className="w-3.5 shrink-0" />
         )}
-        <span className="num w-14 shrink-0 text-[11px] text-muted-foreground">{node.code}</span>
+        <span className="num w-11 md:w-14 shrink-0 text-[10px] md:text-[11px] text-muted-foreground">{node.code}</span>
         <span className="min-w-0 flex-1 truncate">{node.name}</span>
         <span className={cn("num tabular-nums shrink-0", node.amount < 0 && "text-destructive")}>
           {money(node.amount)}

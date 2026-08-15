@@ -264,14 +264,14 @@ function TradingAccountPage() {
       </SectionCard>
 
       <div
-        className={`bg-card border-2 rounded-lg p-5 mt-6 flex items-center justify-between ${
+        className={`bg-card border-2 rounded-lg p-4 md:p-5 mt-6 flex items-center justify-between gap-3 ${
           grossProfit >= 0 ? "border-emerald-500/40" : "border-red-500/40"
         }`}
       >
-        <div className="font-bold text-lg">
+        <div className="font-bold text-sm md:text-lg min-w-0">
           {grossProfit >= 0 ? T("مجمل الربح", "Gross Profit") : T("مجمل الخسارة", "Gross Loss")}
         </div>
-        <div className={`text-2xl font-bold num ${grossProfit >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+        <div className={`text-lg md:text-2xl font-bold num whitespace-nowrap ${grossProfit >= 0 ? "text-emerald-600" : "text-red-600"}`}>
           {fmt(Math.abs(grossProfit))}
         </div>
       </div>
@@ -282,7 +282,7 @@ function TradingAccountPage() {
 function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="bg-card border rounded-lg overflow-hidden mb-4">
-      <div className="bg-muted/50 px-4 py-2.5 font-semibold border-b">{title}</div>
+      <div className="bg-muted/50 px-3 md:px-4 py-2.5 text-[13px] md:text-base font-semibold border-b">{title}</div>
       <div className="divide-y">{children}</div>
     </div>
   );
@@ -296,34 +296,36 @@ function LineTable({
 }) {
   if (hideIfEmpty && rows.length === 0) return null;
   return (
-    <table className="w-full text-sm">
+    <div className="overflow-x-auto">
+    <table className="w-full text-[12px] md:text-sm">
       <tbody>
         {rows.length === 0 && (
           <tr><td className="text-center py-4 text-muted-foreground text-xs">{empty}</td></tr>
         )}
         {rows.map((r) => (
           <tr key={r.id}>
-            <td className="px-4 py-1.5 num w-24 text-muted-foreground">{r.code}</td>
-            <td className="px-4 py-1.5">{r.name}</td>
-            <td className="px-4 py-1.5 num w-40 text-end">{fmt(r.amount)}</td>
+            <td className="px-2 md:px-4 py-1.5 num w-14 md:w-24 text-[10px] md:text-inherit text-muted-foreground">{r.code}</td>
+            <td className="px-2 md:px-4 py-1.5">{r.name}</td>
+            <td className="px-2 md:px-4 py-1.5 num w-24 md:w-40 text-end whitespace-nowrap">{fmt(r.amount)}</td>
           </tr>
         ))}
       </tbody>
       <tfoot className="bg-muted/30">
         <tr>
-          <td colSpan={2} className="px-4 py-2 font-medium">{totalLabel}</td>
-          <td className="px-4 py-2 num text-end font-semibold">{fmt(total)}</td>
+          <td colSpan={2} className="px-2 md:px-4 py-2 font-medium">{totalLabel}</td>
+          <td className="px-2 md:px-4 py-2 num text-end font-semibold whitespace-nowrap">{fmt(total)}</td>
         </tr>
       </tfoot>
     </table>
+    </div>
   );
 }
 
 function SummaryRow({ label, value, fmt, accent }: { label: string; value: number; fmt: (n: number) => string; accent?: boolean }) {
   return (
-    <div className={`flex items-center justify-between px-4 py-2.5 ${accent ? "bg-primary/5 font-semibold" : ""}`}>
-      <div className="text-sm">{label}</div>
-      <div className="num text-sm">{fmt(value)}</div>
+    <div className={`flex items-center justify-between gap-2 px-3 md:px-4 py-2.5 ${accent ? "bg-primary/5 font-semibold" : ""}`}>
+      <div className="text-[12px] md:text-sm min-w-0">{label}</div>
+      <div className="num text-[12px] md:text-sm whitespace-nowrap">{fmt(value)}</div>
     </div>
   );
 }
