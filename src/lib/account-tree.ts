@@ -66,6 +66,16 @@ export function totalOf(nodes: AccNode[]): number {
   return nodes.reduce((s, n) => s + n.amount, 0);
 }
 
+export function totalPrevOf(nodes: AccNode[]): number {
+  return nodes.reduce((s, n) => s + n.prev, 0);
+}
+
+/** Percentage change vs. previous period (null when there is no base). */
+export function pctChange(cur: number, prev: number): number | null {
+  if (!prev) return cur ? null : 0;
+  return ((cur - prev) / Math.abs(prev)) * 100;
+}
+
 /** Flat list (indented codes) for Excel/PDF exports. */
 export function flattenTree(nodes: AccNode[], depth = 0): { node: AccNode; depth: number }[] {
   const out: { node: AccNode; depth: number }[] = [];
