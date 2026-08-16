@@ -1,11 +1,70 @@
-import { type ReactNode, useState } from "react";
-import { Filter, Download, FileSpreadsheet, FileText, ChevronDown, ChevronLeft } from "lucide-react";
+import { type ReactNode, useEffect, useState } from "react";
+import { Filter, Download, FileSpreadsheet, FileText, ChevronDown, ChevronLeft, ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { AccNode } from "@/lib/account-tree";
+import { pctChange } from "@/lib/account-tree";
 
 export function money(n: number) {
   const v = Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   return n < 0 ? `(${v})` : v;
+}
+
+export function pctText(cur: number, prev: number) {
+  const p = pctChange(cur, prev);
+  if (p === null) return "—";
+  return `${p > 0 ? "+" : ""}${p.toFixed(1)}%`;
+}
+
+/** Shared controls for tree reports: expand/collapse all, zero balances, period comparison. */
+export function TreeToolbar({
+  onExpandAll,
+  onCollapseAll,
+  showZero,
+  onShowZero,
+  compare,
+  onCompare,
+  compareDisabled,
+}: {
+  onExpandAll: () => void;
+  onCollapseAll: () => void;
+  showZero: boolean;
+  onShowZero: (v: boolean) => void;
+  compare?: boolean;
+  onCompare?: (v: boolean) => void;
+  compareDisabled?: boolean;
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-2 text-[11px] md:text-xs">
+      <button type="button" onClick={onExpandAll} className="inline-flex items-center gap-1 rounded-lg border px-2.5 py-1.5 hover:bg-muted">
+        <ChevronsUpDown className="w-3.5 h-3.5" /> فتح الكل
+      </button>
+      <button type="button" onClick={onCollapseAll} className="inline-flex items-center gap-1 rounded-lg border px-2.5 py-1.5 hover:bg-muted">
+        <ChevronsDownUp className="w-3.5 h-3.5" /> طي الكل
+      </button>
+      <label className="inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 cursor-pointer hover:bg-muted">
+        <input type="checkbox" checked={showZero} onChange={(e) => onShowZero(e.target.checked)} className="accent-primary" />
+        إظهار الأرصدة الصفرية
+      </label>
+      {onCompare && (
+        <label
+          className={cn(
+            "inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 cursor-pointer hover:bg-muted",
+            compareDisabled && "opacity-50 cursor-not-allowed",
+          )}
+          title={compareDisabled ? "حدّد من تاريخ وإلى تاريخ لتفعيل المقارنة" : undefined}
+        >
+          <input
+            type="checkbox"
+            checked={!!compare}
+            disabled={compareDisabled}
+            onChange={(e) => onCompare(e.target.checked)}
+            className="accent-primary"
+          />
+          مقارنة بالفترة السابقة
+        </label>
+      )}
+    </div>
+  );
 }
 
 /** Report page frame: title on one side, export/filter controls on the other,
@@ -194,18 +253,43 @@ export function ReportTable({ head, children }: { head: ReactNode; children: Rea
 }
 
 /** Collapsible account tree rows: a main account (e.g. Sales) expands into its sub-accounts. */
-export function AccountTreeRows({ nodes, depth = 0 }: { nodes: AccNode[]; depth?: number }) {
+export function AccountTreeRows({
+  nodes,
+  depth = 0,
+  compare,
+  expandSignal,
+}: {
+  nodes: AccNode[];
+  depth?: number;
+  compare?: boolean;
+  /** Bump with a positive number to expand all, negative to collapse all. */
+  expandSignal?: number;
+}) {
   return (
     <>
       {nodes.map((n) => (
-        <AccountTreeRow key={n.id} node={n} depth={depth} />
+        <AccountTreeRow key={n.id} node={n} depth={depth} compare={compare} expandSignal={expandSignal} />
       ))}
     </>
   );
 }
 
-function AccountTreeRow({ node, depth }: { node: AccNode; depth: number }) {
+function AccountTreeRow({
+  node,
+  depth,
+  compare,
+  expandSignal,
+}: {
+  node: AccNode;
+  depth: number;
+  compare?: boolean;
+  expandSignal?: number;
+}) {
   const [open, setOpen] = useState(depth === 0);
+  useEffect(() => {
+    if (!expandSignal) return;
+    setOpen(expandSignal > 0);
+  }, [expandSignal]);
   const hasKids = node.children.length > 0;
   const Chevron = open ? ChevronDown : ChevronLeft;
   return (
@@ -231,8 +315,24 @@ function AccountTreeRow({ node, depth }: { node: AccNode; depth: number }) {
         <span className={cn("num tabular-nums shrink-0", node.amount < 0 && "text-destructive")}>
           {money(node.amount)}
         </span>
+        {compare && (
+          <>
+            <span className="num tabular-nums shrink-0 w-20 md:w-24 text-end text-muted-foreground">{money(node.prev)}</span>
+            <span
+              className={cn(
+                "num tabular-nums shrink-0 w-14 md:w-16 text-end",
+                node.amount - node.prev > 0 && "text-success",
+                node.amount - node.prev < 0 && "text-destructive",
+              )}
+            >
+              {pctText(node.amount, node.prev)}
+            </span>
+          </>
+        )}
       </div>
-      {open && hasKids && <AccountTreeRows nodes={node.children} depth={depth + 1} />}
+      {open && hasKids && (
+        <AccountTreeRows nodes={node.children} depth={depth + 1} compare={compare} expandSignal={expandSignal} />
+      )}
     </>
   );
 }
