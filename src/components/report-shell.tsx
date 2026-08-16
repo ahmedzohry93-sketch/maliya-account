@@ -170,6 +170,21 @@ export function BandRow({ label }: { label: string }) {
   );
 }
 
+/** Column captions shown above tree rows when the comparison mode is on. */
+export function TreeHeadRow({ compare }: { compare?: boolean }) {
+  if (!compare) return null;
+  return (
+    <div className="flex items-center gap-2 px-3 md:px-4 py-1.5 text-[10px] md:text-[11px] font-semibold text-muted-foreground bg-muted/40">
+      <span className="w-3.5 shrink-0" />
+      <span className="w-11 md:w-14 shrink-0">الكود</span>
+      <span className="flex-1 min-w-0">الحساب</span>
+      <span className="shrink-0">الفترة الحالية</span>
+      <span className="w-20 md:w-24 shrink-0 text-end">الفترة السابقة</span>
+      <span className="w-14 md:w-16 shrink-0 text-end">التغير %</span>
+    </div>
+  );
+}
+
 export function LineRow({
   label,
   value,
@@ -209,11 +224,15 @@ export function TotalRow({
   value,
   strong,
   tone = "default",
+  prev,
+  compare,
 }: {
   label: string;
   value: number | string;
   strong?: boolean;
   tone?: "default" | "positive" | "negative" | "brand";
+  prev?: number;
+  compare?: boolean;
 }) {
   const v = typeof value === "number" ? money(value) : value;
   return (
@@ -234,6 +253,14 @@ export function TotalRow({
       >
         {v}
       </span>
+      {compare && (
+        <>
+          <span className="num tabular-nums shrink-0 w-20 md:w-24 text-end">{money(prev ?? 0)}</span>
+          <span className="num tabular-nums shrink-0 w-14 md:w-16 text-end">
+            {typeof value === "number" ? pctText(value, prev ?? 0) : "—"}
+          </span>
+        </>
+      )}
     </div>
   );
 }
