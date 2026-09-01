@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section } from "@/lib/export-utils";
-import { ReportShell, StatementCard, BandRow, TotalRow, TreeHeadRow, TreeToolbar, AccountTreeRows, pctText } from "@/components/report-shell";
+import { DateRangeFields, ReportShell, StatementCard, BandRow, TotalRow, TreeHeadRow, TreeToolbar, AccountTreeRows, pctText } from "@/components/report-shell";
 import {
   buildAccountTree, pruneEmpty, totalOf, totalPrevOf, flattenTree, sortByCode, type AccountRow,
 } from "@/lib/account-tree";
@@ -135,7 +135,7 @@ function IncomeStatementPage() {
         {revenues.length === 0 ? (
           <div className="px-4 py-2 text-[13px] text-muted-foreground">لا توجد بيانات</div>
         ) : (
-          <AccountTreeRows nodes={revenues} compare={compareOn} expandSignal={expandSignal} />
+          <AccountTreeRows nodes={revenues} compare={compareOn} expandSignal={expandSignal} period={{ from, to }} />
         )}
         <TotalRow label="إجمالي الإيرادات" value={totalRev} tone="positive" compare={compareOn} prev={prevRev} />
 
@@ -144,7 +144,7 @@ function IncomeStatementPage() {
         {expenses.length === 0 ? (
           <div className="px-4 py-2 text-[13px] text-muted-foreground">لا توجد بيانات</div>
         ) : (
-          <AccountTreeRows nodes={expenses} compare={compareOn} expandSignal={expandSignal} />
+          <AccountTreeRows nodes={expenses} compare={compareOn} expandSignal={expandSignal} period={{ from, to }} />
         )}
         <TotalRow label="إجمالي المصروفات" value={totalExp} tone="negative" compare={compareOn} prev={prevExp} />
 

@@ -98,7 +98,7 @@ function BalanceSheetPage() {
           {assets.length === 0 ? (
             <div className="px-4 py-2 text-[13px] text-muted-foreground">لا توجد بيانات</div>
           ) : (
-            <AccountTreeRows nodes={assets} />
+            <AccountTreeRows nodes={assets} period={{ from, to }} />
           )}
           <TotalRow label="إجمالي الأصول" value={totAssets} strong tone="brand" />
         </StatementCard>
@@ -108,11 +108,11 @@ function BalanceSheetPage() {
           {liabs.length === 0 ? (
             <div className="px-4 py-2 text-[13px] text-muted-foreground">لا توجد بيانات</div>
           ) : (
-            <AccountTreeRows nodes={liabs} />
+            <AccountTreeRows nodes={liabs} period={{ from, to }} />
           )}
           <TotalRow label="إجمالي الالتزامات" value={totLiabs} />
           <BandRow label="حقوق الملكية" />
-          {equity.length > 0 && <AccountTreeRows nodes={equity} />}
+          {equity.length > 0 && <AccountTreeRows nodes={equity} period={{ from, to }} />}
           <LineRow
             label={netIncome >= 0 ? "صافي ربح الفترة" : "صافي خسارة الفترة"}
             value={netIncome}
