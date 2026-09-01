@@ -308,6 +308,8 @@ export function TreeHeadRow({ compare }: { compare?: boolean }) {
   return (
     <div className="flex items-center gap-2 px-3 md:px-4 py-1.5 text-[10px] md:text-[11px] font-semibold text-muted-foreground bg-muted/40">
       <span className="w-3.5 shrink-0" />
+      <span className="w-6 shrink-0" />
+
       <span className="w-11 md:w-14 shrink-0">الكود</span>
       <span className="flex-1 min-w-0">الحساب</span>
       <span className="shrink-0">الفترة الحالية</span>
