@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section } from "@/lib/export-utils";
-import { ReportShell, StatementCard, BandRow, TotalRow, TreeHeadRow, TreeToolbar, AccountTreeRows, pctText } from "@/components/report-shell";
+import { DateRangeFields, ReportShell, StatementCard, BandRow, TotalRow, TreeHeadRow, TreeToolbar, AccountTreeRows, pctText } from "@/components/report-shell";
 import {
   buildAccountTree, pruneEmpty, totalOf, totalPrevOf, flattenTree, sortByCode, type AccountRow,
 } from "@/lib/account-tree";
@@ -111,22 +111,13 @@ function IncomeStatementPage() {
       onExcel={() => exportToExcel("income-statement", "قائمة الدخل", sections(), meta)}
       onPdf={() => exportToPDF("income-statement", "قائمة الدخل", sections(), meta)}
       filters={
-        <div className="space-y-3">
-          <div className="grid md:grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs font-medium block mb-1">من تاريخ</label>
-              <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="inp" />
-            </div>
-            <div>
-              <label className="text-xs font-medium block mb-1">إلى تاريخ</label>
-              <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="inp" />
-            </div>
-          </div>
+        <DateRangeFields from={from} to={to} onFrom={setFrom} onTo={setTo}>
           {compareOn && prev && (
-            <p className="text-[11px] text-muted-foreground num">الفترة السابقة: {prev.from} → {prev.to}</p>
+            <p className="text-[10px] text-muted-foreground num">الفترة السابقة: {prev.from} → {prev.to}</p>
           )}
-        </div>
+        </DateRangeFields>
       }
+
     >
       <TreeToolbar
         onExpandAll={() => setExpandSignal((s) => Math.abs(s) + 1)}
@@ -144,7 +135,7 @@ function IncomeStatementPage() {
         {revenues.length === 0 ? (
           <div className="px-4 py-2 text-[13px] text-muted-foreground">لا توجد بيانات</div>
         ) : (
-          <AccountTreeRows nodes={revenues} compare={compareOn} expandSignal={expandSignal} />
+          <AccountTreeRows nodes={revenues} compare={compareOn} expandSignal={expandSignal} period={{ from, to }} />
         )}
         <TotalRow label="إجمالي الإيرادات" value={totalRev} tone="positive" compare={compareOn} prev={prevRev} />
 
@@ -153,7 +144,7 @@ function IncomeStatementPage() {
         {expenses.length === 0 ? (
           <div className="px-4 py-2 text-[13px] text-muted-foreground">لا توجد بيانات</div>
         ) : (
-          <AccountTreeRows nodes={expenses} compare={compareOn} expandSignal={expandSignal} />
+          <AccountTreeRows nodes={expenses} compare={compareOn} expandSignal={expandSignal} period={{ from, to }} />
         )}
         <TotalRow label="إجمالي المصروفات" value={totalExp} tone="negative" compare={compareOn} prev={prevExp} />
 

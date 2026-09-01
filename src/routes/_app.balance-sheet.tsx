@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section } from "@/lib/export-utils";
-import { ReportShell, StatementCard, BandRow, LineRow, TotalRow, AccountTreeRows } from "@/components/report-shell";
+import { DateRangeFields, ReportShell, StatementCard, BandRow, LineRow, TotalRow, AccountTreeRows } from "@/components/report-shell";
 import { buildAccountTree, pruneEmpty, totalOf, flattenTree, type AccNode, type AccountRow } from "@/lib/account-tree";
 
 export const Route = createFileRoute("/_app/balance-sheet")({ component: BalanceSheetPage });
@@ -89,16 +89,7 @@ function BalanceSheetPage() {
       onExcel={() => exportToExcel("balance-sheet", "الميزانية العمومية", sections())}
       onPdf={() => exportToPDF("balance-sheet", "الميزانية العمومية", sections())}
       filters={
-        <div className="grid md:grid-cols-2 gap-3">
-          <div>
-            <label className="text-xs font-medium block mb-1">من تاريخ</label>
-            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="inp" />
-          </div>
-          <div>
-            <label className="text-xs font-medium block mb-1">إلى تاريخ</label>
-            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="inp" />
-          </div>
-        </div>
+        <DateRangeFields from={from} to={to} onFrom={setFrom} onTo={setTo} />
       }
     >
       <div className="grid lg:grid-cols-2 gap-4 items-start">
@@ -107,7 +98,7 @@ function BalanceSheetPage() {
           {assets.length === 0 ? (
             <div className="px-4 py-2 text-[13px] text-muted-foreground">لا توجد بيانات</div>
           ) : (
-            <AccountTreeRows nodes={assets} />
+            <AccountTreeRows nodes={assets} period={{ from, to }} />
           )}
           <TotalRow label="إجمالي الأصول" value={totAssets} strong tone="brand" />
         </StatementCard>
@@ -117,11 +108,11 @@ function BalanceSheetPage() {
           {liabs.length === 0 ? (
             <div className="px-4 py-2 text-[13px] text-muted-foreground">لا توجد بيانات</div>
           ) : (
-            <AccountTreeRows nodes={liabs} />
+            <AccountTreeRows nodes={liabs} period={{ from, to }} />
           )}
           <TotalRow label="إجمالي الالتزامات" value={totLiabs} />
           <BandRow label="حقوق الملكية" />
-          {equity.length > 0 && <AccountTreeRows nodes={equity} />}
+          {equity.length > 0 && <AccountTreeRows nodes={equity} period={{ from, to }} />}
           <LineRow
             label={netIncome >= 0 ? "صافي ربح الفترة" : "صافي خسارة الفترة"}
             value={netIncome}

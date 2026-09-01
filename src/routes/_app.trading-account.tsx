@@ -5,7 +5,7 @@ import { Settings2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section as ExSection } from "@/lib/export-utils";
 import { useI18n } from "@/lib/i18n";
-import { ReportShell } from "@/components/report-shell";
+import { DateRangeFields, ReportShell } from "@/components/report-shell";
 
 export const Route = createFileRoute("/_app/trading-account")({ component: TradingAccountPage });
 
@@ -187,24 +187,14 @@ function TradingAccountPage() {
       onExcel={() => exportToExcel("trading-account", title, exportSections())}
       onPdf={() => exportToPDF("trading-account", title, exportSections())}
       filters={
-        <div className="grid md:grid-cols-3 gap-3">
-          <div>
-            <label className="text-xs font-medium block mb-1">{T("من تاريخ", "From")}</label>
-            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="inp" />
-          </div>
-          <div>
-            <label className="text-xs font-medium block mb-1">{T("إلى تاريخ", "To")}</label>
-            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="inp" />
-          </div>
-          <div className="flex items-end">
-            <button
-              onClick={() => setShowConfig((v) => !v)}
-              className="flex items-center gap-1.5 px-3 py-2 text-sm border rounded-md hover:bg-muted w-full justify-center"
-            >
-              <Settings2 className="w-4 h-4" /> {T("تعيين الحسابات", "Map Accounts")}
-            </button>
-          </div>
-        </div>
+        <DateRangeFields from={from} to={to} onFrom={setFrom} onTo={setTo}>
+          <button
+            onClick={() => setShowConfig((v) => !v)}
+            className="flex items-center gap-1.5 px-2 py-1.5 text-xs border rounded-md hover:bg-muted w-full justify-center"
+          >
+            <Settings2 className="w-3.5 h-3.5" /> {T("تعيين الحسابات", "Map Accounts")}
+          </button>
+        </DateRangeFields>
       }
     >
       {showConfig && (

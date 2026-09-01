@@ -10,6 +10,9 @@ import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_app/accounts")({
   component: AccountsPage,
+  validateSearch: (s: Record<string, unknown>): { q?: string } => ({
+    q: typeof s.q === "string" ? s.q : undefined,
+  }),
 });
 
 type Account = {
@@ -45,7 +48,7 @@ function AccountsPage() {
   const [showForm, setShowForm] = useState(false);
   const [sortBy, setSortBy] = useState<"code" | "name" | "type">("code");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(Route.useSearch().q ?? "");
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const { data: accounts = [] } = useQuery({
