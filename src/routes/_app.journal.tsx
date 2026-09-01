@@ -11,7 +11,14 @@ import { useConfirm } from "@/components/confirm-dialog";
 import { archiveRecord, softDeleteRecord } from "@/lib/records";
 import { createReversalEntry } from "@/lib/posting";
 
-export const Route = createFileRoute("/_app/journal")({ component: JournalPage });
+export const Route = createFileRoute("/_app/journal")({
+  component: JournalPage,
+  validateSearch: (s: Record<string, unknown>): { account?: string; from?: string; to?: string } => ({
+    account: typeof s.account === "string" ? s.account : undefined,
+    from: typeof s.from === "string" ? s.from : undefined,
+    to: typeof s.to === "string" ? s.to : undefined,
+  }),
+});
 
 type Entry = {
   id: string;
@@ -59,17 +66,25 @@ function JournalPage() {
     },
   });
 
+  const { account: filterAccount, from: filterFrom, to: filterTo } = Route.useSearch();
+
   const { data: rawEntries = [] } = useQuery({
-    queryKey: ["journal-entries"],
+    queryKey: ["journal-entries", filterAccount, filterFrom, filterTo],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("journal_entries")
-        .select("*, journal_lines(debit, credit)")
+        .select("*, journal_lines(debit, credit, account_id)")
         .eq("is_deleted", false)
         .eq("is_archived", false)
         .order("entry_no", { ascending: false });
+      if (filterFrom) query = query.gte("entry_date", filterFrom);
+      if (filterTo) query = query.lte("entry_date", filterTo);
+      const { data, error } = await query;
       if (error) throw error;
-      return data as any[];
+      const rows = (data ?? []) as any[];
+      return filterAccount
+        ? rows.filter((e) => (e.journal_lines || []).some((l: any) => l.account_id === filterAccount))
+        : rows;
     },
   });
 
