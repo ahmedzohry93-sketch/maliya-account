@@ -67,8 +67,37 @@ export function TreeToolbar({
   );
 }
 
-/** Report page frame: title on one side, export/filter controls on the other,
- *  plus a report/detail view switch — matching the classic ERP statement layout. */
+/** Compact stacked From/To fields used inside the small date filter popover. */
+export function DateRangeFields({
+  from,
+  to,
+  onFrom,
+  onTo,
+  children,
+}: {
+  from: string;
+  to: string;
+  onFrom: (v: string) => void;
+  onTo: (v: string) => void;
+  children?: ReactNode;
+}) {
+  return (
+    <div className="space-y-2">
+      <div>
+        <label className="text-[11px] font-medium text-muted-foreground block mb-1">من تاريخ</label>
+        <input type="date" value={from} onChange={(e) => onFrom(e.target.value)} className="inp h-8 w-full text-xs" />
+      </div>
+      <div>
+        <label className="text-[11px] font-medium text-muted-foreground block mb-1">إلى تاريخ</label>
+        <input type="date" value={to} onChange={(e) => onTo(e.target.value)} className="inp h-8 w-full text-xs" />
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/** Report page frame: fixed-width centered sheet with an Odoo-like toolbar
+ *  (back, view switch, export, compact date filter). */
 export function ReportShell({
   title,
   subtitle,
@@ -89,71 +118,172 @@ export function ReportShell({
   children: ReactNode;
 }) {
   const [openFilters, setOpenFilters] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!openFilters) return;
+    const onDown = (e: PointerEvent) => {
+      const el = e.target as HTMLElement | null;
+      if (el?.closest("[data-report-filter]")) return;
+      setOpenFilters(false);
+    };
+    document.addEventListener("pointerdown", onDown);
+    return () => document.removeEventListener("pointerdown", onDown);
+  }, [openFilters]);
+
   return (
-    <div className="w-full min-w-0 p-3 md:p-6 space-y-4">
-      <header className="flex flex-wrap items-center gap-3">
-        <div className="min-w-0 order-2 sm:order-1 flex items-center gap-2">
-          {filters && (
-            <button
-              onClick={() => setOpenFilters((o) => !o)}
-              className={cn(
-                "h-9 w-9 grid place-items-center rounded-lg border text-muted-foreground hover:bg-muted",
-                openFilters && "border-primary/40 bg-primary/10 text-primary",
-              )}
-              title="تصفية"
-            >
-              <Filter className="w-4 h-4" />
-            </button>
+    <div className="w-full min-w-0 px-2 md:px-4 py-3 md:py-5">
+      <div className="mx-auto w-full max-w-[1000px] min-w-0 space-y-3">
+        <div className="sticky top-0 z-30 flex items-center gap-2 rounded-xl border bg-card/95 backdrop-blur px-2 py-1.5 shadow-sm">
+          <button
+            onClick={() => router.history.back()}
+            className="h-8 w-8 grid place-items-center rounded-lg border text-muted-foreground hover:bg-muted shrink-0"
+            title="رجوع"
+          >
+            <ArrowRight className="w-4 h-4" />
+          </button>
+
+          <div className="min-w-0 flex-1">
+            <h1 className="text-sm md:text-base font-bold truncate">{title}</h1>
+            {subtitle && <p className="text-[10px] md:text-[11px] text-muted-foreground num truncate">{subtitle}</p>}
+          </div>
+
+          {onViewChange && (
+            <div className="hidden sm:inline-flex rounded-lg bg-muted p-0.5 text-[11px] font-medium shrink-0">
+              <button
+                onClick={() => onViewChange("detail")}
+                className={cn("px-2.5 py-1 rounded-md", view === "detail" ? "bg-card text-primary shadow-sm" : "text-muted-foreground")}
+              >
+                كشف تفصيلي
+              </button>
+              <button
+                onClick={() => onViewChange("report")}
+                className={cn("px-2.5 py-1 rounded-md", view === "report" ? "bg-card text-primary shadow-sm" : "text-muted-foreground")}
+              >
+                عرض التقرير
+              </button>
+            </div>
           )}
+
           {(onExcel || onPdf) && (
-            <div className="flex items-center rounded-lg border overflow-hidden">
-              <span className="grid h-9 w-9 place-items-center text-muted-foreground border-e">
+            <div className="flex items-center rounded-lg border overflow-hidden shrink-0">
+              <span className="hidden md:grid h-8 w-8 place-items-center text-muted-foreground border-e">
                 <Download className="w-4 h-4" />
               </span>
               {onExcel && (
-                <button onClick={onExcel} className="h-9 px-3 text-xs font-medium hover:bg-muted flex items-center gap-1.5">
-                  <FileSpreadsheet className="w-3.5 h-3.5" /> Excel
+                <button onClick={onExcel} className="h-8 px-2 text-[11px] font-medium hover:bg-muted flex items-center gap-1" title="تصدير Excel">
+                  <FileSpreadsheet className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Excel</span>
                 </button>
               )}
               {onPdf && (
-                <button onClick={onPdf} className="h-9 px-3 text-xs font-medium hover:bg-muted flex items-center gap-1.5 border-s">
-                  <FileText className="w-3.5 h-3.5" /> PDF
+                <button onClick={onPdf} className="h-8 px-2 text-[11px] font-medium hover:bg-muted flex items-center gap-1 border-s" title="تصدير PDF">
+                  <FileText className="w-3.5 h-3.5" /> <span className="hidden sm:inline">PDF</span>
                 </button>
               )}
             </div>
           )}
-        </div>
-        <div className="flex-1 order-1 sm:order-2 text-start sm:text-end min-w-0">
-          <h1 className="text-xl md:text-2xl font-bold tracking-tight truncate">{title}</h1>
-          {subtitle && <p className="text-[11px] text-muted-foreground mt-0.5 num">{subtitle}</p>}
-        </div>
-      </header>
 
-      {onViewChange && (
-        <div className="flex justify-center">
-          <div className="inline-flex rounded-lg bg-muted p-1 text-xs font-medium">
-            <button
-              onClick={() => onViewChange("detail")}
-              className={cn("px-4 py-1.5 rounded-md", view === "detail" ? "bg-card text-primary shadow-sm" : "text-muted-foreground")}
-            >
-              كشف تفصيلي
-            </button>
-            <button
-              onClick={() => onViewChange("report")}
-              className={cn("px-4 py-1.5 rounded-md", view === "report" ? "bg-card text-primary shadow-sm" : "text-muted-foreground")}
-            >
-              عرض التقرير
-            </button>
+          {filters && (
+            <div className="relative shrink-0" data-report-filter>
+              <button
+                onClick={() => setOpenFilters((o) => !o)}
+                className={cn(
+                  "h-8 w-8 grid place-items-center rounded-lg border text-muted-foreground hover:bg-muted",
+                  openFilters && "border-primary/40 bg-primary/10 text-primary",
+                )}
+                title="فلتر التاريخ"
+              >
+                <Filter className="w-4 h-4" />
+              </button>
+              {openFilters && (
+                <div className="absolute end-0 top-full mt-1.5 w-56 rounded-xl border bg-card p-2.5 shadow-lg z-40">
+                  {filters}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {onViewChange && (
+          <div className="sm:hidden flex justify-center">
+            <div className="inline-flex rounded-lg bg-muted p-1 text-xs font-medium">
+              <button
+                onClick={() => onViewChange("detail")}
+                className={cn("px-3 py-1 rounded-md", view === "detail" ? "bg-card text-primary shadow-sm" : "text-muted-foreground")}
+              >
+                كشف تفصيلي
+              </button>
+              <button
+                onClick={() => onViewChange("report")}
+                className={cn("px-3 py-1 rounded-md", view === "report" ? "bg-card text-primary shadow-sm" : "text-muted-foreground")}
+              >
+                عرض التقرير
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {filters && openFilters && <div className="rounded-xl border bg-card p-3 md:p-4">{filters}</div>}
-
-      {children}
+        {children}
+      </div>
     </div>
   );
 }
+
+/** Small ⋮ menu shown next to an account row: jump to ledger, journal or account data,
+ *  carrying the account and the selected period. */
+export function RowMenu({
+  accountId,
+  code,
+  from,
+  to,
+}: {
+  accountId?: string;
+  code?: string;
+  from?: string;
+  to?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      const el = e.target as HTMLElement | null;
+      if (el?.closest("[data-row-menu]")) return;
+      setOpen(false);
+    };
+    document.addEventListener("pointerdown", onDown);
+    return () => document.removeEventListener("pointerdown", onDown);
+  }, [open]);
+
+  const search = { account: accountId || undefined, from: from || undefined, to: to || undefined };
+  const item = "block w-full text-start px-3 py-1.5 text-[11px] hover:bg-muted";
+
+  return (
+    <span className="relative shrink-0" data-row-menu onClick={(e) => e.stopPropagation()}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="h-6 w-6 grid place-items-center rounded-md text-muted-foreground hover:bg-muted"
+        title="إجراءات الحساب"
+      >
+        <MoreVertical className="w-3.5 h-3.5" />
+      </button>
+      {open && (
+        <span className="absolute end-0 top-full mt-1 w-40 rounded-lg border bg-card shadow-lg z-40 overflow-hidden block">
+          <Link to="/ledger" search={search} className={item} onClick={() => setOpen(false)}>
+            دفتر الأستاذ
+          </Link>
+          <Link to="/journal" search={search} className={item} onClick={() => setOpen(false)}>
+            قيود اليومية
+          </Link>
+          <Link to="/accounts" search={{ q: code || undefined }} className={item} onClick={() => setOpen(false)}>
+            بيانات الحساب
+          </Link>
+        </span>
+      )}
+    </span>
+  );
+}
+
 
 /** A statement card: rows of label/value with blue section bands and total lines. */
 export function StatementCard({ children, className }: { children: ReactNode; className?: string }) {
