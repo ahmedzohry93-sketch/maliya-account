@@ -111,22 +111,13 @@ function IncomeStatementPage() {
       onExcel={() => exportToExcel("income-statement", "قائمة الدخل", sections(), meta)}
       onPdf={() => exportToPDF("income-statement", "قائمة الدخل", sections(), meta)}
       filters={
-        <div className="space-y-3">
-          <div className="grid md:grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs font-medium block mb-1">من تاريخ</label>
-              <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="inp" />
-            </div>
-            <div>
-              <label className="text-xs font-medium block mb-1">إلى تاريخ</label>
-              <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="inp" />
-            </div>
-          </div>
+        <DateRangeFields from={from} to={to} onFrom={setFrom} onTo={setTo}>
           {compareOn && prev && (
-            <p className="text-[11px] text-muted-foreground num">الفترة السابقة: {prev.from} → {prev.to}</p>
+            <p className="text-[10px] text-muted-foreground num">الفترة السابقة: {prev.from} → {prev.to}</p>
           )}
-        </div>
+        </DateRangeFields>
       }
+
     >
       <TreeToolbar
         onExpandAll={() => setExpandSignal((s) => Math.abs(s) + 1)}
