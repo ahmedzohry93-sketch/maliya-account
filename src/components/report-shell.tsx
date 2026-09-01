@@ -417,17 +417,20 @@ export function AccountTreeRows({
   depth = 0,
   compare,
   expandSignal,
+  period,
 }: {
   nodes: AccNode[];
   depth?: number;
   compare?: boolean;
   /** Bump with a positive number to expand all, negative to collapse all. */
   expandSignal?: number;
+  /** Selected report period, forwarded to the per-row ⋮ actions. */
+  period?: { from?: string; to?: string };
 }) {
   return (
     <>
       {nodes.map((n) => (
-        <AccountTreeRow key={n.id} node={n} depth={depth} compare={compare} expandSignal={expandSignal} />
+        <AccountTreeRow key={n.id} node={n} depth={depth} compare={compare} expandSignal={expandSignal} period={period} />
       ))}
     </>
   );
@@ -438,11 +441,13 @@ function AccountTreeRow({
   depth,
   compare,
   expandSignal,
+  period,
 }: {
   node: AccNode;
   depth: number;
   compare?: boolean;
   expandSignal?: number;
+  period?: { from?: string; to?: string };
 }) {
   const [open, setOpen] = useState(depth === 0);
   useEffect(() => {
@@ -469,6 +474,7 @@ function AccountTreeRow({
         ) : (
           <span className="w-3.5 shrink-0" />
         )}
+        <RowMenu accountId={node.id} code={node.code} from={period?.from} to={period?.to} />
         <span className="num w-11 md:w-14 shrink-0 text-[10px] md:text-[11px] text-muted-foreground">{node.code}</span>
         <span className="min-w-0 flex-1 truncate">{node.name}</span>
         <span className={cn("num tabular-nums shrink-0", node.amount < 0 && "text-destructive")}>
@@ -490,8 +496,9 @@ function AccountTreeRow({
         )}
       </div>
       {open && hasKids && (
-        <AccountTreeRows nodes={node.children} depth={depth + 1} compare={compare} expandSignal={expandSignal} />
+        <AccountTreeRows nodes={node.children} depth={depth + 1} compare={compare} expandSignal={expandSignal} period={period} />
       )}
     </>
+
   );
 }
