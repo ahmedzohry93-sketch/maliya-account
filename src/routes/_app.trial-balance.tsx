@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF } from "@/lib/export-utils";
-import { ReportShell, ReportTable, money } from "@/components/report-shell";
+import { DateRangeFields, ReportShell, ReportTable, money } from "@/components/report-shell";
 
 
 export const Route = createFileRoute("/_app/trial-balance")({ component: TrialBalancePage });
@@ -62,16 +62,7 @@ function TrialBalancePage() {
       onExcel={() => exportToExcel("trial-balance", "ميزان المراجعة", sections())}
       onPdf={() => exportToPDF("trial-balance", "ميزان المراجعة", sections())}
       filters={
-        <div className="grid md:grid-cols-2 gap-3">
-          <div>
-            <label className="text-xs font-medium block mb-1">من تاريخ</label>
-            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="inp" />
-          </div>
-          <div>
-            <label className="text-xs font-medium block mb-1">إلى تاريخ</label>
-            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="inp" />
-          </div>
-        </div>
+        <DateRangeFields from={from} to={to} onFrom={setFrom} onTo={setTo} />
       }
     >
       <ReportTable

@@ -3,14 +3,24 @@ import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF } from "@/lib/export-utils";
-import { ReportShell } from "@/components/report-shell";
+import { ReportShell, DateRangeFields } from "@/components/report-shell";
 
-export const Route = createFileRoute("/_app/ledger")({ component: LedgerPage });
+type LedgerSearch = { account?: string; from?: string; to?: string };
+
+export const Route = createFileRoute("/_app/ledger")({
+  component: LedgerPage,
+  validateSearch: (s: Record<string, unknown>): LedgerSearch => ({
+    account: typeof s.account === "string" ? s.account : undefined,
+    from: typeof s.from === "string" ? s.from : undefined,
+    to: typeof s.to === "string" ? s.to : undefined,
+  }),
+});
 
 function LedgerPage() {
-  const [accountId, setAccountId] = useState<string>("");
-  const [from, setFrom] = useState<string>("");
-  const [to, setTo] = useState<string>("");
+  const sp = Route.useSearch();
+  const [accountId, setAccountId] = useState<string>(sp.account ?? "");
+  const [from, setFrom] = useState<string>(sp.from ?? "");
+  const [to, setTo] = useState<string>(sp.to ?? "");
 
   const { data: accounts = [] } = useQuery({
     queryKey: ["accounts-list"],
@@ -71,23 +81,15 @@ function LedgerPage() {
       onExcel={rows.length ? () => exportToExcel("ledger", title, sections(), meta) : undefined}
       onPdf={rows.length ? () => exportToPDF("ledger", title, sections(), meta) : undefined}
       filters={
-        <div className="grid md:grid-cols-3 gap-3">
+        <DateRangeFields from={from} to={to} onFrom={setFrom} onTo={setTo}>
           <div>
-            <label className="text-xs font-medium block mb-1">الحساب</label>
-            <select value={accountId} onChange={(e) => setAccountId(e.target.value)} className="inp w-full">
+            <label className="text-[11px] font-medium text-muted-foreground block mb-1">الحساب</label>
+            <select value={accountId} onChange={(e) => setAccountId(e.target.value)} className="inp h-8 w-full text-xs">
               <option value="">اختر حساب...</option>
               {accounts.map((a: any) => <option key={a.id} value={a.id}>{a.code} — {a.name}</option>)}
             </select>
           </div>
-          <div>
-            <label className="text-xs font-medium block mb-1">من تاريخ</label>
-            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="inp" />
-          </div>
-          <div>
-            <label className="text-xs font-medium block mb-1">إلى تاريخ</label>
-            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="inp" />
-          </div>
-        </div>
+        </DateRangeFields>
       }
     >
       <div className="bg-card border rounded-lg overflow-hidden">
