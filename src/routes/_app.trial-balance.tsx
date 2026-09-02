@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF } from "@/lib/export-utils";
-import { DateRangeFields, ReportShell, ReportTable, money } from "@/components/report-shell";
+import { DateRangeFields, ReportShell, ReportTable, RowMenu, money } from "@/components/report-shell";
 
 
 export const Route = createFileRoute("/_app/trial-balance")({ component: TrialBalancePage });
@@ -84,7 +84,12 @@ function TrialBalancePage() {
           {data.map((r: any) => (
             <tr key={r.id} className="hover:bg-muted/40">
               <td className="px-4 py-2 num text-muted-foreground">{r.code}</td>
-              <td className="px-4 py-2">{r.name}</td>
+              <td className="px-4 py-2">
+                <span className="inline-flex items-center gap-1">
+                  <RowMenu accountId={r.id} code={r.code} from={from} to={to} />
+                  {r.name}
+                </span>
+              </td>
               <td className="px-4 py-2 num">{r.debit ? money(r.debit) : "-"}</td>
               <td className="px-4 py-2 num">{r.credit ? money(r.credit) : "-"}</td>
               <td className="px-4 py-2 num">{r.balance > 0 ? money(r.balance) : "-"}</td>

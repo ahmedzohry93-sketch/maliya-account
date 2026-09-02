@@ -1,4 +1,5 @@
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, useRouter } from "@tanstack/react-router";
 import { Filter, Download, FileSpreadsheet, FileText, ChevronDown, ChevronLeft, ChevronsDownUp, ChevronsUpDown, MoreVertical, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -244,47 +245,74 @@ export function RowMenu({
   from?: string;
   to?: string;
 }) {
-  const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
-    if (!open) return;
+    if (!pos) return;
+    const close = () => setPos(null);
     const onDown = (e: PointerEvent) => {
       const el = e.target as HTMLElement | null;
       if (el?.closest("[data-row-menu]")) return;
-      setOpen(false);
+      close();
     };
     document.addEventListener("pointerdown", onDown);
-    return () => document.removeEventListener("pointerdown", onDown);
-  }, [open]);
+    window.addEventListener("scroll", close, true);
+    window.addEventListener("resize", close);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("resize", close);
+    };
+  }, [pos]);
+
+  const toggle = () => {
+    if (pos) return setPos(null);
+    const r = btnRef.current?.getBoundingClientRect();
+    if (!r) return;
+    const width = 160;
+    const left = Math.min(Math.max(8, r.right - width), window.innerWidth - width - 8);
+    setPos({ top: r.bottom + 4, left });
+  };
 
   const search = { account: accountId || undefined, from: from || undefined, to: to || undefined };
   const item = "block w-full text-start px-3 py-1.5 text-[11px] hover:bg-muted";
 
   return (
-    <span className="relative shrink-0" data-row-menu onClick={(e) => e.stopPropagation()}>
+    <span className="shrink-0" data-row-menu onClick={(e) => e.stopPropagation()}>
       <button
+        ref={btnRef}
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={toggle}
         className="h-6 w-6 grid place-items-center rounded-md text-muted-foreground hover:bg-muted"
         title="إجراءات الحساب"
       >
         <MoreVertical className="w-3.5 h-3.5" />
       </button>
-      {open && (
-        <span className="absolute end-0 top-full mt-1 w-40 rounded-lg border bg-card shadow-lg z-40 overflow-hidden block">
-          <Link to="/ledger" search={search} className={item} onClick={() => setOpen(false)}>
-            دفتر الأستاذ
-          </Link>
-          <Link to="/journal" search={search} className={item} onClick={() => setOpen(false)}>
-            قيود اليومية
-          </Link>
-          <Link to="/accounts" search={{ q: code || undefined }} className={item} onClick={() => setOpen(false)}>
-            بيانات الحساب
-          </Link>
-        </span>
-      )}
+      {pos &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            data-row-menu
+            style={{ position: "fixed", top: pos.top, left: pos.left, width: 160 }}
+            className="rounded-lg border bg-card shadow-lg z-[100] overflow-hidden"
+          >
+            <Link to="/ledger" search={search} className={item} onClick={() => setPos(null)}>
+              دفتر الأستاذ
+            </Link>
+            <Link to="/journal" search={search} className={item} onClick={() => setPos(null)}>
+              قيود اليومية
+            </Link>
+            <Link to="/accounts" search={{ q: code || undefined }} className={item} onClick={() => setPos(null)}>
+              بيانات الحساب
+            </Link>
+          </div>,
+          document.body,
+        )}
     </span>
   );
 }
+
 
 
 /** A statement card: rows of label/value with blue section bands and total lines. */
