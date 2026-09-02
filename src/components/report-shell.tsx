@@ -38,20 +38,20 @@ export function TreeToolbar({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2 text-[11px] md:text-xs">
-      <button type="button" onClick={onExpandAll} className="inline-flex items-center gap-1 rounded-lg border px-2.5 py-1.5 hover:bg-muted">
+      <button type="button" onClick={onExpandAll} className="inline-flex items-center gap-1 rounded-none border px-2.5 py-1.5 hover:bg-muted">
         <ChevronsUpDown className="w-3.5 h-3.5" /> فتح الكل
       </button>
-      <button type="button" onClick={onCollapseAll} className="inline-flex items-center gap-1 rounded-lg border px-2.5 py-1.5 hover:bg-muted">
+      <button type="button" onClick={onCollapseAll} className="inline-flex items-center gap-1 rounded-none border px-2.5 py-1.5 hover:bg-muted">
         <ChevronsDownUp className="w-3.5 h-3.5" /> طي الكل
       </button>
-      <label className="inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 cursor-pointer hover:bg-muted">
+      <label className="inline-flex items-center gap-1.5 rounded-none border px-2.5 py-1.5 cursor-pointer hover:bg-muted">
         <input type="checkbox" checked={showZero} onChange={(e) => onShowZero(e.target.checked)} className="accent-primary" />
         إظهار الأرصدة الصفرية
       </label>
       {onCompare && (
         <label
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 cursor-pointer hover:bg-muted",
+            "inline-flex items-center gap-1.5 rounded-none border px-2.5 py-1.5 cursor-pointer hover:bg-muted",
             compareDisabled && "opacity-50 cursor-not-allowed",
           )}
           title={compareDisabled ? "حدّد من تاريخ وإلى تاريخ لتفعيل المقارنة" : undefined}
@@ -137,10 +137,10 @@ export function ReportShell({
   return (
     <div className="w-full min-w-0 px-2 md:px-4 py-3 md:py-5">
       <div className="mx-auto w-full max-w-[1000px] min-w-0 space-y-3">
-        <div className="sticky top-0 z-30 flex items-center gap-2 rounded-xl border bg-card/95 backdrop-blur px-2 py-1.5 shadow-sm">
+        <div className="sticky top-0 z-30 flex items-center gap-2 rounded-none border bg-card/95 backdrop-blur px-2 py-1.5 shadow-sm">
           <button
             onClick={() => router.history.back()}
-            className="h-8 w-8 grid place-items-center rounded-lg border text-muted-foreground hover:bg-muted shrink-0"
+            className="h-8 w-8 grid place-items-center rounded-none border text-muted-foreground hover:bg-muted shrink-0"
             title="رجوع"
           >
             <ArrowRight className="w-4 h-4" />
@@ -152,16 +152,16 @@ export function ReportShell({
           </div>
 
           {onViewChange && (
-            <div className="hidden sm:inline-flex rounded-lg bg-muted p-0.5 text-[11px] font-medium shrink-0">
+            <div className="hidden sm:inline-flex rounded-none bg-muted p-0.5 text-[11px] font-medium shrink-0">
               <button
                 onClick={() => onViewChange("detail")}
-                className={cn("px-2.5 py-1 rounded-md", view === "detail" ? "bg-card text-primary shadow-sm" : "text-muted-foreground")}
+                className={cn("px-2.5 py-1 rounded-none", view === "detail" ? "bg-card text-primary shadow-sm" : "text-muted-foreground")}
               >
                 كشف تفصيلي
               </button>
               <button
                 onClick={() => onViewChange("report")}
-                className={cn("px-2.5 py-1 rounded-md", view === "report" ? "bg-card text-primary shadow-sm" : "text-muted-foreground")}
+                className={cn("px-2.5 py-1 rounded-none", view === "report" ? "bg-card text-primary shadow-sm" : "text-muted-foreground")}
               >
                 عرض التقرير
               </button>
@@ -169,7 +169,7 @@ export function ReportShell({
           )}
 
           {(onExcel || onPdf) && (
-            <div className="flex items-center rounded-lg border overflow-hidden shrink-0">
+            <div className="flex items-center rounded-none border overflow-hidden shrink-0">
               <span className="hidden md:grid h-8 w-8 place-items-center text-muted-foreground border-e">
                 <Download className="w-4 h-4" />
               </span>
@@ -191,7 +191,7 @@ export function ReportShell({
               <button
                 onClick={() => setOpenFilters((o) => !o)}
                 className={cn(
-                  "h-8 w-8 grid place-items-center rounded-lg border text-muted-foreground hover:bg-muted",
+                  "h-8 w-8 grid place-items-center rounded-none border text-muted-foreground hover:bg-muted",
                   openFilters && "border-primary/40 bg-primary/10 text-primary",
                 )}
                 title="فلتر التاريخ"
@@ -199,7 +199,7 @@ export function ReportShell({
                 <Filter className="w-4 h-4" />
               </button>
               {openFilters && (
-                <div className="absolute end-0 top-full mt-1.5 w-56 rounded-xl border bg-card p-2.5 shadow-lg z-40">
+                <div className="absolute end-0 top-full mt-1.5 w-56 rounded-none border bg-card p-2.5 shadow-lg z-40">
                   {filters}
                 </div>
               )}
@@ -209,16 +209,16 @@ export function ReportShell({
 
         {onViewChange && (
           <div className="sm:hidden flex justify-center">
-            <div className="inline-flex rounded-lg bg-muted p-1 text-xs font-medium">
+            <div className="inline-flex rounded-none bg-muted p-1 text-xs font-medium">
               <button
                 onClick={() => onViewChange("detail")}
-                className={cn("px-3 py-1 rounded-md", view === "detail" ? "bg-card text-primary shadow-sm" : "text-muted-foreground")}
+                className={cn("px-3 py-1 rounded-none", view === "detail" ? "bg-card text-primary shadow-sm" : "text-muted-foreground")}
               >
                 كشف تفصيلي
               </button>
               <button
                 onClick={() => onViewChange("report")}
-                className={cn("px-3 py-1 rounded-md", view === "report" ? "bg-card text-primary shadow-sm" : "text-muted-foreground")}
+                className={cn("px-3 py-1 rounded-none", view === "report" ? "bg-card text-primary shadow-sm" : "text-muted-foreground")}
               >
                 عرض التقرير
               </button>
@@ -284,7 +284,7 @@ export function RowMenu({
         ref={btnRef}
         type="button"
         onClick={toggle}
-        className="h-6 w-6 grid place-items-center rounded-md text-muted-foreground hover:bg-muted"
+        className="h-6 w-6 grid place-items-center rounded-none text-muted-foreground hover:bg-muted"
         title="إجراءات الحساب"
       >
         <MoreVertical className="w-3.5 h-3.5" />
@@ -295,7 +295,7 @@ export function RowMenu({
           <div
             data-row-menu
             style={{ position: "fixed", top: pos.top, left: pos.left, width: 160 }}
-            className="rounded-lg border bg-card shadow-lg z-[100] overflow-hidden"
+            className="rounded-none border bg-card shadow-lg z-[100] overflow-hidden"
           >
             <Link to="/ledger" search={search} className={item} onClick={() => setPos(null)}>
               دفتر الأستاذ
@@ -318,8 +318,8 @@ export function RowMenu({
 /** A statement card: rows of label/value with blue section bands and total lines. */
 export function StatementCard({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cn("rounded-xl border bg-card overflow-hidden shadow-sm", className)}>
-      <div className="divide-y divide-border/60">{children}</div>
+    <div className={cn("rounded-none border bg-card overflow-hidden shadow-sm", className)}>
+      <div className="divide-y divide-border">{children}</div>
     </div>
   );
 }
@@ -430,7 +430,7 @@ export function TotalRow({
 /** Classic bordered data table used by detail views (trial balance, cash flow…). */
 export function ReportTable({ head, children }: { head: ReactNode; children: ReactNode }) {
   return (
-    <div className="rounded-xl border bg-card overflow-hidden shadow-sm">
+    <div className="rounded-none border bg-card overflow-hidden shadow-sm">
       <div className="overflow-x-auto">
         <table className="w-full text-[12px] md:text-[13px] min-w-[640px]">
           <thead className="bg-primary/8 text-[11px] font-bold text-primary">{head}</thead>
