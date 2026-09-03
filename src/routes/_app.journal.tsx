@@ -1,15 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
-import { toast } from "sonner";
-import { Plus, Trash2, FileText, FileCheck, Eye } from "lucide-react";
+import { Plus, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/lib/i18n";
-import { logAudit } from "@/lib/audit";
-import { useConfirm } from "@/components/confirm-dialog";
-import { archiveRecord, softDeleteRecord } from "@/lib/records";
-import { createReversalEntry } from "@/lib/posting";
 
 export const Route = createFileRoute("/_app/journal")({
   component: JournalPage,
@@ -49,7 +44,6 @@ type TabKey = "all" | "draft" | "posted";
 function JournalPage() {
   const { permissions } = useAuth();
   const { t, fmt } = useI18n();
-  const qc = useQueryClient();
   const navigate = useNavigate();
   const [tab, setTab] = useState<TabKey>("all");
 
@@ -135,52 +129,6 @@ function JournalPage() {
     return entries;
   }, [entries, tab]);
 
-  const confirm = useConfirm();
-
-  const del = useMutation({
-    mutationFn: async (e: Entry) => {
-      const choice = await confirm({
-        title: `${t("common.delete")} — ${t("journal.entry")} #${e.entry_no}`,
-        description: t("common.cannot_undo"),
-        allowReverse: e.status === "posted",
-      });
-      if (!choice) return null;
-
-      const snapshot = {
-        entry_no: e.entry_no,
-        entry_date: e.entry_date,
-        status: e.status,
-        total_amount: e.total_amount,
-      };
-
-      if (choice === "reverse") {
-        await createReversalEntry(e.id);
-        await logAudit("reverse", "journal_entries", e.id, snapshot);
-        return "reverse" as const;
-      }
-      if (choice === "archive") {
-        await archiveRecord("journal_entries", e.id, snapshot);
-        return "archive" as const;
-      }
-      await softDeleteRecord("journal_entries", e.id, snapshot);
-      return "delete" as const;
-    },
-    onSuccess: (result) => {
-      if (!result) return;
-      qc.invalidateQueries({ queryKey: ["journal-entries"] });
-      qc.invalidateQueries({ queryKey: ["journal-balances"] });
-      toast.success(
-        result === "reverse"
-          ? t("common.create_reversal")
-          : result === "archive"
-            ? t("common.archive_success")
-            : t("common.delete_success"),
-      );
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
-
   const entryTypeLabel = (type: string) => t(`entry_type.${type}`);
 
   const tabBtn = (key: TabKey, label: string, count: number) => (
@@ -232,32 +180,6 @@ function JournalPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-        <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <FileText className="w-4 h-4 text-warning-foreground" />
-            <span className="text-xs text-muted-foreground">{t("journal.draft_count")}</span>
-          </div>
-          <div className="text-xl font-bold num">{fmt(stats.draftCount)}</div>
-          <div className="text-xs text-muted-foreground mt-1 num">{fmt(stats.draftTotal)}</div>
-        </div>
-        <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <FileCheck className="w-4 h-4 text-success" />
-            <span className="text-xs text-muted-foreground">{t("journal.posted_count")}</span>
-          </div>
-          <div className="text-xl font-bold num">{fmt(stats.postedCount)}</div>
-          <div className="text-xs text-muted-foreground mt-1 num">{fmt(stats.postedTotal)}</div>
-        </div>
-        <div className="bg-card border rounded-lg p-4">
-          <span className="text-xs text-muted-foreground">{t("journal.total_draft_amount")}</span>
-          <div className="text-xl font-bold num text-warning-foreground mt-2">{fmt(stats.draftTotal)}</div>
-        </div>
-        <div className="bg-card border rounded-lg p-4">
-          <span className="text-xs text-muted-foreground">{t("journal.total_posted_amount")}</span>
-          <div className="text-xl font-bold num text-success mt-2">{fmt(stats.postedTotal)}</div>
-        </div>
-      </div>
 
       <div className="bg-card border rounded-lg overflow-x-auto">
         <div className="flex border-b bg-muted/20">
@@ -343,16 +265,6 @@ function JournalPage() {
                       >
                         <Eye className="w-3.5 h-3.5" />
                       </button>
-                      {permissions.has("journal.delete") && (
-                        <button
-                          onClick={() => del.mutate(e)}
-                          className="p-1.5 rounded hover:bg-destructive/10 text-destructive"
-                          title={t("common.delete")}
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-
                     </div>
                   </td>
                 </tr>
