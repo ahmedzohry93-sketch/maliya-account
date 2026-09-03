@@ -211,7 +211,7 @@ function CashFlowPage() {
           <CategoryTable title="الأنشطة التشغيلية" items={byCat("operating")} totals={op} />
           <CategoryTable title="الأنشطة الاستثمارية" items={byCat("investing")} totals={inv} />
           <CategoryTable title="الأنشطة التمويلية" items={byCat("financing")} totals={fin} />
-          <div className={`rounded-xl p-4 border-2 ${total.net >= 0 ? "border-success/40 bg-success/5" : "border-destructive/40 bg-destructive/5"}`}>
+          <div className={`rounded-none p-4 border-2 ${total.net >= 0 ? "border-success/40 bg-success/5" : "border-destructive/40 bg-destructive/5"}`}>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div><div className="text-[11px] text-muted-foreground mb-1">إجمالي الوارد</div><div className="text-lg font-bold num text-success">{fmt(total.inflow)}</div></div>
               <div><div className="text-[11px] text-muted-foreground mb-1">إجمالي الصادر</div><div className="text-lg font-bold num text-destructive">{fmt(total.outflow)}</div></div>
@@ -228,7 +228,7 @@ function CashFlowPage() {
 function SummaryCard({ label, net }: { label: string; net: number }) {
   const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   return (
-    <div className="bg-card border rounded-lg p-4">
+    <div className="bg-card border rounded-none p-4">
       <div className="text-xs text-muted-foreground mb-1">{label}</div>
       <div className={`text-2xl font-bold num ${net >= 0 ? "text-emerald-700" : "text-red-700"}`}>{fmt(net)}</div>
     </div>
@@ -238,7 +238,7 @@ function SummaryCard({ label, net }: { label: string; net: number }) {
 function CategoryTable({ title, items, totals }: { title: string; items: any[]; totals: { inflow: number; outflow: number; net: number } }) {
   const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   return (
-    <div className="bg-card border rounded-lg overflow-hidden mb-4">
+    <div className="bg-card border rounded-none overflow-hidden mb-4">
       <div className="bg-muted/50 px-4 py-2.5 font-semibold border-b">{title}</div>
       <table className="w-full text-sm">
         <thead className="bg-muted/30 text-xs">

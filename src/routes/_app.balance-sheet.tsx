@@ -126,7 +126,7 @@ function BalanceSheetPage() {
       </div>
 
       <div
-        className={`rounded-xl p-4 border-2 ${balanced ? "border-success/40 bg-success/5" : "border-destructive/40 bg-destructive/5"}`}
+        className={`rounded-none p-4 border-2 ${balanced ? "border-success/40 bg-success/5" : "border-destructive/40 bg-destructive/5"}`}
       >
         <div className="grid grid-cols-2 gap-4 text-center">
           <div>
