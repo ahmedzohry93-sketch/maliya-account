@@ -232,32 +232,6 @@ function JournalPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-        <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <FileText className="w-4 h-4 text-warning-foreground" />
-            <span className="text-xs text-muted-foreground">{t("journal.draft_count")}</span>
-          </div>
-          <div className="text-xl font-bold num">{fmt(stats.draftCount)}</div>
-          <div className="text-xs text-muted-foreground mt-1 num">{fmt(stats.draftTotal)}</div>
-        </div>
-        <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <FileCheck className="w-4 h-4 text-success" />
-            <span className="text-xs text-muted-foreground">{t("journal.posted_count")}</span>
-          </div>
-          <div className="text-xl font-bold num">{fmt(stats.postedCount)}</div>
-          <div className="text-xs text-muted-foreground mt-1 num">{fmt(stats.postedTotal)}</div>
-        </div>
-        <div className="bg-card border rounded-lg p-4">
-          <span className="text-xs text-muted-foreground">{t("journal.total_draft_amount")}</span>
-          <div className="text-xl font-bold num text-warning-foreground mt-2">{fmt(stats.draftTotal)}</div>
-        </div>
-        <div className="bg-card border rounded-lg p-4">
-          <span className="text-xs text-muted-foreground">{t("journal.total_posted_amount")}</span>
-          <div className="text-xl font-bold num text-success mt-2">{fmt(stats.postedTotal)}</div>
-        </div>
-      </div>
 
       <div className="bg-card border rounded-lg overflow-x-auto">
         <div className="flex border-b bg-muted/20">
