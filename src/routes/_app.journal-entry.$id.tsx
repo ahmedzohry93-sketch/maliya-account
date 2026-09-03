@@ -13,11 +13,14 @@ import {
   BookOpen,
   Scale,
   ListOrdered,
+  Trash2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/lib/i18n";
 import { logAudit } from "@/lib/audit";
+import { useConfirm } from "@/components/confirm-dialog";
+import { archiveRecord, softDeleteRecord } from "@/lib/records";
 import { ancestorCodes, CUSTOMER_ROOT_CODES, SUPPLIER_ROOT_CODES } from "@/lib/account-tree";
 
 export const Route = createFileRoute("/_app/journal-entry/$id")({
@@ -157,6 +160,27 @@ function JournalEntryPage() {
     qc.invalidateQueries({ queryKey: ["journal-entry", id] });
   };
 
+  const confirm = useConfirm();
+
+  const removeEntry = async () => {
+    if (isNew || !entry || status !== "draft") return;
+    const choice = await confirm({
+      title: `${t("common.delete")} — ${t("journal.entry")} #${entry.entry_no}`,
+      description: t("common.cannot_undo"),
+    });
+    if (!choice) return;
+    try {
+      const snapshot = { entry_no: entry.entry_no, entry_date: date, status };
+      if (choice === "archive") await archiveRecord("journal_entries", entry.id, snapshot);
+      else await softDeleteRecord("journal_entries", entry.id, snapshot);
+      toast.success(choice === "archive" ? t("common.archive_success") : t("common.delete_success"));
+      qc.invalidateQueries({ queryKey: ["journal-entries"] });
+      navigate({ to: "/journal" });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Error");
+    }
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (readonly) return;
@@ -294,6 +318,15 @@ function JournalEntryPage() {
                 className="inline-flex items-center gap-1.5 bg-warning text-warning-foreground px-4 py-2 rounded-xl text-sm font-medium hover:opacity-90"
               >
                 <RotateCcw className="w-4 h-4" strokeWidth={1.75} /> {t("journal.revert")}
+              </button>
+            )}
+            {!isNew && status === "draft" && permissions.has("journal.delete") && (
+              <button
+                type="button"
+                onClick={removeEntry}
+                className="inline-flex items-center gap-1.5 border border-destructive/40 text-destructive px-3 py-2 rounded-xl text-sm font-medium hover:bg-destructive/10"
+              >
+                <Trash2 className="w-4 h-4" strokeWidth={1.75} /> {t("common.delete")}
               </button>
             )}
             <button type="button" onClick={backToList} className="px-3 py-2 border rounded-xl text-sm hover:bg-muted">
