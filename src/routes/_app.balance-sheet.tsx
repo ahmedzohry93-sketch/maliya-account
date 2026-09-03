@@ -5,12 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section } from "@/lib/export-utils";
 import { DateRangeFields, ReportShell, StatementCard, BandRow, LineRow, TotalRow, AccountTreeRows } from "@/components/report-shell";
 import { buildAccountTree, pruneEmpty, totalOf, flattenTree, type AccNode, type AccountRow } from "@/lib/account-tree";
+import { today } from "@/lib/report-period";
 
 export const Route = createFileRoute("/_app/balance-sheet")({ component: BalanceSheetPage });
 
 function BalanceSheetPage() {
   const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const [to, setTo] = useState(today());
 
   const { data } = useQuery({
     queryKey: ["balance-sheet", from, to],
@@ -125,7 +126,7 @@ function BalanceSheetPage() {
       </div>
 
       <div
-        className={`rounded-xl p-4 border-2 ${balanced ? "border-success/40 bg-success/5" : "border-destructive/40 bg-destructive/5"}`}
+        className={`rounded-none p-4 border-2 ${balanced ? "border-success/40 bg-success/5" : "border-destructive/40 bg-destructive/5"}`}
       >
         <div className="grid grid-cols-2 gap-4 text-center">
           <div>

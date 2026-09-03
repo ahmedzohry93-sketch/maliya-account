@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section as ExSection } from "@/lib/export-utils";
 import { useI18n } from "@/lib/i18n";
 import { DateRangeFields, ReportShell } from "@/components/report-shell";
+import { defaultPeriod } from "@/lib/report-period";
 
 export const Route = createFileRoute("/_app/trading-account")({ component: TradingAccountPage });
 
@@ -65,8 +66,9 @@ function loadMapping(): Mapping | null {
 function TradingAccountPage() {
   const { lang } = useI18n();
   const isAr = lang === "ar";
-  const [from, setFrom] = useState<string>("");
-  const [to, setTo] = useState<string>("");
+  const dp = defaultPeriod();
+  const [from, setFrom] = useState<string>(dp.from);
+  const [to, setTo] = useState<string>(dp.to);
   const [showConfig, setShowConfig] = useState(false);
   const [override, setOverride] = useState<Mapping | null>(() => loadMapping());
 
@@ -190,7 +192,7 @@ function TradingAccountPage() {
         <DateRangeFields from={from} to={to} onFrom={setFrom} onTo={setTo}>
           <button
             onClick={() => setShowConfig((v) => !v)}
-            className="flex items-center gap-1.5 px-2 py-1.5 text-xs border rounded-md hover:bg-muted w-full justify-center"
+            className="flex items-center gap-1.5 px-2 py-1.5 text-xs border rounded-none hover:bg-muted w-full justify-center"
           >
             <Settings2 className="w-3.5 h-3.5" /> {T("تعيين الحسابات", "Map Accounts")}
           </button>
@@ -254,7 +256,7 @@ function TradingAccountPage() {
       </SectionCard>
 
       <div
-        className={`bg-card border-2 rounded-lg p-4 md:p-5 mt-6 flex items-center justify-between gap-3 ${
+        className={`bg-card border-2 rounded-none p-4 md:p-5 mt-6 flex items-center justify-between gap-3 ${
           grossProfit >= 0 ? "border-emerald-500/40" : "border-red-500/40"
         }`}
       >
@@ -271,7 +273,7 @@ function TradingAccountPage() {
 
 function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-card border rounded-lg overflow-hidden mb-4">
+    <div className="bg-card border rounded-none overflow-hidden mb-4">
       <div className="bg-muted/50 px-3 md:px-4 py-2.5 text-[13px] md:text-base font-semibold border-b">{title}</div>
       <div className="divide-y">{children}</div>
     </div>
@@ -346,7 +348,7 @@ function MappingPanel({
   };
 
   return (
-    <div className="bg-card border rounded-lg p-4 mb-4">
+    <div className="bg-card border rounded-none p-4 mb-4">
       <div className="flex items-center justify-between mb-3">
         <div className="font-semibold">{T("تعيين الحسابات لقائمة المتاجرة", "Map Accounts for Trading Account")}</div>
         <div className="flex gap-2">
