@@ -28,6 +28,12 @@ type Entry = {
   status: string;
   entry_type: string;
   total_amount: number;
+  reference: string | null;
+  lines_count: number;
+  total_debit: number;
+  total_credit: number;
+  accounts_label: string;
+  created_at: string | null;
 };
 type Account = { id: string; code: string; name: string; parent_id: string | null };
 type Line = { account_id: string; partner_id: string | null; debit: number; credit: number; description: string };
@@ -73,7 +79,7 @@ function JournalPage() {
     queryFn: async () => {
       let query = supabase
         .from("journal_entries")
-        .select("*, journal_lines(debit, credit, account_id)")
+        .select("*, journal_lines(debit, credit, account_id, accounts(code, name))")
         .eq("is_deleted", false)
         .eq("is_archived", false)
         .order("entry_no", { ascending: false });
@@ -96,6 +102,15 @@ function JournalPage() {
       description: e.description,
       status: e.status,
       entry_type: e.entry_type ?? "general",
+      reference: e.reference ?? null,
+      created_at: e.created_at ?? null,
+      lines_count: (e.journal_lines || []).length,
+      total_debit: (e.journal_lines || []).reduce((s: number, l: any) => s + Number(l.debit || 0), 0),
+      total_credit: (e.journal_lines || []).reduce((s: number, l: any) => s + Number(l.credit || 0), 0),
+      accounts_label: (e.journal_lines || [])
+        .map((l: any) => (l.accounts ? `${l.accounts.code} ${l.accounts.name}` : ""))
+        .filter(Boolean)
+        .join(" / "),
       total_amount: (e.journal_lines || []).reduce(
         (s: number, l: any) => s + Number(l.debit || 0),
         0
@@ -244,28 +259,33 @@ function JournalPage() {
         </div>
       </div>
 
-      <div className="bg-card border rounded-lg overflow-hidden">
+      <div className="bg-card border rounded-lg overflow-x-auto">
         <div className="flex border-b bg-muted/20">
           {tabBtn("all", t("journal.tab_all"), entries.length)}
           {tabBtn("draft", t("journal.tab_draft"), stats.draftCount)}
           {tabBtn("posted", t("journal.tab_posted"), stats.postedCount)}
         </div>
-        <table className="w-full text-sm">
+        <table className="w-full text-sm min-w-[1100px]">
           <thead className="bg-muted/50 text-xs">
             <tr>
               <th className="text-start px-4 py-3">{t("journal.no")}</th>
               <th className="text-start px-4 py-3">{t("journal.date")}</th>
+              <th className="text-start px-4 py-3">المرجع</th>
               <th className="text-start px-4 py-3">{t("journal.description")}</th>
+              <th className="text-start px-4 py-3">الحسابات</th>
               <th className="text-start px-4 py-3">{t("journal.type")}</th>
-              <th className="text-start px-4 py-3">{t("journal.amount")}</th>
+              <th className="text-start px-4 py-3">البنود</th>
+              <th className="text-start px-4 py-3">مدين</th>
+              <th className="text-start px-4 py-3">دائن</th>
               <th className="text-start px-4 py-3">{t("journal.status")}</th>
+              <th className="text-start px-4 py-3">تاريخ الإنشاء</th>
               <th className="px-4 py-3 w-28"></th>
             </tr>
           </thead>
           <tbody>
             {visibleEntries.length === 0 && (
               <tr>
-                <td colSpan={7} className="text-center py-10 text-muted-foreground">
+                <td colSpan={12} className="text-center py-10 text-muted-foreground">
                   {t("journal.empty")}
                 </td>
               </tr>
@@ -281,13 +301,19 @@ function JournalPage() {
                 >
                   <td className="px-4 py-2.5 num font-medium">#{e.entry_no}</td>
                   <td className="px-4 py-2.5 num">{e.entry_date}</td>
+                  <td className="px-4 py-2.5 num text-muted-foreground">{e.reference || "—"}</td>
                   <td className="px-4 py-2.5">{e.description || "—"}</td>
+                  <td className="px-4 py-2.5 max-w-[220px] truncate text-xs text-muted-foreground" title={e.accounts_label}>
+                    {e.accounts_label || "—"}
+                  </td>
                   <td className="px-4 py-2.5">
                     <span className="text-[11px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">
                       {entryTypeLabel(e.entry_type)}
                     </span>
                   </td>
-                  <td className="px-4 py-2.5 num font-medium">{fmt(e.total_amount)}</td>
+                  <td className="px-4 py-2.5 num text-muted-foreground">{e.lines_count}</td>
+                  <td className="px-4 py-2.5 num font-medium">{fmt(e.total_debit)}</td>
+                  <td className="px-4 py-2.5 num font-medium">{fmt(e.total_credit)}</td>
                   <td className="px-4 py-2.5">
                     <span
                       className={`text-[11px] px-2 py-0.5 rounded-full ${
@@ -304,6 +330,9 @@ function JournalPage() {
                           ? t("journal.status.cancelled")
                           : t("journal.status.draft")}
                     </span>
+                  </td>
+                  <td className="px-4 py-2.5 num text-xs text-muted-foreground">
+                    {e.created_at ? e.created_at.slice(0, 10) : "—"}
                   </td>
                   <td className="px-4 py-2.5" onClick={(ev) => ev.stopPropagation()}>
                     <div className="flex gap-1 justify-end">
