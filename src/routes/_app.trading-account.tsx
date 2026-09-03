@@ -65,8 +65,9 @@ function loadMapping(): Mapping | null {
 function TradingAccountPage() {
   const { lang } = useI18n();
   const isAr = lang === "ar";
-  const [from, setFrom] = useState<string>("");
-  const [to, setTo] = useState<string>("");
+  const dp = defaultPeriod();
+  const [from, setFrom] = useState<string>(dp.from);
+  const [to, setTo] = useState<string>(dp.to);
   const [showConfig, setShowConfig] = useState(false);
   const [override, setOverride] = useState<Mapping | null>(() => loadMapping());
 

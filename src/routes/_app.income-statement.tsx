@@ -7,7 +7,7 @@ import { DateRangeFields, ReportShell, StatementCard, BandRow, TotalRow, TreeHea
 import {
   buildAccountTree, pruneEmpty, totalOf, totalPrevOf, flattenTree, sortByCode, type AccountRow,
 } from "@/lib/account-tree";
-import { prevRange, periodLabel } from "@/lib/report-period";
+import { prevRange, periodLabel, defaultPeriod } from "@/lib/report-period";
 
 export const Route = createFileRoute("/_app/income-statement")({ component: IncomeStatementPage });
 
@@ -27,8 +27,9 @@ async function balancesFor(from: string, to: string) {
 }
 
 function IncomeStatementPage() {
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const dp = defaultPeriod();
+  const [from, setFrom] = useState(dp.from);
+  const [to, setTo] = useState(dp.to);
   const [showZero, setShowZero] = useState(false);
   const [compare, setCompare] = useState(false);
   const [expandSignal, setExpandSignal] = useState(0);

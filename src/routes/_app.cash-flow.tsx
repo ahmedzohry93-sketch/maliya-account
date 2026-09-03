@@ -37,8 +37,9 @@ function classify(otherAcc: Acc | undefined): "operating" | "investing" | "finan
 
 
 function CashFlowPage() {
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const dp = defaultPeriod();
+  const [from, setFrom] = useState(dp.from);
+  const [to, setTo] = useState(dp.to);
   const [view, setView] = useState<"report" | "detail">("report");
 
 

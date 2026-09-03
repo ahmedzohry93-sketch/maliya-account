@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_app/balance-sheet")({ component: Balance
 
 function BalanceSheetPage() {
   const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const [to, setTo] = useState(today());
 
   const { data } = useQuery({
     queryKey: ["balance-sheet", from, to],
