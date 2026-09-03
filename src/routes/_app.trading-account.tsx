@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section as ExSection } from "@/lib/export-utils";
 import { useI18n } from "@/lib/i18n";
 import { DateRangeFields, ReportShell } from "@/components/report-shell";
+import { defaultPeriod } from "@/lib/report-period";
 
 export const Route = createFileRoute("/_app/trading-account")({ component: TradingAccountPage });
 

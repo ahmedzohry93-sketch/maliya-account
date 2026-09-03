@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section } from "@/lib/export-utils";
 import { DateRangeFields, ReportShell, StatementCard, BandRow, LineRow, TotalRow } from "@/components/report-shell";
+import { defaultPeriod } from "@/lib/report-period";
 
 
 export const Route = createFileRoute("/_app/cash-flow")({ component: CashFlowPage });

@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section } from "@/lib/export-utils";
 import { DateRangeFields, ReportShell, StatementCard, BandRow, LineRow, TotalRow, AccountTreeRows } from "@/components/report-shell";
 import { buildAccountTree, pruneEmpty, totalOf, flattenTree, type AccNode, type AccountRow } from "@/lib/account-tree";
+import { today } from "@/lib/report-period";
 
 export const Route = createFileRoute("/_app/balance-sheet")({ component: BalanceSheetPage });
 
