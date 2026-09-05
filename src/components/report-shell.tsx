@@ -226,7 +226,8 @@ export function ReportShell({
           </div>
         )}
 
-        {children}
+        <ReportSheet title={title} subtitle={subtitle}>{children}</ReportSheet>
+
       </div>
     </div>
   );
