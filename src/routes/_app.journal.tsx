@@ -47,25 +47,6 @@ function JournalPage() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<TabKey>("all");
 
-  const { data: balances } = useQuery({
-    queryKey: ["journal-balances"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("journal_lines")
-        .select("debit, credit, accounts!inner(type), journal_entries!inner(status)")
-        .eq("journal_entries.status", "posted");
-      const tot: Record<string, number> = { asset: 0, liability: 0, equity: 0 };
-      (data ?? []).forEach((l: any) => {
-        const type = l.accounts?.type;
-        const d = Number(l.debit || 0), c = Number(l.credit || 0);
-        if (type === "asset") tot.asset += d - c;
-        else if (type === "liability") tot.liability += c - d;
-        else if (type === "equity") tot.equity += c - d;
-      });
-      return tot;
-    },
-  });
-
   const { account: filterAccount, from: filterFrom, to: filterTo } = Route.useSearch();
 
   const { data: rawEntries = [] } = useQuery({
@@ -129,6 +110,11 @@ function JournalPage() {
     return entries;
   }, [entries, tab]);
 
+  const totals = useMemo(() => ({
+    debit: visibleEntries.reduce((s2, e) => s2 + e.total_debit, 0),
+    credit: visibleEntries.reduce((s2, e) => s2 + e.total_credit, 0),
+  }), [visibleEntries]);
+
   const entryTypeLabel = (type: string) => t(`entry_type.${type}`);
 
   const tabBtn = (key: TabKey, label: string, count: number) => (
@@ -157,50 +143,33 @@ function JournalPage() {
         {permissions.has("journal.create") && (
           <button
             onClick={() => navigate({ to: "/journal-entry/$id", params: { id: "new" } })}
-            className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:opacity-90"
+            className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-none text-sm font-medium hover:opacity-90"
           >
             <Plus className="w-4 h-4" /> {t("journal.new")}
           </button>
         )}
       </header>
 
-      {/* Balance sheet snapshot */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-        <div className="rounded-xl border bg-gradient-to-br from-primary/15 to-primary/5 p-4">
-          <div className="text-xs text-muted-foreground font-medium">{t("dashboard.assets")}</div>
-          <div className="text-2xl font-bold num mt-1">{fmt(balances?.asset ?? 0)}</div>
-        </div>
-        <div className="rounded-xl border bg-gradient-to-br from-destructive/15 to-destructive/5 p-4">
-          <div className="text-xs text-muted-foreground font-medium">{t("dashboard.liabilities")}</div>
-          <div className="text-2xl font-bold num mt-1">{fmt(balances?.liability ?? 0)}</div>
-        </div>
-        <div className="rounded-xl border bg-gradient-to-br from-accent/25 to-accent/5 p-4">
-          <div className="text-xs text-muted-foreground font-medium">{t("dashboard.equity")}</div>
-          <div className="text-2xl font-bold num mt-1">{fmt(balances?.equity ?? 0)}</div>
-        </div>
-      </div>
-
-
-      <div className="bg-card border rounded-lg overflow-x-auto">
+      <div className="rpt-sheet overflow-x-auto">
         <div className="flex border-b bg-muted/20">
           {tabBtn("all", t("journal.tab_all"), entries.length)}
           {tabBtn("draft", t("journal.tab_draft"), stats.draftCount)}
           {tabBtn("posted", t("journal.tab_posted"), stats.postedCount)}
         </div>
-        <table className="w-full text-sm min-w-[1100px]">
-          <thead className="bg-muted/50 text-xs">
+        <table className="w-full min-w-[1100px]">
+          <thead>
             <tr>
-              <th className="text-start px-4 py-3">{t("journal.no")}</th>
-              <th className="text-start px-4 py-3">{t("journal.date")}</th>
-              <th className="text-start px-4 py-3">المرجع</th>
-              <th className="text-start px-4 py-3">{t("journal.description")}</th>
-              <th className="text-start px-4 py-3">الحسابات</th>
-              <th className="text-start px-4 py-3">{t("journal.type")}</th>
-              <th className="text-start px-4 py-3">البنود</th>
-              <th className="text-start px-4 py-3">مدين</th>
-              <th className="text-start px-4 py-3">دائن</th>
-              <th className="text-start px-4 py-3">{t("journal.status")}</th>
-              <th className="text-start px-4 py-3">تاريخ الإنشاء</th>
+              <th className="text-start px-2 py-1.5">{t("journal.no")}</th>
+              <th className="text-start px-2 py-1.5">{t("journal.date")}</th>
+              <th className="text-start px-2 py-1.5">المرجع</th>
+              <th className="text-start px-2 py-1.5">{t("journal.description")}</th>
+              <th className="text-start px-2 py-1.5">الحسابات</th>
+              <th className="text-start px-2 py-1.5">{t("journal.type")}</th>
+              <th className="text-start px-2 py-1.5">البنود</th>
+              <th className="text-start px-2 py-1.5">مدين</th>
+              <th className="text-start px-2 py-1.5">دائن</th>
+              <th className="text-start px-2 py-1.5">{t("journal.status")}</th>
+              <th className="text-start px-2 py-1.5">تاريخ الإنشاء</th>
               <th className="px-4 py-3 w-28"></th>
             </tr>
           </thead>
@@ -221,22 +190,22 @@ function JournalPage() {
                   className="border-t hover:bg-muted/30 cursor-pointer"
                   onClick={() => navigate({ to: "/journal-entry/$id", params: { id: e.id } })}
                 >
-                  <td className="px-4 py-2.5 num font-medium">#{e.entry_no}</td>
-                  <td className="px-4 py-2.5 num">{e.entry_date}</td>
-                  <td className="px-4 py-2.5 num text-muted-foreground">{e.reference || "—"}</td>
-                  <td className="px-4 py-2.5">{e.description || "—"}</td>
-                  <td className="px-4 py-2.5 max-w-[220px] truncate text-xs text-muted-foreground" title={e.accounts_label}>
+                  <td className="px-2 py-1.5 num font-medium">#{e.entry_no}</td>
+                  <td className="px-2 py-1.5 num">{e.entry_date}</td>
+                  <td className="px-2 py-1.5 num text-muted-foreground">{e.reference || "—"}</td>
+                  <td className="px-2 py-1.5">{e.description || "—"}</td>
+                  <td className="px-2 py-1.5 max-w-[220px] truncate text-xs text-muted-foreground" title={e.accounts_label}>
                     {e.accounts_label || "—"}
                   </td>
-                  <td className="px-4 py-2.5">
+                  <td className="px-2 py-1.5">
                     <span className="text-[11px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">
                       {entryTypeLabel(e.entry_type)}
                     </span>
                   </td>
-                  <td className="px-4 py-2.5 num text-muted-foreground">{e.lines_count}</td>
-                  <td className="px-4 py-2.5 num font-medium">{fmt(e.total_debit)}</td>
-                  <td className="px-4 py-2.5 num font-medium">{fmt(e.total_credit)}</td>
-                  <td className="px-4 py-2.5">
+                  <td className="px-2 py-1.5 num text-muted-foreground">{e.lines_count}</td>
+                  <td className="px-2 py-1.5 num font-medium">{fmt(e.total_debit)}</td>
+                  <td className="px-2 py-1.5 num font-medium">{fmt(e.total_credit)}</td>
+                  <td className="px-2 py-1.5">
                     <span
                       className={`text-[11px] px-2 py-0.5 rounded-full ${
                         isPosted
@@ -253,10 +222,10 @@ function JournalPage() {
                           : t("journal.status.draft")}
                     </span>
                   </td>
-                  <td className="px-4 py-2.5 num text-xs text-muted-foreground">
+                  <td className="px-2 py-1.5 num text-xs text-muted-foreground">
                     {e.created_at ? e.created_at.slice(0, 10) : "—"}
                   </td>
-                  <td className="px-4 py-2.5" onClick={(ev) => ev.stopPropagation()}>
+                  <td className="px-2 py-1.5" onClick={(ev) => ev.stopPropagation()}>
                     <div className="flex gap-1 justify-end">
                       <button
                         onClick={() => navigate({ to: "/journal-entry/$id", params: { id: e.id } })}
@@ -271,6 +240,16 @@ function JournalPage() {
               );
             })}
           </tbody>
+          {visibleEntries.length > 0 && (
+            <tfoot>
+              <tr>
+                <td colSpan={7} className="px-2 py-1.5">الإجمالي</td>
+                <td className="px-2 py-1.5 num">{fmt(totals.debit)}</td>
+                <td className="px-2 py-1.5 num">{fmt(totals.credit)}</td>
+                <td colSpan={3}></td>
+              </tr>
+            </tfoot>
+          )}
         </table>
       </div>
 
