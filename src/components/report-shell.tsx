@@ -5,6 +5,7 @@ import { Filter, Download, FileSpreadsheet, FileText, ChevronDown, ChevronLeft, 
 import { cn } from "@/lib/utils";
 import type { AccNode } from "@/lib/account-tree";
 import { pctChange } from "@/lib/account-tree";
+import { useCompanySettings } from "@/lib/company";
 
 
 export function money(n: number) {
@@ -352,15 +353,15 @@ export function RowMenu({
 /** A statement card: rows of label/value with blue section bands and total lines. */
 export function StatementCard({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cn("rounded-none border bg-card overflow-hidden shadow-sm", className)}>
-      <div className="divide-y divide-border">{children}</div>
+    <div className={cn("rpt-block overflow-hidden", className)}>
+      <div>{children}</div>
     </div>
   );
 }
 
 export function BandRow({ label }: { label: string }) {
   return (
-    <div className="bg-primary/8 px-3 md:px-4 py-2 text-[12px] md:text-[13px] font-bold text-primary">{label}</div>
+    <div className="rpt-band">{label}</div>
   );
 }
 
@@ -368,7 +369,7 @@ export function BandRow({ label }: { label: string }) {
 export function TreeHeadRow({ compare }: { compare?: boolean }) {
   if (!compare) return null;
   return (
-    <div className="flex items-center gap-2 px-3 md:px-4 py-1.5 text-[10px] md:text-[11px] font-semibold text-muted-foreground bg-muted/40">
+    <div className="flex items-center gap-2 px-2 py-1 text-[10px] font-bold bg-[#fafafa] border-b border-[#8a8a8a]">
       <span className="w-3.5 shrink-0" />
       <span className="w-6 shrink-0" />
 
@@ -399,7 +400,7 @@ export function LineRow({
   const v = typeof value === "number" ? money(value) : value;
   const neg = typeof value === "number" && value < 0;
   return (
-    <div className={cn("flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 text-[12px] md:text-[13px]", muted && "text-muted-foreground")}>
+    <div className={cn("rpt-row flex items-center gap-2 md:gap-3 px-2 py-1", muted && "text-muted-foreground")}>
       {code && <span className="num text-[10px] md:text-[11px] text-muted-foreground w-10 md:w-12 shrink-0">{code}</span>}
       <span className={cn("flex-1 min-w-0 truncate", indent && "ps-3 md:ps-4")}>{label}</span>
       <span
@@ -434,8 +435,8 @@ export function TotalRow({
   return (
     <div
       className={cn(
-        "flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2.5 text-[12px] md:text-[13px] font-bold border-t-2 border-border",
-        strong ? "bg-primary/10 text-primary" : "bg-muted/50",
+        "flex items-center gap-2 md:gap-3 px-2 py-1.5",
+        strong ? "rpt-grand" : "rpt-subtotal",
       )}
     >
       <span className="flex-1 min-w-0 truncate">{label}</span>
@@ -464,10 +465,10 @@ export function TotalRow({
 /** Classic bordered data table used by detail views (trial balance, cash flow…). */
 export function ReportTable({ head, children }: { head: ReactNode; children: ReactNode }) {
   return (
-    <div className="rounded-none border bg-card overflow-hidden shadow-sm">
+    <div className="rpt-block overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full text-[12px] md:text-[13px] min-w-[640px]">
-          <thead className="bg-primary/8 text-[11px] font-bold text-primary">{head}</thead>
+        <table className="w-full min-w-[640px]">
+          <thead>{head}</thead>
           {children}
         </table>
       </div>
@@ -526,8 +527,8 @@ function AccountTreeRow({
         role={hasKids ? "button" : undefined}
         onClick={hasKids ? () => setOpen((o) => !o) : undefined}
         className={cn(
-          "flex items-center gap-2 px-3 md:px-4 py-2 text-[12px] md:text-[13px]",
-          hasKids && "cursor-pointer hover:bg-muted/50",
+          "rpt-row flex items-center gap-2 px-2 py-1",
+          hasKids && "cursor-pointer hover:bg-black/5",
           depth === 0 && "font-bold",
           depth === 1 && "font-semibold",
         )}
