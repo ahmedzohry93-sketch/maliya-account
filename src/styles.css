@@ -171,3 +171,97 @@
 }
 
 
+
+/* ===== Classic printed-report look (applied to all financial reports) ===== */
+.rpt-sheet {
+  background: #fff;
+  color: #1a1a1a;
+  border: 1px solid #8a8a8a;
+  padding: 14px 14px 10px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
+  font-family: Tahoma, Arial, "Segoe UI", sans-serif;
+}
+@media (min-width: 768px) {
+  .rpt-sheet { padding: 22px 20px 14px; }
+}
+.rpt-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  border-bottom: 2px solid #1a1a1a;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+.rpt-company-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.rpt-company { font-size: 11px; line-height: 1.5; }
+.rpt-title-block { text-align: left; font-size: 11px; line-height: 1.6; }
+.rpt-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.rpt-meta {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-size: 11px;
+  border-bottom: 1px solid #8a8a8a;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}
+.rpt-meta span { color: #555; }
+.rpt-foot {
+  margin-top: 10px;
+  padding-top: 6px;
+  border-top: 1px solid #c9c9c9;
+  font-size: 10px;
+  color: #555;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Tables and statement rows inside a classic sheet */
+.rpt-sheet table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.rpt-sheet th,
+.rpt-sheet td { border: 1px solid #c9c9c9; padding: 3px 5px; white-space: nowrap; }
+.rpt-sheet th {
+  background: #fafafa;
+  border-bottom: 1.5px solid #8a8a8a;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+.rpt-sheet tbody tr:nth-child(even) { background: #f6f6f6; }
+.rpt-sheet tfoot td {
+  background: #eee;
+  font-weight: 700;
+  font-size: 12px;
+  border-top: 2px solid #1a1a1a;
+  border-bottom: 2px double #1a1a1a;
+}
+
+.rpt-block { border: 1px solid #c9c9c9; }
+.rpt-band {
+  background: #e2e2e2;
+  font-weight: 700;
+  font-size: 11.5px;
+  color: #1a1a1a;
+  border-top: 1.5px solid #8a8a8a;
+  border-bottom: 1px solid #8a8a8a;
+  padding: 3px 6px;
+}
+.rpt-row { font-size: 11px; border-bottom: 1px solid #e4e4e4; }
+.rpt-row:nth-child(even) { background: #f6f6f6; }
+.rpt-subtotal {
+  background: #eee;
+  font-weight: 700;
+  font-size: 11.5px;
+  border-top: 1px solid #8a8a8a;
+}
+.rpt-grand {
+  background: #eee;
+  font-weight: 700;
+  font-size: 12px;
+  border-top: 2px solid #1a1a1a;
+  border-bottom: 2px double #1a1a1a;
+}
+.rpt-neg { color: #b02a2a; }
