@@ -233,8 +233,41 @@ export function ReportShell({
   );
 }
 
+/** Classic printed sheet: company header, meta strip, body and footer note. */
+export function ReportSheet({ title, subtitle, children }: { title: string; subtitle?: ReactNode; children: ReactNode }) {
+  const { data: company } = useCompanySettings();
+  const printed = new Date().toLocaleDateString("en-GB");
+  return (
+    <div className="rpt-sheet">
+      <div className="rpt-head">
+        <div className="rpt-company">
+          <div className="rpt-company-name">{company?.name || "الشركة"}</div>
+          {company?.address && <>{company.address}<br /></>}
+          {company?.tax_number && <>الرقم الضريبي: <span className="num">{company.tax_number}</span></>}
+        </div>
+        <div className="rpt-title-block">
+          <div className="rpt-title">{title}</div>
+          <span className="num">تاريخ الطباعة: {printed}</span>
+        </div>
+      </div>
+      <div className="rpt-meta">
+        <div><span>الفترة: </span><b className="num">{subtitle}</b></div>
+        <div><span>العملة: </span><b>{company?.currency || "د.ل"}</b></div>
+      </div>
+
+      <div className="space-y-3">{children}</div>
+
+      <div className="rpt-foot">
+        <span>{company?.footer_note || "تم إعداد هذا التقرير آليًا ولا يحتاج إلى توقيع"}</span>
+        <span>القيود المرحّلة فقط</span>
+      </div>
+    </div>
+  );
+}
+
 /** Small ⋮ menu shown next to an account row: jump to ledger, journal or account data,
  *  carrying the account and the selected period. */
+
 export function RowMenu({
   accountId,
   code,
