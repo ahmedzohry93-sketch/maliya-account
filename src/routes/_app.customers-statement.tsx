@@ -115,37 +115,18 @@ export function PartnerStatement({ kind }: { kind: "customer" | "supplier" }) {
   };
 
   return (
-    <div className="p-6 md:p-8 max-w-6xl mx-auto">
-      <header className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">{title}</h1>
-          <p className="text-sm text-muted-foreground mt-1"><span className="num">{partners.length}</span> طرف</p>
-        </div>
-        <div className="flex gap-2">
-          <button onClick={() => exportToExcel(kind + "s-statement", title, sections(), dateMeta)} className="flex items-center gap-1.5 px-3 py-2 text-sm border rounded-md hover:bg-muted">
-            <FileSpreadsheet className="w-4 h-4" /> Excel (الكل)
-          </button>
-          <button onClick={() => exportToPDF(kind + "s-statement", title, sections(), dateMeta)} className="flex items-center gap-1.5 px-3 py-2 text-sm border rounded-md hover:bg-muted">
-            <FileText className="w-4 h-4" /> PDF (الكل)
-          </button>
-        </div>
-      </header>
-
-      <div className="bg-card border rounded-lg p-4 mb-6 grid md:grid-cols-2 gap-3">
-        <div>
-          <label className="text-xs font-medium block mb-1">من تاريخ</label>
-          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="w-full px-3 py-2 border rounded-md bg-background" />
-        </div>
-        <div>
-          <label className="text-xs font-medium block mb-1">إلى تاريخ</label>
-          <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="w-full px-3 py-2 border rounded-md bg-background" />
-        </div>
-      </div>
-
-      <div className="bg-card border rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/50 text-xs">
+    <ReportShell
+      title={title}
+      subtitle={periodLabel(from, to)}
+      onExcel={() => exportToExcel(kind + "s-statement", title, sections(), dateMeta)}
+      onPdf={() => exportToPDF(kind + "s-statement", title, sections(), dateMeta)}
+      filters={<DateRangeFields from={from} to={to} onFrom={setFrom} onTo={setTo} />}
+    >
+      <div className="rpt-block overflow-x-auto">
+        <table className="w-full min-w-[640px]">
+          <thead>
             <tr>
+
               <th className="w-8"></th>
               <th className="text-start px-4 py-3">الكود</th>
               <th className="text-start px-4 py-3">الاسم</th>
