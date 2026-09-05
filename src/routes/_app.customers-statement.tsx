@@ -5,6 +5,8 @@ import { useMemo, useState } from "react";
 import { FileSpreadsheet, FileText, ChevronDown, ChevronLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section } from "@/lib/export-utils";
+import { ReportShell, DateRangeFields } from "@/components/report-shell";
+import { defaultPeriod, periodLabel } from "@/lib/report-period";
 
 export const Route = createFileRoute("/_app/customers-statement")({ component: Page });
 
@@ -16,8 +18,9 @@ function Page() {
 }
 
 export function PartnerStatement({ kind }: { kind: "customer" | "supplier" }) {
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const dp = defaultPeriod();
+  const [from, setFrom] = useState(dp.from);
+  const [to, setTo] = useState(dp.to);
   const [openId, setOpenId] = useState<string | null>(null);
 
   const { data: partners = [] } = useQuery({
@@ -147,11 +150,11 @@ export function PartnerStatement({ kind }: { kind: "customer" | "supplier" }) {
                 <Fragment key={g.partner.id}>
                   <tr className="border-t hover:bg-muted/30">
                     <td className="px-2 text-muted-foreground cursor-pointer" onClick={toggle}>{open ? <ChevronDown className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}</td>
-                    <td className="px-4 py-2.5 num text-muted-foreground cursor-pointer" onClick={toggle}>{g.partner.code || "—"}</td>
-                    <td className="px-4 py-2.5 font-medium cursor-pointer" onClick={toggle}>{g.partner.name}</td>
-                    <td className="px-4 py-2.5 num">{fmt(g.totDebit)}</td>
-                    <td className="px-4 py-2.5 num">{fmt(g.totCredit)}</td>
-                    <td className={`px-4 py-2.5 num font-semibold ${g.balance > 0 ? "text-emerald-600" : g.balance < 0 ? "text-red-600" : ""}`}>{fmt(g.balance)}</td>
+                    <td className="px-3 py-1.5 num text-muted-foreground cursor-pointer" onClick={toggle}>{g.partner.code || "—"}</td>
+                    <td className="px-3 py-1.5 font-medium cursor-pointer" onClick={toggle}>{g.partner.name}</td>
+                    <td className="px-3 py-1.5 num">{fmt(g.totDebit)}</td>
+                    <td className="px-3 py-1.5 num">{fmt(g.totCredit)}</td>
+                    <td className={`px-3 py-1.5 num font-semibold ${g.balance > 0 ? "text-emerald-600" : g.balance < 0 ? "text-red-600" : ""}`}>{fmt(g.balance)}</td>
                     <td className="px-2 py-2">
                       <div className="flex gap-1">
                         <button onClick={() => exportPartner(g, "excel")} disabled={g.rows.length === 0} title="Excel" className="p-1.5 rounded hover:bg-muted disabled:opacity-30 text-emerald-700">
@@ -204,7 +207,7 @@ export function PartnerStatement({ kind }: { kind: "customer" | "supplier" }) {
             <tfoot className="bg-muted/40 font-bold border-t-2">
               <tr>
                 <td></td>
-                <td colSpan={2} className="px-4 py-3">إجمالي {kind === "customer" ? "العملاء" : "الموردين"}</td>
+                <td colSpan={2} className="px-3 py-2">إجمالي {kind === "customer" ? "العملاء" : "الموردين"}</td>
                 <td className="px-4 py-3 num">{fmt(grandDebit)}</td>
                 <td className="px-4 py-3 num">{fmt(grandCredit)}</td>
                 <td className={`px-4 py-3 num ${grandBalance > 0 ? "text-emerald-600" : grandBalance < 0 ? "text-red-600" : ""}`}>{fmt(grandBalance)}</td>
@@ -214,6 +217,6 @@ export function PartnerStatement({ kind }: { kind: "customer" | "supplier" }) {
           )}
         </table>
       </div>
-    </div>
+    </ReportShell>
   );
 }
