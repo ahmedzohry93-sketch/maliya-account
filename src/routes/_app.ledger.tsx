@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF } from "@/lib/export-utils";
 import { ReportShell, DateRangeFields, money } from "@/components/report-shell";
 import { defaultPeriod, dayBefore, periodLabel } from "@/lib/report-period";
+import { isRootAccount } from "@/lib/account-tree";
 
 type LedgerSearch = { account?: string; from?: string; to?: string };
 
@@ -27,8 +28,8 @@ function LedgerPage() {
   const { data: accounts = [] } = useQuery({
     queryKey: ["accounts-list"],
     queryFn: async () => {
-      const { data } = await supabase.from("accounts").select("id, code, name").order("code");
-      return data ?? [];
+      const { data } = await supabase.from("accounts").select("id, code, name, parent_id").order("code");
+      return (data ?? []).filter((account) => !isRootAccount(account));
     },
   });
 
