@@ -73,7 +73,7 @@ function TrialBalancePage() {
 
   const balanced = Math.abs(totals.dr - totals.cr) < 0.01;
 
-  const sections = useMemo(() => {
+  const accountSections = useMemo(() => {
     const labels: Record<string, string> = {
       asset: "الأصول",
       liability: "الالتزامات",
@@ -95,7 +95,7 @@ function TrialBalancePage() {
   }, [data]);
 
   const headers = ["الكود", "اسم الحساب", "الرصيد الافتتاحي", "مدين", "دائن", "رصيد مدين", "رصيد دائن"];
-  const exportRows = (): (string | number)[][] => sections.flatMap((section) => [
+  const exportRows = (): (string | number)[][] => accountSections.flatMap((section) => [
     ["", section.label, "", "", "", "", ""],
     ...section.rows.map((r: any) => [
       r.code, r.name, r.opening, r.debit, r.credit,
@@ -141,7 +141,7 @@ function TrialBalancePage() {
           {data.length === 0 && (
             <tr><td colSpan={7} className="text-center py-10 text-muted-foreground">لا توجد بيانات (اعتمد قيوداً أولاً)</td></tr>
           )}
-          {sections.map((section) => section.rows.length > 0 && (
+          {accountSections.map((section) => section.rows.length > 0 && (
             <Fragment key={section.type}>
               <tr className="rpt-section-head">
                 <td colSpan={7}>{section.label}</td>
