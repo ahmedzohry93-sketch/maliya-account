@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
-import { Plus, Eye } from "lucide-react";
+import { Plus, Eye, Printer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/lib/i18n";
@@ -54,7 +54,7 @@ function JournalPage() {
     queryFn: async () => {
       let query = supabase
         .from("journal_entries")
-        .select("*, journal_lines(debit, credit, account_id, accounts(code, name))")
+        .select("*, journal_lines(debit, credit, account_id, accounts(code, name, parent_id))")
         .eq("is_deleted", false)
         .eq("is_archived", false)
         .order("entry_no", { ascending: false });
@@ -83,7 +83,7 @@ function JournalPage() {
       total_debit: (e.journal_lines || []).reduce((s: number, l: any) => s + Number(l.debit || 0), 0),
       total_credit: (e.journal_lines || []).reduce((s: number, l: any) => s + Number(l.credit || 0), 0),
       accounts_label: (e.journal_lines || [])
-        .map((l: any) => (l.accounts ? `${l.accounts.code} ${l.accounts.name}` : ""))
+        .map((l: any) => (l.accounts && l.accounts.parent_id ? `${l.accounts.code} ${l.accounts.name}` : ""))
         .filter(Boolean)
         .join(" / "),
       total_amount: (e.journal_lines || []).reduce(
@@ -140,14 +140,19 @@ function JournalPage() {
             {entries.length} {t("journal.count")}
           </p>
         </div>
-        {permissions.has("journal.create") && (
-          <button
-            onClick={() => navigate({ to: "/journal-entry/$id", params: { id: "new" } })}
-            className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-none text-sm font-medium hover:opacity-90"
-          >
-            <Plus className="w-4 h-4" /> {t("journal.new")}
+        <div className="flex items-center gap-2 print:hidden">
+          <button onClick={() => window.print()} className="h-9 w-9 grid place-items-center border rounded-none hover:bg-muted" title="طباعة">
+            <Printer className="w-4 h-4" />
           </button>
-        )}
+          {permissions.has("journal.create") && (
+            <button
+              onClick={() => navigate({ to: "/journal-entry/$id", params: { id: "new" } })}
+              className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-none text-sm font-medium hover:opacity-90"
+            >
+              <Plus className="w-4 h-4" /> {t("journal.new")}
+            </button>
+          )}
+        </div>
       </header>
 
       <div className="rpt-sheet overflow-x-auto">

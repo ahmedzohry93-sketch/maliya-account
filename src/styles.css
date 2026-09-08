@@ -180,6 +180,8 @@
   padding: 14px 14px 10px;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
   font-family: Tahoma, Arial, "Segoe UI", sans-serif;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 @media (min-width: 768px) {
   .rpt-sheet { padding: 22px 20px 14px; }
@@ -265,3 +267,18 @@
   border-bottom: 2px double #1a1a1a;
 }
 .rpt-neg { color: #b02a2a; }
+
+/* Print the same report sheet shown on screen, without rebuilding or restyling it. */
+@page { margin: 8mm; }
+@media print {
+  body * { visibility: hidden; }
+  .rpt-sheet,
+  .rpt-sheet * { visibility: visible; }
+  .rpt-sheet {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+  }
+  .rpt-sheet .overflow-x-auto { overflow: visible; }
+  .rpt-sheet table { min-width: 0 !important; }
+}

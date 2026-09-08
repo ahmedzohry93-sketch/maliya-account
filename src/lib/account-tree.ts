@@ -8,6 +8,16 @@ export type AccountRow = {
 
 export type AccNode = AccountRow & { children: AccNode[]; amount: number; prev: number };
 
+/** The five top-level accounting classes are presentation headings, never balance rows. */
+export function isRootAccount(account: Pick<AccountRow, "code" | "parent_id">): boolean {
+  return account.parent_id === null && /^[1-5]$/.test(account.code);
+}
+
+/** Removes the class heading itself while keeping its children and rolled-up total intact. */
+export function reportTreeRows(nodes: AccNode[]): AccNode[] {
+  return nodes.flatMap((node) => (isRootAccount(node) ? node.children : [node]));
+}
+
 /** Accounting code order: shorter codes first, then numeric value (1, 11, 12, 111, 1111…). */
 export function compareCode(a: string, b: string): number {
   const ca = String(a ?? ""), cb = String(b ?? "");

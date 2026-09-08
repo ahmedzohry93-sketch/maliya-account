@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section } from "@/lib/export-utils";
 import { DateRangeFields, ReportShell, StatementCard, BandRow, LineRow, TotalRow, AccountTreeRows } from "@/components/report-shell";
-import { buildAccountTree, pruneEmpty, totalOf, flattenTree, type AccNode, type AccountRow } from "@/lib/account-tree";
+import { buildAccountTree, pruneEmpty, totalOf, flattenTree, isRootAccount, type AccNode, type AccountRow } from "@/lib/account-tree";
 import { today } from "@/lib/report-period";
 
 export const Route = createFileRoute("/_app/balance-sheet")({ component: BalanceSheetPage });
@@ -67,7 +67,9 @@ function BalanceSheetPage() {
   const totLiabEquity = totLiabs + totEquityWithProfit;
 
   const rowsOf = (nodes: AccNode[]) =>
-    flattenTree(nodes).map(({ node, depth }) => [node.code, `${"— ".repeat(depth)}${node.name}`, node.amount]);
+    flattenTree(nodes)
+      .filter(({ node }) => !isRootAccount(node))
+      .map(({ node, depth }) => [node.code, `${"— ".repeat(Math.max(0, depth - 1))}${node.name}`, node.amount]);
 
   const sections = (): Section[] => {
     const eqRows = rowsOf(equity);
