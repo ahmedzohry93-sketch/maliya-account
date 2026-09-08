@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { Fragment } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF } from "@/lib/export-utils";
 import { DateRangeFields, ReportShell, ReportTable, RowMenu, money } from "@/components/report-shell";
 import { defaultPeriod, dayBefore, periodLabel } from "@/lib/report-period";
+import { isRootAccount } from "@/lib/account-tree";
 
 
 export const Route = createFileRoute("/_app/trial-balance")({ component: TrialBalancePage });
@@ -17,7 +19,7 @@ function TrialBalancePage() {
   const { data = [] } = useQuery({
     queryKey: ["trial-balance", from, to],
     queryFn: async () => {
-      const { data: accounts } = await supabase.from("accounts").select("id, code, name, type").order("code");
+      const { data: accounts } = await supabase.from("accounts").select("id, code, name, type, parent_id").order("code");
 
       // Movement inside the selected period
       let q = supabase
@@ -50,7 +52,7 @@ function TrialBalancePage() {
         map.set(l.account_id, cur);
       });
 
-      return (accounts ?? []).map((a) => {
+      return (accounts ?? []).filter((a) => !isRootAccount(a)).map((a) => {
         const v = map.get(a.id) ?? { debit: 0, credit: 0 };
         const opening = openMap.get(a.id) ?? 0;
         const balance = opening + v.debit - v.credit;
@@ -71,10 +73,35 @@ function TrialBalancePage() {
 
   const balanced = Math.abs(totals.dr - totals.cr) < 0.01;
 
+  const accountSections = useMemo(() => {
+    const labels: Record<string, string> = {
+      asset: "الأصول",
+      liability: "الالتزامات",
+      equity: "حقوق الملكية",
+      revenue: "الإيرادات",
+      expense: "المصروفات",
+    };
+    return ["asset", "liability", "equity", "revenue", "expense"].map((type) => {
+      const rows = data.filter((row: any) => row.type === type);
+      const subtotal = rows.reduce((acc: any, row: any) => ({
+        opening: acc.opening + row.opening,
+        debit: acc.debit + row.debit,
+        credit: acc.credit + row.credit,
+        dr: acc.dr + (row.balance > 0 ? row.balance : 0),
+        cr: acc.cr + (row.balance < 0 ? -row.balance : 0),
+      }), { opening: 0, debit: 0, credit: 0, dr: 0, cr: 0 });
+      return { type, label: labels[type], rows, subtotal };
+    });
+  }, [data]);
+
   const headers = ["الكود", "اسم الحساب", "الرصيد الافتتاحي", "مدين", "دائن", "رصيد مدين", "رصيد دائن"];
-  const exportRows = (): (string | number)[][] => data.map((r: any) => [
-    r.code, r.name, r.opening, r.debit, r.credit,
-    r.balance > 0 ? r.balance : "", r.balance < 0 ? -r.balance : "",
+  const exportRows = (): (string | number)[][] => accountSections.flatMap((section) => [
+    ["", section.label, "", "", "", "", ""],
+    ...section.rows.map((r: any) => [
+      r.code, r.name, r.opening, r.debit, r.credit,
+      r.balance > 0 ? r.balance : "", r.balance < 0 ? -r.balance : "",
+    ]),
+    ["", `إجمالي ${section.label}`, section.subtotal.opening, section.subtotal.debit, section.subtotal.credit, section.subtotal.dr, section.subtotal.cr],
   ]);
   const totalsRow: (string | number)[] = ["", "الإجمالي", totals.opening, totals.debit, totals.credit, totals.dr, totals.cr];
   const sections = () => [{ headers, rows: exportRows(), totals: totalsRow }];
@@ -114,21 +141,36 @@ function TrialBalancePage() {
           {data.length === 0 && (
             <tr><td colSpan={7} className="text-center py-10 text-muted-foreground">لا توجد بيانات (اعتمد قيوداً أولاً)</td></tr>
           )}
-          {data.map((r: any) => (
-            <tr key={r.id} className="hover:bg-muted/40">
-              <td className="px-3 py-2 num text-muted-foreground">{r.code}</td>
-              <td className="px-3 py-2">
-                <span className="inline-flex items-center gap-1">
-                  <RowMenu accountId={r.id} code={r.code} from={from} to={to} />
-                  {r.name}
-                </span>
-              </td>
-              <td className="px-3 py-2 num">{r.opening ? money(r.opening) : "-"}</td>
-              <td className="px-3 py-2 num">{r.debit ? money(r.debit) : "-"}</td>
-              <td className="px-3 py-2 num">{r.credit ? money(r.credit) : "-"}</td>
-              <td className="px-3 py-2 num">{r.balance > 0 ? money(r.balance) : "-"}</td>
-              <td className="px-3 py-2 num">{r.balance < 0 ? money(-r.balance) : "-"}</td>
-            </tr>
+          {accountSections.map((section) => section.rows.length > 0 && (
+            <Fragment key={section.type}>
+              <tr className="rpt-section-head">
+                <td colSpan={7}>{section.label}</td>
+              </tr>
+              {section.rows.map((r: any) => (
+                <tr key={r.id} className="hover:bg-muted/40">
+                  <td className="px-3 py-2 num text-muted-foreground">{r.code}</td>
+                  <td className="px-3 py-2">
+                    <span className="inline-flex items-center gap-1">
+                      <RowMenu accountId={r.id} code={r.code} from={from} to={to} />
+                      {r.name}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2 num">{r.opening ? money(r.opening) : "-"}</td>
+                  <td className="px-3 py-2 num">{r.debit ? money(r.debit) : "-"}</td>
+                  <td className="px-3 py-2 num">{r.credit ? money(r.credit) : "-"}</td>
+                  <td className="px-3 py-2 num">{r.balance > 0 ? money(r.balance) : "-"}</td>
+                  <td className="px-3 py-2 num">{r.balance < 0 ? money(-r.balance) : "-"}</td>
+                </tr>
+              ))}
+              <tr className="rpt-section-total">
+                <td colSpan={2}>إجمالي {section.label}</td>
+                <td className="num">{money(section.subtotal.opening)}</td>
+                <td className="num">{money(section.subtotal.debit)}</td>
+                <td className="num">{money(section.subtotal.credit)}</td>
+                <td className="num">{money(section.subtotal.dr)}</td>
+                <td className="num">{money(section.subtotal.cr)}</td>
+              </tr>
+            </Fragment>
           ))}
         </tbody>
         {data.length > 0 && (

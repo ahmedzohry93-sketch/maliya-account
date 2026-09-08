@@ -10,7 +10,7 @@ import { defaultPeriod } from "@/lib/report-period";
 
 export const Route = createFileRoute("/_app/trading-account")({ component: TradingAccountPage });
 
-type AccountRow = { id: string; code: string; name: string; type: string };
+type AccountRow = { id: string; code: string; name: string; type: string; parent_id: string | null };
 
 const STORAGE_KEY = "trading-account:mapping";
 
@@ -75,7 +75,7 @@ function TradingAccountPage() {
   const { data: accounts = [] } = useQuery({
     queryKey: ["accounts-trading"],
     queryFn: async () => {
-      const { data } = await supabase.from("accounts").select("id, code, name, type").order("code");
+      const { data } = await supabase.from("accounts").select("id, code, name, type, parent_id").order("code");
       return (data ?? []) as AccountRow[];
     },
   });
@@ -99,7 +99,9 @@ function TradingAccountPage() {
     },
   });
 
-  const mapping = useMemo<Mapping>(() => override ?? autoDetect(accounts), [override, accounts]);
+  const parentIds = useMemo(() => new Set(accounts.flatMap((a) => (a.parent_id ? [a.parent_id] : []))), [accounts]);
+  const postableAccounts = useMemo(() => accounts.filter((a) => !parentIds.has(a.id)), [accounts, parentIds]);
+  const mapping = useMemo<Mapping>(() => override ?? autoDetect(postableAccounts), [override, postableAccounts]);
 
   const sumBucket = (b: Bucket, flipSign = false) =>
     mapping[b].reduce((s, id) => {
@@ -201,7 +203,7 @@ function TradingAccountPage() {
     >
       {showConfig && (
         <MappingPanel
-          accounts={accounts}
+          accounts={postableAccounts}
           mapping={mapping}
           onSave={saveMapping}
           onReset={resetMapping}

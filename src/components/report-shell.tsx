@@ -4,7 +4,7 @@ import { Link, useRouter } from "@tanstack/react-router";
 import { Filter, Download, FileSpreadsheet, FileText, ChevronDown, ChevronLeft, ChevronsDownUp, ChevronsUpDown, MoreVertical, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { AccNode } from "@/lib/account-tree";
-import { pctChange } from "@/lib/account-tree";
+import { isRootAccount, pctChange } from "@/lib/account-tree";
 import { useCompanySettings } from "@/lib/company";
 
 
@@ -180,8 +180,8 @@ export function ReportShell({
                 </button>
               )}
               {onPdf && (
-                <button onClick={onPdf} className="h-8 px-2 text-[11px] font-medium hover:bg-muted flex items-center gap-1 border-s" title="تصدير PDF">
-                  <FileText className="w-3.5 h-3.5" /> <span className="hidden sm:inline">PDF</span>
+                <button onClick={() => window.print()} className="h-8 px-2 text-[11px] font-medium hover:bg-muted flex items-center gap-1 border-s" title="طباعة / حفظ PDF">
+                  <FileText className="w-3.5 h-3.5" /> <span className="hidden sm:inline">طباعة</span>
                 </button>
               )}
             </div>
@@ -494,9 +494,13 @@ export function AccountTreeRows({
 }) {
   return (
     <>
-      {nodes.map((n) => (
-        <AccountTreeRow key={n.id} node={n} depth={depth} compare={compare} expandSignal={expandSignal} period={period} />
-      ))}
+      {nodes.map((n) =>
+        isRootAccount(n) ? (
+          <AccountTreeRows key={n.id} nodes={n.children} depth={depth} compare={compare} expandSignal={expandSignal} period={period} />
+        ) : (
+          <AccountTreeRow key={n.id} node={n} depth={depth} compare={compare} expandSignal={expandSignal} period={period} />
+        ),
+      )}
     </>
   );
 }

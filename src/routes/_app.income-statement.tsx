@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { exportToExcel, exportToPDF, type Section } from "@/lib/export-utils";
 import { DateRangeFields, ReportShell, StatementCard, BandRow, TotalRow, TreeHeadRow, TreeToolbar, AccountTreeRows, pctText } from "@/components/report-shell";
 import {
-  buildAccountTree, pruneEmpty, totalOf, totalPrevOf, flattenTree, sortByCode, type AccountRow,
+  buildAccountTree, pruneEmpty, totalOf, totalPrevOf, flattenTree, isRootAccount, sortByCode, type AccountRow,
 } from "@/lib/account-tree";
 import { prevRange, periodLabel, defaultPeriod } from "@/lib/report-period";
 
@@ -83,7 +83,7 @@ function IncomeStatementPage() {
     : ["الكود", "اسم الحساب", "المبلغ"];
 
   const rowsOf = (nodes: ReturnType<typeof pruneEmpty>) =>
-    flattenTree(nodes).map(({ node, depth }) =>
+    flattenTree(nodes).filter(({ node }) => !isRootAccount(node)).map(({ node, depth }) =>
       compareOn
         ? [node.code, `${"— ".repeat(depth)}${node.name}`, node.amount, node.prev, pctText(node.amount, node.prev)]
         : [node.code, `${"— ".repeat(depth)}${node.name}`, node.amount],
