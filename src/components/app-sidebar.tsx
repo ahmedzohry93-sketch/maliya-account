@@ -61,6 +61,7 @@ const GROUPS: Group[] = [
     titleKey: "nav.group.admin",
     items: [
       { to: "/settings", labelKey: "nav.settings", icon: Settings },
+      { to: "/account-settings", labelKey: "nav.account_settings", icon: ListTree, perm: "accounts.view" },
       { to: "/users", labelKey: "nav.users", icon: UserCog, perm: "users.manage" },
       { to: "/roles", labelKey: "nav.roles", icon: ShieldCheck, perm: "roles.manage" },
       { to: "/archive", labelKey: "nav.archive", icon: Archive },

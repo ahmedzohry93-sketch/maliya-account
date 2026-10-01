@@ -1,16 +1,25 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { useAuth } from "@/hooks/use-auth";
 import { useCompanySettings, getLogoDataUrl } from "@/lib/company";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
-import { Sun, Moon, Languages, User, Palette, Check, Building2, Upload, Trash2 } from "lucide-react";
+import { Sun, Moon, Languages, User, Palette, Check, Building2, Upload, Trash2, ListTree, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/settings")({
+  head: () => ({ meta: [
+    { title: "الإعدادات | مالية" },
+    { name: "description", content: "إعدادات الشركة والحسابات والمظهر واللغة في مالية." },
+    { property: "og:title", content: "الإعدادات | مالية" },
+    { property: "og:description", content: "إعدادات الشركة والحسابات والمظهر واللغة في مالية." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: SettingsPage,
 });
 
@@ -28,6 +37,9 @@ function SettingsPage() {
       </header>
 
       <div className="space-y-6">
+        <Section icon={ListTree} title="إعدادات شجرة الحسابات" desc="الرموز والتصنيف وارتباط الحسابات الرئيسية والفرعية">
+          <Button asChild variant="outline"><Link to="/account-settings">فتح إعدادات الحسابات <ArrowLeft className="h-4 w-4" /></Link></Button>
+        </Section>
         <Section icon={Building2} title={t("settings.company")} desc={t("settings.company_desc")}>
           <CompanyForm canEdit={permissions.has("users.manage")} />
         </Section>
