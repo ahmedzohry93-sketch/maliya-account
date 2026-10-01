@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ChevronDown, ChevronLeft, Pencil, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,7 @@ function AccountSettings() {
   const [code, setCode] = useState("");
   const [type, setType] = useState<AccountType>("asset");
   const [parentId, setParentId] = useState("");
+  const editorRef = useRef<HTMLElement>(null);
 
   const { data: accounts = [], isPending, error } = useQuery({
     queryKey: ["accounts"],
@@ -62,6 +63,7 @@ function AccountSettings() {
     setCode(a.code);
     setType(a.type);
     setParentId(a.parent_id ?? "");
+    if (window.innerWidth < 1024) requestAnimationFrame(() => editorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   };
 
   const save = useMutation({
@@ -120,9 +122,9 @@ function AccountSettings() {
               {opened ? <ChevronDown /> : <ChevronLeft />}
             </Button>
           ) : <span className="w-6 shrink-0" />}
-          <button type="button" onClick={() => choose(a)} className="min-w-0 flex-1 text-start hover:text-primary" aria-label={`إعداد ${a.name}`}>
-            <span className="num inline-block min-w-12 text-muted-foreground" dir="ltr">{a.code}</span>
-            <span>{a.name}</span>
+          <button type="button" onClick={() => choose(a)} className="flex min-w-0 flex-1 items-center gap-2 text-start hover:text-primary" aria-label={`إعداد ${a.name}`}>
+            <span className="num min-w-12 shrink-0 text-muted-foreground" dir="ltr">{a.code}</span>
+            <span className="min-w-0">{a.name}</span>
           </button>
           <span className="hidden sm:inline text-xs text-muted-foreground">{heading ? "رئيسي" : kids.length ? "مجموعة" : "فرعي"}</span>
           <span className="hidden md:inline text-xs text-muted-foreground">{a.parent_id ? byId.get(a.parent_id)?.name ?? "—" : labels[a.type]}</span>
@@ -163,7 +165,7 @@ function AccountSettings() {
             </div>;
           })}
         </section>
-        <aside className="h-fit border border-border bg-card p-4 lg:sticky lg:top-32" aria-label="تعديل الحساب">
+        <aside ref={editorRef} className={`h-fit scroll-mt-32 border border-border bg-card p-4 lg:sticky lg:top-32 ${selected ? "order-first lg:order-none" : ""}`} aria-label="تعديل الحساب">
           <h2 className="mb-4 font-semibold">بيانات الحساب</h2>
           {!selected ? <p className="text-sm text-muted-foreground">اختر حسابًا من الشجرة لعرض ارتباطه وتعديل بياناته.</p> : (
             <form onSubmit={(e) => { e.preventDefault(); save.mutate(); }} className="space-y-4">
