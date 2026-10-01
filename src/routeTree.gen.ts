@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as AppAccountSettingsRouteImport } from './routes/_app.account-settings'
 import { Route as AppAccountsRouteImport } from './routes/_app.accounts'
 import { Route as AppArchiveRouteImport } from './routes/_app.archive'
 import { Route as AppAssetsRouteImport } from './routes/_app.assets'
@@ -60,6 +61,11 @@ const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppAccountSettingsRoute = AppAccountSettingsRouteImport.update({
+  id: '/account-settings',
+  path: '/account-settings',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppAccountsRoute = AppAccountsRouteImport.update({
   id: '/accounts',
@@ -239,6 +245,7 @@ const ApiPublicHooksDailyBackupRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/account-settings': typeof AppAccountSettingsRoute
   '/accounts': typeof AppAccountsRoute
   '/archive': typeof AppArchiveRoute
   '/assets': typeof AppAssetsRoute
@@ -277,6 +284,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/account-settings': typeof AppAccountSettingsRoute
   '/accounts': typeof AppAccountsRoute
   '/archive': typeof AppArchiveRoute
   '/assets': typeof AppAssetsRoute
@@ -316,6 +324,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/_app/account-settings': typeof AppAccountSettingsRoute
   '/_app/accounts': typeof AppAccountsRoute
   '/_app/archive': typeof AppArchiveRoute
   '/_app/assets': typeof AppAssetsRoute
@@ -356,6 +365,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/account-settings'
     | '/accounts'
     | '/archive'
     | '/assets'
@@ -394,6 +404,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/account-settings'
     | '/accounts'
     | '/archive'
     | '/assets'
@@ -432,6 +443,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_app'
     | '/login'
+    | '/_app/account-settings'
     | '/_app/accounts'
     | '/_app/archive'
     | '/_app/assets'
@@ -497,6 +509,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/account-settings': {
+      id: '/_app/account-settings'
+      path: '/account-settings'
+      fullPath: '/account-settings'
+      preLoaderRoute: typeof AppAccountSettingsRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/accounts': {
       id: '/_app/accounts'
@@ -759,6 +778,7 @@ const AppBankReconciliationRouteWithChildren =
   )
 
 interface AppRouteChildren {
+  AppAccountSettingsRoute: typeof AppAccountSettingsRoute
   AppAccountsRoute: typeof AppAccountsRoute
   AppArchiveRoute: typeof AppArchiveRoute
   AppAssetsRoute: typeof AppAssetsRoute
@@ -791,6 +811,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAccountSettingsRoute: AppAccountSettingsRoute,
   AppAccountsRoute: AppAccountsRoute,
   AppArchiveRoute: AppArchiveRoute,
   AppAssetsRoute: AppAssetsRoute,
