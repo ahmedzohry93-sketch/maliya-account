@@ -34,6 +34,7 @@ import { Route as AppLedgerRouteImport } from './routes/_app.ledger'
 import { Route as AppPartnersRouteImport } from './routes/_app.partners'
 import { Route as AppProductsRouteImport } from './routes/_app.products'
 import { Route as AppRecurringObligationsRouteImport } from './routes/_app.recurring-obligations'
+import { Route as AppReturnsRouteImport } from './routes/_app.returns'
 import { Route as AppRolesRouteImport } from './routes/_app.roles'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
 import { Route as AppSuppliersRouteImport } from './routes/_app.suppliers'
@@ -172,6 +173,11 @@ const AppRecurringObligationsRoute = AppRecurringObligationsRouteImport.update({
   path: '/recurring-obligations',
   getParentRoute: () => AppRoute,
 } as any)
+const AppReturnsRoute = AppReturnsRouteImport.update({
+  id: '/returns',
+  path: '/returns',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppRolesRoute = AppRolesRouteImport.update({
   id: '/roles',
   path: '/roles',
@@ -267,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/partners': typeof AppPartnersRoute
   '/products': typeof AppProductsRoute
   '/recurring-obligations': typeof AppRecurringObligationsRoute
+  '/returns': typeof AppReturnsRoute
   '/roles': typeof AppRolesRoute
   '/settings': typeof AppSettingsRoute
   '/suppliers': typeof AppSuppliersRoute
@@ -305,6 +312,7 @@ export interface FileRoutesByTo {
   '/partners': typeof AppPartnersRoute
   '/products': typeof AppProductsRoute
   '/recurring-obligations': typeof AppRecurringObligationsRoute
+  '/returns': typeof AppReturnsRoute
   '/roles': typeof AppRolesRoute
   '/settings': typeof AppSettingsRoute
   '/suppliers': typeof AppSuppliersRoute
@@ -346,6 +354,7 @@ export interface FileRoutesById {
   '/_app/partners': typeof AppPartnersRoute
   '/_app/products': typeof AppProductsRoute
   '/_app/recurring-obligations': typeof AppRecurringObligationsRoute
+  '/_app/returns': typeof AppReturnsRoute
   '/_app/roles': typeof AppRolesRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/suppliers': typeof AppSuppliersRoute
@@ -387,6 +396,7 @@ export interface FileRouteTypes {
     | '/partners'
     | '/products'
     | '/recurring-obligations'
+    | '/returns'
     | '/roles'
     | '/settings'
     | '/suppliers'
@@ -425,6 +435,7 @@ export interface FileRouteTypes {
     | '/partners'
     | '/products'
     | '/recurring-obligations'
+    | '/returns'
     | '/roles'
     | '/settings'
     | '/suppliers'
@@ -465,6 +476,7 @@ export interface FileRouteTypes {
     | '/_app/partners'
     | '/_app/products'
     | '/_app/recurring-obligations'
+    | '/_app/returns'
     | '/_app/roles'
     | '/_app/settings'
     | '/_app/suppliers'
@@ -664,6 +676,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRecurringObligationsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/returns': {
+      id: '/_app/returns'
+      path: '/returns'
+      fullPath: '/returns'
+      preLoaderRoute: typeof AppReturnsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/roles': {
       id: '/_app/roles'
       path: '/roles'
@@ -800,6 +819,7 @@ interface AppRouteChildren {
   AppPartnersRoute: typeof AppPartnersRoute
   AppProductsRoute: typeof AppProductsRoute
   AppRecurringObligationsRoute: typeof AppRecurringObligationsRoute
+  AppReturnsRoute: typeof AppReturnsRoute
   AppRolesRoute: typeof AppRolesRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppSuppliersRoute: typeof AppSuppliersRoute
@@ -833,6 +853,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPartnersRoute: AppPartnersRoute,
   AppProductsRoute: AppProductsRoute,
   AppRecurringObligationsRoute: AppRecurringObligationsRoute,
+  AppReturnsRoute: AppReturnsRoute,
   AppRolesRoute: AppRolesRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppSuppliersRoute: AppSuppliersRoute,

@@ -295,3 +295,28 @@
     margin: 0;
   }
 }
+
+/* ===== Unified document controls (buttons, fields, lists) ===== */
+@utility doc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 2.1rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  color: var(--color-foreground);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  &:hover { background: var(--color-muted); }
+  &:disabled { opacity: 0.5; pointer-events: none; }
+}
+@utility doc-btn-primary {
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  border-color: var(--color-primary);
+  &:hover { background: color-mix(in oklab, var(--color-primary) 88%, black); }
+}
+@media print {
+  .doc-noprint { display: none !important; }
+}
