@@ -873,6 +873,125 @@ export type Database = {
           },
         ]
       }
+      invoice_return_lines: {
+        Row: {
+          cost_per_unit: number
+          description: string | null
+          id: string
+          line_order: number
+          original_line_id: string | null
+          product_id: string | null
+          quantity: number
+          return_id: string
+          total: number
+          unit_price: number
+        }
+        Insert: {
+          cost_per_unit?: number
+          description?: string | null
+          id?: string
+          line_order?: number
+          original_line_id?: string | null
+          product_id?: string | null
+          quantity?: number
+          return_id: string
+          total?: number
+          unit_price?: number
+        }
+        Update: {
+          cost_per_unit?: number
+          description?: string | null
+          id?: string
+          line_order?: number
+          original_line_id?: string | null
+          product_id?: string | null
+          quantity?: number
+          return_id?: string
+          total?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_return_lines_original_line_id_fkey"
+            columns: ["original_line_id"]
+            isOneToOne: false
+            referencedRelation: "invoice_lines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_return_lines_return_id_fkey"
+            columns: ["return_id"]
+            isOneToOne: false
+            referencedRelation: "invoice_returns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_returns: {
+        Row: {
+          cogs_journal_entry_id: string | null
+          created_at: string
+          created_by: string | null
+          discount_amount: number
+          id: string
+          journal_entry_id: string | null
+          kind: string
+          notes: string | null
+          original_invoice_id: string
+          partner_id: string
+          return_date: string
+          return_no: number
+          status: string
+          subtotal: number
+          tax: number
+          total: number
+        }
+        Insert: {
+          cogs_journal_entry_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          discount_amount?: number
+          id?: string
+          journal_entry_id?: string | null
+          kind: string
+          notes?: string | null
+          original_invoice_id: string
+          partner_id: string
+          return_date?: string
+          return_no?: number
+          status?: string
+          subtotal?: number
+          tax?: number
+          total?: number
+        }
+        Update: {
+          cogs_journal_entry_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          discount_amount?: number
+          id?: string
+          journal_entry_id?: string | null
+          kind?: string
+          notes?: string | null
+          original_invoice_id?: string
+          partner_id?: string
+          return_date?: string
+          return_no?: number
+          status?: string
+          subtotal?: number
+          tax?: number
+          total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_returns_original_invoice_id_fkey"
+            columns: ["original_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoices: {
         Row: {
           archived_at: string | null
@@ -1573,7 +1692,10 @@ export type Database = {
           notes: string | null
           product_id: string
           qty: number
+          return_id: string | null
           unit_cost: number
+          voucher_id: string | null
+          warehouse_id: string | null
         }
         Insert: {
           created_at?: string
@@ -1583,7 +1705,10 @@ export type Database = {
           notes?: string | null
           product_id: string
           qty: number
+          return_id?: string | null
           unit_cost?: number
+          voucher_id?: string | null
+          warehouse_id?: string | null
         }
         Update: {
           created_at?: string
@@ -1593,7 +1718,10 @@ export type Database = {
           notes?: string | null
           product_id?: string
           qty?: number
+          return_id?: string | null
           unit_cost?: number
+          voucher_id?: string | null
+          warehouse_id?: string | null
         }
         Relationships: [
           {
@@ -1608,6 +1736,135 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_moves_return_id_fkey"
+            columns: ["return_id"]
+            isOneToOne: false
+            referencedRelation: "invoice_returns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_moves_voucher_id_fkey"
+            columns: ["voucher_id"]
+            isOneToOne: false
+            referencedRelation: "stock_vouchers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_moves_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_voucher_lines: {
+        Row: {
+          id: string
+          line_order: number
+          product_id: string
+          quantity: number
+          unit: string | null
+          unit_cost: number
+          voucher_id: string
+        }
+        Insert: {
+          id?: string
+          line_order?: number
+          product_id: string
+          quantity?: number
+          unit?: string | null
+          unit_cost?: number
+          voucher_id: string
+        }
+        Update: {
+          id?: string
+          line_order?: number
+          product_id?: string
+          quantity?: number
+          unit?: string | null
+          unit_cost?: number
+          voucher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_voucher_lines_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_voucher_lines_voucher_id_fkey"
+            columns: ["voucher_id"]
+            isOneToOne: false
+            referencedRelation: "stock_vouchers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_vouchers: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          kind: string
+          notes: string | null
+          party_name: string | null
+          party_type: string | null
+          reason: string | null
+          status: string
+          target_warehouse_id: string | null
+          voucher_date: string
+          voucher_no: number
+          warehouse_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind: string
+          notes?: string | null
+          party_name?: string | null
+          party_type?: string | null
+          reason?: string | null
+          status?: string
+          target_warehouse_id?: string | null
+          voucher_date?: string
+          voucher_no?: number
+          warehouse_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          notes?: string | null
+          party_name?: string | null
+          party_type?: string | null
+          reason?: string | null
+          status?: string
+          target_warehouse_id?: string | null
+          voucher_date?: string
+          voucher_no?: number
+          warehouse_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_vouchers_target_warehouse_id_fkey"
+            columns: ["target_warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_vouchers_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
             referencedColumns: ["id"]
           },
         ]
@@ -1637,6 +1894,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      warehouses: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          kind: string
+          location: string | null
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          kind?: string
+          location?: string | null
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          kind?: string
+          location?: string | null
+          name?: string
+        }
+        Relationships: []
       }
     }
     Views: {
