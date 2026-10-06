@@ -55,6 +55,9 @@ export const NAV_GROUPS: Group[] = [
     icon: Package,
     items: [
       { to: "/products", labelKey: "nav.products", icon: Package },
+      { to: "/warehouses", labelKey: "nav.warehouses", icon: Package },
+      { to: "/stock-vouchers", labelKey: "nav.stock_vouchers", icon: Package },
+      { to: "/returns", labelKey: "nav.returns", icon: Package },
     ],
   },
   {

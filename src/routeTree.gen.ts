@@ -37,11 +37,13 @@ import { Route as AppRecurringObligationsRouteImport } from './routes/_app.recur
 import { Route as AppReturnsRouteImport } from './routes/_app.returns'
 import { Route as AppRolesRouteImport } from './routes/_app.roles'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
+import { Route as AppStockVouchersRouteImport } from './routes/_app.stock-vouchers'
 import { Route as AppSuppliersRouteImport } from './routes/_app.suppliers'
 import { Route as AppSuppliersStatementRouteImport } from './routes/_app.suppliers-statement'
 import { Route as AppTradingAccountRouteImport } from './routes/_app.trading-account'
 import { Route as AppTrialBalanceRouteImport } from './routes/_app.trial-balance'
 import { Route as AppUsersRouteImport } from './routes/_app.users'
+import { Route as AppWarehousesRouteImport } from './routes/_app.warehouses'
 import { Route as AppBankReconciliationIndexRouteImport } from './routes/_app.bank-reconciliation.index'
 import { Route as AppBankReconciliationIdRouteImport } from './routes/_app.bank-reconciliation.$id'
 import { Route as AppBankReconciliationNewRouteImport } from './routes/_app.bank-reconciliation.new'
@@ -188,6 +190,11 @@ const AppSettingsRoute = AppSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AppRoute,
 } as any)
+const AppStockVouchersRoute = AppStockVouchersRouteImport.update({
+  id: '/stock-vouchers',
+  path: '/stock-vouchers',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppSuppliersRoute = AppSuppliersRouteImport.update({
   id: '/suppliers',
   path: '/suppliers',
@@ -211,6 +218,11 @@ const AppTrialBalanceRoute = AppTrialBalanceRouteImport.update({
 const AppUsersRoute = AppUsersRouteImport.update({
   id: '/users',
   path: '/users',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppWarehousesRoute = AppWarehousesRouteImport.update({
+  id: '/warehouses',
+  path: '/warehouses',
   getParentRoute: () => AppRoute,
 } as any)
 const AppBankReconciliationIndexRoute =
@@ -276,11 +288,13 @@ export interface FileRoutesByFullPath {
   '/returns': typeof AppReturnsRoute
   '/roles': typeof AppRolesRoute
   '/settings': typeof AppSettingsRoute
+  '/stock-vouchers': typeof AppStockVouchersRoute
   '/suppliers': typeof AppSuppliersRoute
   '/suppliers-statement': typeof AppSuppliersStatementRoute
   '/trading-account': typeof AppTradingAccountRoute
   '/trial-balance': typeof AppTrialBalanceRoute
   '/users': typeof AppUsersRoute
+  '/warehouses': typeof AppWarehousesRoute
   '/bank-reconciliation/$id': typeof AppBankReconciliationIdRoute
   '/bank-reconciliation/new': typeof AppBankReconciliationNewRoute
   '/bank-reconciliation/reports': typeof AppBankReconciliationReportsRoute
@@ -315,11 +329,13 @@ export interface FileRoutesByTo {
   '/returns': typeof AppReturnsRoute
   '/roles': typeof AppRolesRoute
   '/settings': typeof AppSettingsRoute
+  '/stock-vouchers': typeof AppStockVouchersRoute
   '/suppliers': typeof AppSuppliersRoute
   '/suppliers-statement': typeof AppSuppliersStatementRoute
   '/trading-account': typeof AppTradingAccountRoute
   '/trial-balance': typeof AppTrialBalanceRoute
   '/users': typeof AppUsersRoute
+  '/warehouses': typeof AppWarehousesRoute
   '/bank-reconciliation/$id': typeof AppBankReconciliationIdRoute
   '/bank-reconciliation/new': typeof AppBankReconciliationNewRoute
   '/bank-reconciliation/reports': typeof AppBankReconciliationReportsRoute
@@ -357,11 +373,13 @@ export interface FileRoutesById {
   '/_app/returns': typeof AppReturnsRoute
   '/_app/roles': typeof AppRolesRoute
   '/_app/settings': typeof AppSettingsRoute
+  '/_app/stock-vouchers': typeof AppStockVouchersRoute
   '/_app/suppliers': typeof AppSuppliersRoute
   '/_app/suppliers-statement': typeof AppSuppliersStatementRoute
   '/_app/trading-account': typeof AppTradingAccountRoute
   '/_app/trial-balance': typeof AppTrialBalanceRoute
   '/_app/users': typeof AppUsersRoute
+  '/_app/warehouses': typeof AppWarehousesRoute
   '/_app/bank-reconciliation/$id': typeof AppBankReconciliationIdRoute
   '/_app/bank-reconciliation/new': typeof AppBankReconciliationNewRoute
   '/_app/bank-reconciliation/reports': typeof AppBankReconciliationReportsRoute
@@ -399,11 +417,13 @@ export interface FileRouteTypes {
     | '/returns'
     | '/roles'
     | '/settings'
+    | '/stock-vouchers'
     | '/suppliers'
     | '/suppliers-statement'
     | '/trading-account'
     | '/trial-balance'
     | '/users'
+    | '/warehouses'
     | '/bank-reconciliation/$id'
     | '/bank-reconciliation/new'
     | '/bank-reconciliation/reports'
@@ -438,11 +458,13 @@ export interface FileRouteTypes {
     | '/returns'
     | '/roles'
     | '/settings'
+    | '/stock-vouchers'
     | '/suppliers'
     | '/suppliers-statement'
     | '/trading-account'
     | '/trial-balance'
     | '/users'
+    | '/warehouses'
     | '/bank-reconciliation/$id'
     | '/bank-reconciliation/new'
     | '/bank-reconciliation/reports'
@@ -479,11 +501,13 @@ export interface FileRouteTypes {
     | '/_app/returns'
     | '/_app/roles'
     | '/_app/settings'
+    | '/_app/stock-vouchers'
     | '/_app/suppliers'
     | '/_app/suppliers-statement'
     | '/_app/trading-account'
     | '/_app/trial-balance'
     | '/_app/users'
+    | '/_app/warehouses'
     | '/_app/bank-reconciliation/$id'
     | '/_app/bank-reconciliation/new'
     | '/_app/bank-reconciliation/reports'
@@ -697,6 +721,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSettingsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/stock-vouchers': {
+      id: '/_app/stock-vouchers'
+      path: '/stock-vouchers'
+      fullPath: '/stock-vouchers'
+      preLoaderRoute: typeof AppStockVouchersRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/suppliers': {
       id: '/_app/suppliers'
       path: '/suppliers'
@@ -730,6 +761,13 @@ declare module '@tanstack/react-router' {
       path: '/users'
       fullPath: '/users'
       preLoaderRoute: typeof AppUsersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/warehouses': {
+      id: '/_app/warehouses'
+      path: '/warehouses'
+      fullPath: '/warehouses'
+      preLoaderRoute: typeof AppWarehousesRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/bank-reconciliation/': {
@@ -822,11 +860,13 @@ interface AppRouteChildren {
   AppReturnsRoute: typeof AppReturnsRoute
   AppRolesRoute: typeof AppRolesRoute
   AppSettingsRoute: typeof AppSettingsRoute
+  AppStockVouchersRoute: typeof AppStockVouchersRoute
   AppSuppliersRoute: typeof AppSuppliersRoute
   AppSuppliersStatementRoute: typeof AppSuppliersStatementRoute
   AppTradingAccountRoute: typeof AppTradingAccountRoute
   AppTrialBalanceRoute: typeof AppTrialBalanceRoute
   AppUsersRoute: typeof AppUsersRoute
+  AppWarehousesRoute: typeof AppWarehousesRoute
   AppJournalEntryIdRoute: typeof AppJournalEntryIdRoute
 }
 
@@ -856,11 +896,13 @@ const AppRouteChildren: AppRouteChildren = {
   AppReturnsRoute: AppReturnsRoute,
   AppRolesRoute: AppRolesRoute,
   AppSettingsRoute: AppSettingsRoute,
+  AppStockVouchersRoute: AppStockVouchersRoute,
   AppSuppliersRoute: AppSuppliersRoute,
   AppSuppliersStatementRoute: AppSuppliersStatementRoute,
   AppTradingAccountRoute: AppTradingAccountRoute,
   AppTrialBalanceRoute: AppTrialBalanceRoute,
   AppUsersRoute: AppUsersRoute,
+  AppWarehousesRoute: AppWarehousesRoute,
   AppJournalEntryIdRoute: AppJournalEntryIdRoute,
 }
 
