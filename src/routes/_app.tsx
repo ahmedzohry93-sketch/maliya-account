@@ -40,7 +40,7 @@ function AppLayout() {
         <AppTopbar />
         <AppTopNav />
       </div>
-      <main className="flex-1 min-w-0 w-full overflow-x-hidden">
+      <main className="classic-app flex-1 min-w-0 w-full overflow-x-hidden">
         <Outlet />
       </main>
     </div>

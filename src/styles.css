@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "Cairo", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --font-sans: Tahoma, Arial, "Segoe UI", sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -44,6 +44,19 @@
 }
 
 :root {
+  --paper: oklch(1 0 0);
+  --paper-ink: oklch(0.22 0 0);
+  --paper-border: oklch(0.63 0 0);
+  --paper-grid: oklch(0.83 0 0);
+  --paper-muted: oklch(0.45 0 0);
+  --paper-stripe: oklch(0.975 0 0);
+  --paper-heading: oklch(0.99 0 0);
+  --paper-total: oklch(0.95 0 0);
+  --paper-band: oklch(0.91 0 0);
+  --paper-negative: oklch(0.5 0.16 25);
+  --toolbar: oklch(0.27 0 0);
+  --toolbar-foreground: oklch(0.98 0 0);
+  --paper-shadow: 0 0 6px color-mix(in oklab, var(--paper-ink) 12%, transparent);
   --radius: 0.5rem;
   /* Slate / navy professional with gold accents */
   --background: oklch(0.985 0.003 240);
@@ -174,11 +187,11 @@
 
 /* ===== Classic printed-report look (applied to all financial reports) ===== */
 .rpt-sheet {
-  background: #fff;
-  color: #1a1a1a;
-  border: 1px solid #8a8a8a;
+  background: var(--paper);
+  color: var(--paper-ink);
+  border: 1px solid var(--paper-border);
   padding: 14px 14px 10px;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--paper-shadow);
   font-family: Tahoma, Arial, "Segoe UI", sans-serif;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
@@ -191,7 +204,7 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
-  border-bottom: 2px solid #1a1a1a;
+  border-bottom: 2px solid var(--paper-ink);
   padding-bottom: 6px;
   margin-bottom: 6px;
 }
@@ -205,17 +218,17 @@
   flex-wrap: wrap;
   gap: 4px 16px;
   font-size: 11px;
-  border-bottom: 1px solid #8a8a8a;
+  border-bottom: 1px solid var(--paper-border);
   padding-bottom: 6px;
   margin-bottom: 8px;
 }
-.rpt-meta span { color: #555; }
+.rpt-meta span { color: var(--paper-muted); }
 .rpt-foot {
   margin-top: 10px;
   padding-top: 6px;
-  border-top: 1px solid #c9c9c9;
+  border-top: 1px solid var(--paper-grid);
   font-size: 10px;
-  color: #555;
+  color: var(--paper-muted);
   display: flex;
   justify-content: space-between;
   gap: 8px;
@@ -224,77 +237,64 @@
 /* Tables and statement rows inside a classic sheet */
 .rpt-sheet table { width: 100%; border-collapse: collapse; font-size: 11px; }
 .rpt-sheet th,
-.rpt-sheet td { border: 1px solid #c9c9c9; padding: 3px 5px; white-space: nowrap; }
+.rpt-sheet td { border: 1px solid var(--paper-grid); padding: 3px 5px; white-space: nowrap; }
 .rpt-sheet th {
-  background: #fafafa;
-  border-bottom: 1.5px solid #8a8a8a;
+  background: var(--paper-heading);
+  border-bottom: 1.5px solid var(--paper-border);
   font-size: 11.5px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--paper-ink);
 }
-.rpt-sheet tbody tr:nth-child(even) { background: #f6f6f6; }
+.rpt-sheet tbody tr:nth-child(even) { background: var(--paper-stripe); }
 .rpt-sheet tfoot td {
-  background: #eee;
+  background: var(--paper-total);
   font-weight: 700;
   font-size: 12px;
-  border-top: 2px solid #1a1a1a;
-  border-bottom: 2px double #1a1a1a;
+  border-top: 2px solid var(--paper-ink);
+  border-bottom: 2px double var(--paper-ink);
 }
 .rpt-section-head td {
-  background: #e2e2e2;
-  border-top: 1.5px solid #8a8a8a;
-  border-bottom: 1px solid #8a8a8a;
+  background: var(--paper-band);
+  border-top: 1.5px solid var(--paper-border);
+  border-bottom: 1px solid var(--paper-border);
   font-size: 11.5px;
   font-weight: 700;
   padding: 3px 6px;
 }
 .rpt-section-total td {
-  background: #eee;
-  border-top: 1px solid #8a8a8a;
+  background: var(--paper-total);
+  border-top: 1px solid var(--paper-border);
   font-size: 11.5px;
   font-weight: 700;
   padding: 3px 5px;
 }
 
-.rpt-block { border: 1px solid #c9c9c9; }
+.rpt-block { border: 1px solid var(--paper-grid); }
 .rpt-band {
-  background: #e2e2e2;
+  background: var(--paper-band);
   font-weight: 700;
   font-size: 11.5px;
-  color: #1a1a1a;
-  border-top: 1.5px solid #8a8a8a;
-  border-bottom: 1px solid #8a8a8a;
+  color: var(--paper-ink);
+  border-top: 1.5px solid var(--paper-border);
+  border-bottom: 1px solid var(--paper-border);
   padding: 3px 6px;
 }
-.rpt-row { font-size: 11px; border-bottom: 1px solid #e4e4e4; }
-.rpt-row:nth-child(even) { background: #f6f6f6; }
+.rpt-row { font-size: 11px; border-bottom: 1px solid var(--paper-grid); }
+.rpt-row:nth-child(even) { background: var(--paper-stripe); }
 .rpt-subtotal {
-  background: #eee;
+  background: var(--paper-total);
   font-weight: 700;
   font-size: 11.5px;
-  border-top: 1px solid #8a8a8a;
+  border-top: 1px solid var(--paper-border);
 }
 .rpt-grand {
-  background: #eee;
+  background: var(--paper-total);
   font-weight: 700;
   font-size: 12px;
-  border-top: 2px solid #1a1a1a;
-  border-bottom: 2px double #1a1a1a;
+  border-top: 2px solid var(--paper-ink);
+  border-bottom: 2px double var(--paper-ink);
 }
-.rpt-neg { color: #b02a2a; }
-
-/* Print the same report sheet shown on screen, without rebuilding or restyling it. */
-@page { margin: 8mm; }
-@media print {
-  body * { visibility: hidden; }
-  .rpt-sheet,
-  .rpt-sheet * { visibility: visible; }
-  .rpt-sheet {
-    position: absolute;
-    inset: 0;
-    margin: 0;
-  }
-}
+.rpt-neg { color: var(--paper-negative); }
 
 /* ===== Unified document controls (buttons, fields, lists) ===== */
 @utility doc-btn {
@@ -317,6 +317,62 @@
   border-color: var(--color-primary);
   &:hover { background: color-mix(in oklab, var(--color-primary) 88%, black); }
 }
+@media print { 
+  .no-print { display: none !important; } 
+}
 @media print {
   .doc-noprint { display: none !important; }
+}
+
+/* One classic identity for all accounting workspaces. */
+.classic-app { font-family: var(--font-sans); }
+.classic-app :is(button, input, select, textarea, [class*="rounded"]) { border-radius: 0; letter-spacing: 0; }
+.classic-app :is(input, select, textarea) { font-size: 12px; min-width: 0; }
+.classic-app h1 { font-size: 18px; letter-spacing: 0; }
+.classic-app table { border-collapse: collapse; font-size: 12px; }
+.classic-app :is(th, td) { border: 1px solid var(--border); padding: 5px 7px; }
+.classic-app th { background: var(--muted); }
+.classic-app .num { font-family: Tahoma, Arial, sans-serif; }
+.classic-app [class*="bg-gradient"] { background-image: none; background-color: var(--muted); }
+.doc-toolbar { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; max-width: 1000px; margin: 0 auto 12px; padding: 8px; background: var(--toolbar); color: var(--toolbar-foreground); border: 1px solid var(--toolbar); }
+.doc-toolbar > :first-child { flex: 1; min-width: 0; }
+.doc-toolbar .text-muted-foreground { color: var(--toolbar-foreground); }
+.doc-toolbar button { color: var(--foreground); background: var(--card); }
+.rpt-sheet .num { font-family: Tahoma, Arial, sans-serif; }
+.rpt-sheet :is(input, select, textarea) { color: var(--paper-ink); background: var(--paper); border-color: var(--paper-grid); font-family: inherit; font-size: 11px; border-radius: 0; padding: 4px 5px; }
+.rpt-sheet :is(th,td) { border-color: var(--paper-grid); padding: 3px 5px; }
+.rpt-sheet th { background: var(--paper-heading); }
+.rpt-sheet :is(.text-foreground,.text-primary) { color: var(--paper-ink); }
+.rpt-sheet .text-muted-foreground { color: var(--paper-muted); }
+.document-totals { width: auto !important; margin-inline-start: auto; margin-top: 8px; min-width: 260px; }
+.document-signatures { display: flex; gap: 16px; margin-top: 28px; font-size: 11px; }
+.document-signatures > div { flex: 1; border-top: 1px solid var(--paper-border); padding-top: 4px; text-align: center; }
+.document-modal { position: fixed; inset: 0; z-index: 50; overflow: auto; background: var(--background); padding: 12px; }
+.document-modal > div { max-width: 1000px; width: 100%; margin: 0 auto; }
+.document-modal .rpt-sheet { overflow-x: auto; }
+.partner-workspace { max-width: 1000px; margin: auto; padding: 12px; }
+.partner-workspace nav { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:12px; }
+.partner-workspace .rpt-sheet .rpt-sheet { padding:0; border:0; box-shadow:none; }
+.partner-workspace .rpt-sheet > div > div:has(>table) { border:0; overflow-x:auto; }
+.journal-document .rpt-sheet { overflow-x: auto; }
+@page { size: A4; margin: 8mm; }
+@media print {
+  body * { visibility: hidden; }
+  body:has(.rpt-sheet) { margin:0; }
+  .rpt-sheet, .rpt-sheet * { visibility:visible; }
+  body:has(.document-modal) .partner-workspace > .document-viewport { display:none; }
+  .rpt-sheet { position:static; width:100%; min-width:0 !important; margin:0; box-shadow:none; padding:14px; }
+  body:has(.rpt-sheet) :is(main, main > div, .document-viewport, .document-modal, .document-modal > div, .journal-document) { position:static !important; overflow:visible !important; max-height:none !important; height:auto !important; padding:0; }
+  body:has(.rpt-sheet) :is(main > div > div, .document-modal > div > form) { margin:0; }
+  .classic-app > div { max-width:none; }
+  .classic-app .sticky, .classic-app .fixed:not(.document-modal), .doc-noprint { display:none !important; }
+  body:has(.rpt-sheet) .min-h-screen > .sticky { display:none; }
+  .rpt-sheet .overflow-x-auto { overflow:visible; }
+  .rpt-sheet table { min-width:0 !important; table-layout:auto; }
+  .rpt-sheet :is(th,td) { white-space:normal; overflow-wrap:anywhere; }
+  .rpt-sheet :is(input,select,textarea) { border:0; box-shadow:none; opacity:1; width:100%; appearance:none; resize:none; }
+  .rpt-sheet :is(button, [role="button"]) { display:none !important; }
+  .rpt-sheet thead { display:table-header-group; }
+  .rpt-sheet tr, .rpt-head, .rpt-foot, .document-signatures { break-inside:avoid; }
+  .document-modal > div > .doc-toolbar { display:none; }
 }
