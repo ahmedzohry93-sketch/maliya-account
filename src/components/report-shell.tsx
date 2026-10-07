@@ -240,17 +240,19 @@ export function ReportSheet({ title, subtitle, children }: { title: string; subt
   const { data: company } = useCompanySettings();
   return (
     <div className="rpt-sheet">
-      <DocumentHeader title={title} />
-      <div className="rpt-meta">
-        <div><span>الفترة: </span><b className="num">{subtitle}</b></div>
-        <div><span>العملة: </span><b>{company?.currency || "د.ل"}</b></div>
+      <div className="rpt-head">
+        <div>
+          <div className="rpt-company-name">{company?.name || "الشركة"}</div>
+          <div className="rpt-company">
+            {company?.address && <>{company.address}<br /></>}
+            {company?.tax_number && <>الرقم الضريبي: <span className="num">{company.tax_number}</span></>}
+          </div>
+        </div>
+        <div className="rpt-title-block">
+          <div className="rpt-title">{title}</div>
+          <span className="num">تاريخ الطباعة: {printed}</span>
+        </div>
       </div>
-
-      <div className="space-y-3">{children}</div>
-
-      <DocumentFooter />
-    </div>
-  );
 }
 
 /** Small ⋮ menu shown next to an account row: jump to ledger, journal or account data,

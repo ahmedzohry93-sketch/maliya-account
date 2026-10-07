@@ -15,6 +15,8 @@ import {
   ListOrdered,
   Trash2,
 } from "lucide-react";
+import { DocSheet, DocToolbar } from "@/components/document-sheet";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/lib/i18n";
@@ -31,6 +33,8 @@ export const Route = createFileRoute("/_app/journal-entry/$id")({
       { name: "description", content: "شاشة قيد اليومية الكاملة: البنود، المدين والدائن، الاعتماد والترحيل." },
       { property: "og:title", content: "قيد يومية | Journal Entry" },
       { property: "og:description", content: "شاشة قيد اليومية الكاملة مع البنود والتوازن والاعتماد." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
 });
@@ -269,76 +273,51 @@ function JournalEntryPage() {
   );
 
   return (
-    <form onSubmit={submit} className="min-h-full pb-28">
-      {/* Sticky header */}
-      <div className="sticky top-0 z-20 bg-background/80 backdrop-blur-xl border-b">
-        <div className="max-w-6xl mx-auto px-4 md:px-8 py-3 flex flex-wrap items-center gap-3">
-          <Link
-            to="/journal"
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground rounded-xl px-2.5 py-1.5 hover:bg-muted transition-colors"
-          >
-            <BackIcon className="w-4 h-4" strokeWidth={1.75} /> {t("journal.back")}
-          </Link>
-          <div className="flex items-center gap-2.5 min-w-0">
-            <span className="grid place-items-center w-9 h-9 rounded-xl bg-primary/10 text-primary shrink-0">
-              <BookOpen className="w-4.5 h-4.5" strokeWidth={1.75} />
-            </span>
-            <div className="min-w-0">
-              <div className="font-semibold leading-tight truncate">
-                {isNew ? t("journal.draft_no") : `${t("journal.no")} #${entry?.entry_no ?? ""}`}
-              </div>
-              <div className="text-xs text-muted-foreground num">{date}</div>
-            </div>
-            {statusChip}
-          </div>
-
-          <div className="ms-auto flex items-center gap-2">
-            {!readonly && (
-              <button
+    <form onSubmit={submit} className="journal-document p-3 md:p-5">
+      <DocToolbar title={isNew ? t("journal.draft_no") : `${t("journal.no")} #${entry?.entry_no ?? ""}`} onBack={backToList} actions={<>{statusChip}            {!readonly && (
+              <Button variant="outline"
                 type="submit"
                 disabled={saving || !balanced}
                 className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium disabled:opacity-50 hover:opacity-90"
               >
                 <Save className="w-4 h-4" strokeWidth={1.75} /> {saving ? "..." : t("common.save")}
-              </button>
+              </Button>
             )}
             {!isNew && status === "draft" && permissions.has("journal.approve") && (
-              <button
+              <Button variant="outline"
                 type="button"
                 onClick={approve}
                 className="inline-flex items-center gap-1.5 bg-success text-success-foreground px-4 py-2 rounded-xl text-sm font-medium hover:opacity-90"
               >
                 <CheckCircle2 className="w-4 h-4" strokeWidth={1.75} /> {t("journal.approve")}
-              </button>
+              </Button>
             )}
             {!isNew && status === "posted" && permissions.has("journal.approve") && (
-              <button
+              <Button variant="outline"
                 type="button"
                 onClick={revert}
                 className="inline-flex items-center gap-1.5 bg-warning text-warning-foreground px-4 py-2 rounded-xl text-sm font-medium hover:opacity-90"
               >
                 <RotateCcw className="w-4 h-4" strokeWidth={1.75} /> {t("journal.revert")}
-              </button>
+              </Button>
             )}
             {!isNew && status === "draft" && permissions.has("journal.delete") && (
-              <button
+              <Button variant="outline"
                 type="button"
                 onClick={removeEntry}
                 className="inline-flex items-center gap-1.5 border border-destructive/40 text-destructive px-3 py-2 rounded-xl text-sm font-medium hover:bg-destructive/10"
               >
                 <Trash2 className="w-4 h-4" strokeWidth={1.75} /> {t("common.delete")}
-              </button>
+              </Button>
             )}
-            <button type="button" onClick={backToList} className="px-3 py-2 border rounded-xl text-sm hover:bg-muted">
+            <Button variant="outline" type="button" onClick={backToList} className="px-3 py-2 border rounded-xl text-sm hover:bg-muted">
               {readonly ? t("common.close") : t("common.cancel")}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-6xl mx-auto px-4 md:px-8 py-6 space-y-5">
+            </Button>
+</>} />
+      <DocSheet title={t("journal.entry")} number={isNew ? undefined : entry?.entry_no} meta={[{label: t("journal.date"), value: date}, {label: t("journal.type"), value: t(`entry_type.${entryType}`)}, {label: t("journal.reference"), value: reference}]} totals={[{label: t("journal.debit"), value: fmt(totalDebit)}, {label: t("journal.credit"), value: fmt(totalCredit)}, {label: t("journal.difference"), value: fmt(diff), strong: true}]}>
+      <div className="space-y-3">
         {/* Entry details */}
-        <section className="bg-card border rounded-2xl p-5">
+        <section className="py-2">
           <h2 className="text-sm font-semibold mb-4 flex items-center gap-2">
             <span className="grid place-items-center w-7 h-7 rounded-lg bg-muted text-muted-foreground">
               <ListOrdered className="w-4 h-4" strokeWidth={1.75} />
@@ -368,17 +347,17 @@ function JournalEntryPage() {
         </section>
 
         {/* Lines */}
-        <section className="bg-card border rounded-2xl overflow-hidden">
-          <div className="px-5 py-3 border-b flex items-center justify-between">
+        <section className="overflow-hidden">
+          <div className="doc-noprint rpt-band flex items-center justify-between">
             <h2 className="text-sm font-semibold">{t("journal.lines")}</h2>
             {!readonly && (
-              <button
+              <Button variant="outline"
                 type="button"
                 onClick={() => setLines([...lines, emptyLine()])}
                 className="inline-flex items-center gap-1.5 text-sm text-primary hover:bg-primary/10 rounded-lg px-2.5 py-1.5"
               >
                 <Plus className="w-4 h-4" strokeWidth={1.75} /> {t("journal.add_line")}
-              </button>
+              </Button>
             )}
           </div>
           <div className="overflow-x-auto">
@@ -391,7 +370,7 @@ function JournalEntryPage() {
                   <th className="text-start px-3 py-2.5">{t("journal.description")}</th>
                   <th className="text-start px-3 py-2.5 w-32">{t("journal.debit")}</th>
                   <th className="text-start px-3 py-2.5 w-32">{t("journal.credit")}</th>
-                  <th className="w-10"></th>
+                  <th className="doc-noprint w-10"></th>
                 </tr>
               </thead>
               <tbody>
@@ -483,15 +462,15 @@ function JournalEntryPage() {
                           className="inp text-sm num disabled:opacity-70"
                         />
                       </td>
-                      <td className="px-2 py-1.5">
+                      <td className="doc-noprint px-2 py-1.5">
                         {!readonly && lines.length > 2 && (
-                          <button
+                          <Button variant="outline"
                             type="button"
                             onClick={() => setLines(lines.filter((_, x) => x !== i))}
                             className="p-1.5 rounded-lg text-destructive hover:bg-destructive/10"
                           >
                             <X className="w-4 h-4" strokeWidth={1.75} />
-                          </button>
+                          </Button>
                         )}
                       </td>
                     </tr>
@@ -503,23 +482,7 @@ function JournalEntryPage() {
         </section>
       </div>
 
-      {/* Sticky totals bar */}
-      <div className="fixed bottom-0 inset-x-0 z-20 border-t bg-background/85 backdrop-blur-xl">
-        <div className="max-w-6xl mx-auto px-4 md:px-8 py-3 flex flex-wrap items-center gap-x-8 gap-y-2 text-sm">
-          <span className="inline-flex items-center gap-2 font-medium">
-            <span className="grid place-items-center w-8 h-8 rounded-xl bg-primary/10 text-primary">
-              <Scale className="w-4 h-4" strokeWidth={1.75} />
-            </span>
-            {t("journal.total")}
-          </span>
-          <span className="text-muted-foreground">{t("journal.debit")}: <b className="num text-foreground">{fmt(totalDebit)}</b></span>
-          <span className="text-muted-foreground">{t("journal.credit")}: <b className="num text-foreground">{fmt(totalCredit)}</b></span>
-          <span className="text-muted-foreground">{t("journal.difference")}: <b className="num text-foreground">{fmt(diff)}</b></span>
-          <span className={`ms-auto text-xs px-2.5 py-1 rounded-full font-medium ${balanced ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive"}`}>
-            {balanced ? t("journal.balanced") : t("journal.unbalanced")}
-          </span>
-        </div>
-      </div>
+      </DocSheet>
     </form>
   );
 }

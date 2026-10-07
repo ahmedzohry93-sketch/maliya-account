@@ -8,7 +8,15 @@ import { exportToExcel, exportToPDF, type Section } from "@/lib/export-utils";
 import { ReportShell, DateRangeFields } from "@/components/report-shell";
 import { defaultPeriod, periodLabel } from "@/lib/report-period";
 
-export const Route = createFileRoute("/_app/customers-statement")({ component: Page });
+export const Route = createFileRoute("/_app/customers-statement")({
+  component: Page,
+  head: () => ({
+    meta: [
+      { title: "كشف حساب الأطراف | Partner Statement" },
+      { name: "description", content: "عرض كشوفات حساب العملاء والموردين مع التفاصيل والأرصدة." },
+    ],
+  }),
+});
 
 type Partner = { id: string; code: string | null; name: string; type: "customer" | "supplier" | "both"; phone: string | null; email: string | null };
 type LineRow = { id: string; partner_id: string | null; debit: number; credit: number; description: string | null; journal_entries: { id: string; entry_no: number; entry_date: string; description: string | null; status: string } };

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export function DocumentHeader({ title, number }: { title: string; number?: string | number }) {
   const { data: c } = useCompanySettings();
-  return <div className="rpt-head">
+    <div className="sticky top-0 z-30 mb-3 flex items-center gap-2 border bg-card/95 px-2 py-1.5 backdrop-blur shadow-sm">
     <div><div className="rpt-company-name">{c?.name ?? "الشركة"}</div>
       <div className="rpt-company">{c?.address && <div>{c.address}</div>}
         {(c?.phone || c?.tax_number) && <div className="num">{[c?.phone, c?.tax_number && `ر.ض ${c.tax_number}`].filter(Boolean).join(" · ")}</div>}
