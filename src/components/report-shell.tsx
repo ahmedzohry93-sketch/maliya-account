@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import type { AccNode } from "@/lib/account-tree";
 import { isRootAccount, pctChange } from "@/lib/account-tree";
 import { useCompanySettings } from "@/lib/company";
+import { DocumentHeader, DocumentFooter } from "@/components/document-sheet";
 
 
 export function money(n: number) {
@@ -138,7 +139,7 @@ export function ReportShell({
   return (
     <div className="w-full min-w-0 px-2 md:px-4 py-3 md:py-5">
       <div className="mx-auto w-full max-w-[1000px] min-w-0 space-y-3">
-        <div className="sticky top-0 z-30 flex items-center gap-2 rounded-none border bg-card/95 backdrop-blur px-2 py-1.5 shadow-sm">
+        <div className="doc-toolbar doc-noprint">
           <button
             onClick={() => router.history.back()}
             className="h-8 w-8 grid place-items-center rounded-none border text-muted-foreground hover:bg-muted shrink-0"
@@ -237,20 +238,9 @@ export function ReportShell({
 /** Classic printed sheet: company header, meta strip, body and footer note. */
 export function ReportSheet({ title, subtitle, children }: { title: string; subtitle?: ReactNode; children: ReactNode }) {
   const { data: company } = useCompanySettings();
-  const printed = new Date().toLocaleDateString("en-GB");
   return (
     <div className="rpt-sheet">
-      <div className="rpt-head">
-        <div className="rpt-company">
-          <div className="rpt-company-name">{company?.name || "الشركة"}</div>
-          {company?.address && <>{company.address}<br /></>}
-          {company?.tax_number && <>الرقم الضريبي: <span className="num">{company.tax_number}</span></>}
-        </div>
-        <div className="rpt-title-block">
-          <div className="rpt-title">{title}</div>
-          <span className="num">تاريخ الطباعة: {printed}</span>
-        </div>
-      </div>
+      <DocumentHeader title={title} />
       <div className="rpt-meta">
         <div><span>الفترة: </span><b className="num">{subtitle}</b></div>
         <div><span>العملة: </span><b>{company?.currency || "د.ل"}</b></div>
@@ -258,10 +248,7 @@ export function ReportSheet({ title, subtitle, children }: { title: string; subt
 
       <div className="space-y-3">{children}</div>
 
-      <div className="rpt-foot">
-        <span>{company?.footer_note || "تم إعداد هذا التقرير آليًا ولا يحتاج إلى توقيع"}</span>
-        <span>القيود المرحّلة فقط</span>
-      </div>
+      <DocumentFooter />
     </div>
   );
 }
