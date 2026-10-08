@@ -1,3 +1,6 @@
+import { Link } from "@tanstack/react-router";
+import { DocSheet, DocToolbar } from "@/components/document-sheet";
+import { Button } from "@/components/ui/button";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -47,19 +50,15 @@ export function PartnerWorkspace({ kind }: { kind: Kind }) {
   const titleEn = isCust ? "Customers" : "Suppliers";
 
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
-        <p className="text-sm text-muted-foreground mt-1">{titleEn} · {isCust ? "إدارة العملاء وفواتيرهم ودفعاتهم" : "إدارة الموردين وفواتيرهم ودفعاتهم"}</p>
-      </header>
-
-      <div className="flex gap-1 mb-6 border-b">
+    <div className="partner-workspace">
+      <DocToolbar title={title} />
+      <nav className="doc-noprint">
         {([
           ["invoices", isCust ? "فواتير العملاء" : "فواتير الموردين", FileText],
           ["payments", isCust ? "الدفعات الواردة" : "الدفعات الصادرة", Receipt],
           ["list", isCust ? "قائمة العملاء" : "قائمة الموردين", Users],
         ] as const).map(([k, label, Icon]) => (
-          <button
+          <Button variant="outline"
             key={k}
             onClick={() => setTab(k)}
             className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
@@ -67,13 +66,16 @@ export function PartnerWorkspace({ kind }: { kind: Kind }) {
             }`}
           >
             <Icon className="w-4 h-4" /> {label}
-          </button>
+          </Button>
         ))}
-      </div>
+        <Button variant="outline" asChild><Link to={isCust ? "/customers-statement" : "/suppliers-statement"}>كشوف الحساب والحركات</Link></Button>
+      </nav>
 
+      <DocSheet title={tab === "list" ? `قائمة ${title}` : tab === "invoices" ? `فواتير ${title}` : `دفعات ${title}`} signatures={[]}>
       {tab === "list" && <PartnersList kind={kind} />}
       {tab === "invoices" && <InvoicesTab kind={kind} fmt={fmt} />}
       {tab === "payments" && <PaymentsTab kind={kind} fmt={fmt} />}
+      </DocSheet>
     </div>
   );
 }
@@ -130,9 +132,9 @@ function PartnersList({ kind }: { kind: Kind }) {
           />
         </div>
         <p className="text-sm text-muted-foreground">{visible.length} طرف</p>
-        <button onClick={() => { setEditing(null); setShowForm(true); }} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium">
+        <Button variant="outline" onClick={() => { setEditing(null); setShowForm(true); }} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium">
           <Plus className="w-4 h-4" /> {kind === "customer" ? "عميل جديد" : "مورد جديد"}
-        </button>
+        </Button>
       </div>
 
       <div className="bg-card border rounded-lg overflow-hidden">
@@ -150,8 +152,8 @@ function PartnersList({ kind }: { kind: Kind }) {
                 <td className="px-4 py-2.5 text-muted-foreground" dir="ltr">{p.email || "—"}</td>
                 <td className="px-4 py-2.5">
                   <div className="flex gap-1 justify-end">
-                    <button onClick={() => { setEditing(p); setShowForm(true); }} className="p-1.5 rounded hover:bg-muted"><Edit2 className="w-3.5 h-3.5" /></button>
-                    <button onClick={() => del.mutate(p.id)} className="p-1.5 rounded hover:bg-destructive/10 text-destructive"><Trash2 className="w-3.5 h-3.5" /></button>
+                    <Button variant="outline" onClick={() => { setEditing(p); setShowForm(true); }} className="p-1.5 rounded hover:bg-muted"><Edit2 className="w-3.5 h-3.5" /></Button>
+                    <Button variant="outline" onClick={() => del.mutate(p.id)} className="p-1.5 rounded hover:bg-destructive/10 text-destructive"><Trash2 className="w-3.5 h-3.5" /></Button>
                   </div>
                 </td>
               </tr>
@@ -189,13 +191,12 @@ function PartnerForm({ partner, kind, onClose, onSaved }: { partner: Partner | n
     } catch (err) { toast.error(err instanceof Error ? err.message : "خطأ"); } finally { setSaving(false); }
   };
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-card rounded-lg max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-semibold text-lg">{partner ? "تعديل" : kind === "customer" ? "عميل جديد" : "مورد جديد"}</h3>
-          <button onClick={onClose}><X className="w-5 h-5" /></button>
-        </div>
+    <div className="document-modal" role="dialog" aria-modal="true">
+      <div>
+        <DocToolbar title={partner ? "تعديل بيانات الطرف" : kind === "customer" ? "عميل جديد" : "مورد جديد"} onBack={onClose} />
         <form onSubmit={submit} className="space-y-3">
+          <DocSheet title={partner ? "تعديل بيانات الطرف" : kind === "customer" ? "عميل جديد" : "مورد جديد"} signatures={[]}>
+
           <div className="grid grid-cols-2 gap-3">
             <div><label className="text-xs font-medium block mb-1">الكود</label><input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} className="w-full px-3 py-2 border rounded-md bg-background" /></div>
             <div><label className="text-xs font-medium block mb-1">النوع</label>
@@ -209,10 +210,11 @@ function PartnerForm({ partner, kind, onClose, onSaved }: { partner: Partner | n
             <div><label className="text-xs font-medium block mb-1">الهاتف</label><input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="w-full px-3 py-2 border rounded-md bg-background" dir="ltr" /></div>
             <div><label className="text-xs font-medium block mb-1">البريد</label><input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full px-3 py-2 border rounded-md bg-background" dir="ltr" /></div>
           </div>
-          <div className="flex gap-2 pt-2">
-            <button type="submit" disabled={saving} className="flex-1 bg-primary text-primary-foreground py-2 rounded-md text-sm font-medium">{saving ? "..." : "حفظ"}</button>
-            <button type="button" onClick={onClose} className="px-4 py-2 border rounded-md text-sm">إلغاء</button>
+          <div className="doc-noprint flex gap-2 pt-2">
+            <Button variant="outline" type="submit" disabled={saving} className="flex-1 bg-primary text-primary-foreground py-2 rounded-md text-sm font-medium">{saving ? "..." : "حفظ"}</Button>
+            <Button variant="outline" type="button" onClick={onClose} className="px-4 py-2 border rounded-md text-sm">إلغاء</Button>
           </div>
+          </DocSheet>
         </form>
       </div>
     </div>
@@ -345,7 +347,7 @@ function InvoicesTab({ kind, fmt }: { kind: Kind; fmt: (n: number) => string }) 
     const totalsRow = ["", "", "", "", "الإجمالي", filtered.reduce((s, i) => s + Number(i.total), 0), ""];
     const title = isSale ? "فواتير المبيعات" : "فواتير المشتريات";
     if (fmt2 === "excel") exportToExcel(title, title, [{ headers, rows, totals: totalsRow }]);
-    else exportToPDF(title, title, [{ headers, rows, totals: totalsRow }]);
+    else window.print();
   };
 
   return (
@@ -372,17 +374,17 @@ function InvoicesTab({ kind, fmt }: { kind: Kind; fmt: (n: number) => string }) 
       <div className="flex justify-between items-center mb-3 flex-wrap gap-2">
         <div className="flex gap-1 bg-muted/50 p-1 rounded-md">
           {(["all", "draft", "posted"] as const).map((f) => (
-            <button key={f} onClick={() => setFilter(f)} className={`px-3 py-1.5 text-xs font-medium rounded ${filter === f ? "bg-background shadow-sm" : "text-muted-foreground"}`}>
+            <Button variant="outline" key={f} onClick={() => setFilter(f)} className={`px-3 py-1.5 text-xs font-medium rounded ${filter === f ? "bg-background shadow-sm" : "text-muted-foreground"}`}>
               {f === "all" ? "الكل" : f === "draft" ? "مسودة" : "مُرحّل"}
-            </button>
+            </Button>
           ))}
         </div>
         <div className="flex gap-2">
-          <button onClick={() => exportList("excel")} className="flex items-center gap-1.5 border px-3 py-2 rounded-md text-xs font-medium hover:bg-muted"><Download className="w-3.5 h-3.5" /> Excel</button>
-          <button onClick={() => exportList("pdf")} className="flex items-center gap-1.5 border px-3 py-2 rounded-md text-xs font-medium hover:bg-muted"><Printer className="w-3.5 h-3.5" /> PDF</button>
-          <button onClick={() => { setEditing(null); setShowForm(true); }} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium">
+          <Button variant="outline" onClick={() => exportList("excel")} className="flex items-center gap-1.5 border px-3 py-2 rounded-md text-xs font-medium hover:bg-muted"><Download className="w-3.5 h-3.5" /> Excel</Button>
+          <Button variant="outline" onClick={() => exportList("pdf")} className="flex items-center gap-1.5 border px-3 py-2 rounded-md text-xs font-medium hover:bg-muted"><Printer className="w-3.5 h-3.5" /> PDF</Button>
+          <Button variant="outline" onClick={() => { setEditing(null); setShowForm(true); }} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium">
             <Plus className="w-4 h-4" /> {isSale ? "فاتورة بيع" : "فاتورة شراء"}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -420,8 +422,8 @@ function InvoicesTab({ kind, fmt }: { kind: Kind; fmt: (n: number) => string }) 
                 <td className="px-4 py-2.5">
                   <div className="flex gap-1 justify-end">
                     <PrintMenu inv={inv} partnerName={partnerMap.get(inv.partner_id)?.name ?? ""} isSale={isSale} />
-                    <button onClick={() => { setEditing(inv); setShowForm(true); }} className="p-1.5 rounded hover:bg-muted" title="تعديل"><Edit2 className="w-3.5 h-3.5" /></button>
-                    <button onClick={() => del.mutate(inv)} className="p-1.5 rounded hover:bg-destructive/10 text-destructive" title="حذف"><Trash2 className="w-3.5 h-3.5" /></button>
+                    <Button variant="outline" onClick={() => { setEditing(inv); setShowForm(true); }} className="p-1.5 rounded hover:bg-muted" title="تعديل"><Edit2 className="w-3.5 h-3.5" /></Button>
+                    <Button variant="outline" onClick={() => del.mutate(inv)} className="p-1.5 rounded hover:bg-destructive/10 text-destructive" title="حذف"><Trash2 className="w-3.5 h-3.5" /></Button>
                   </div>
                 </td>
               </tr>
@@ -458,24 +460,24 @@ function PrintMenu({ inv, partnerName, isSale }: { inv: Invoice; partnerName: st
 
   if (!isSale) {
     return (
-      <button onClick={() => printInvoiceA4(inv, partnerName)} className="p-1.5 rounded hover:bg-muted" title="طباعة">
+      <Button variant="outline" onClick={() => printInvoiceA4(inv, partnerName)} className="p-1.5 rounded hover:bg-muted" title="طباعة">
         <Printer className="w-3.5 h-3.5" />
-      </button>
+      </Button>
     );
   }
   return (
     <div className="relative" onClick={(e) => e.stopPropagation()}>
-      <button onClick={() => setOpen((v) => !v)} className="p-1.5 rounded hover:bg-muted flex items-center gap-0.5" title="طباعة">
+      <Button variant="outline" onClick={() => setOpen((v) => !v)} className="p-1.5 rounded hover:bg-muted flex items-center gap-0.5" title="طباعة">
         <Printer className="w-3.5 h-3.5" /><ChevronDown className="w-3 h-3" />
-      </button>
+      </Button>
       {open && (
         <div className="absolute end-0 top-full mt-1 bg-popover border rounded-md shadow-lg z-30 py-1 min-w-[180px]">
-          <button onClick={() => { setOpen(false); printInvoiceA4(inv, partnerName); }} className="w-full text-start px-3 py-2 text-sm hover:bg-muted flex items-center gap-2">
+          <Button variant="outline" onClick={() => { setOpen(false); printInvoiceA4(inv, partnerName); }} className="w-full text-start px-3 py-2 text-sm hover:bg-muted flex items-center gap-2">
             <FileText className="w-3.5 h-3.5" /> فاتورة A4 (PDF)
-          </button>
-          <button onClick={() => { setOpen(false); printInvoiceReceipt(inv, partnerName); }} className="w-full text-start px-3 py-2 text-sm hover:bg-muted flex items-center gap-2">
+          </Button>
+          <Button variant="outline" onClick={() => { setOpen(false); printInvoiceReceipt(inv, partnerName); }} className="w-full text-start px-3 py-2 text-sm hover:bg-muted flex items-center gap-2">
             <Receipt className="w-3.5 h-3.5" /> إيصال 80mm (طابعة صغيرة)
-          </button>
+          </Button>
         </div>
       )}
     </div>
@@ -704,7 +706,7 @@ function InvoiceForm({ kind, invoice, onClose, onSaved }: { kind: Kind; invoice:
 
       // Insert lines
       const lineRows = valid.map((l, i) => ({
-        invoice_id: invId!,
+        invoice_id: invId,
         line_order: i,
         product_id: l.product_id,
         description: l.description || null,
@@ -732,13 +734,12 @@ function InvoiceForm({ kind, invoice, onClose, onSaved }: { kind: Kind; invoice:
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-card rounded-lg max-w-4xl w-full p-6 max-h-[95vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-semibold text-lg">{invoice ? `تعديل فاتورة #${invoice.invoice_no}` : isSale ? "فاتورة بيع جديدة" : "فاتورة شراء جديدة"}</h3>
-          <button onClick={onClose}><X className="w-5 h-5" /></button>
-        </div>
+    <div className="document-modal" role="dialog" aria-modal="true">
+      <div>
+        <DocToolbar title={isSale ? "فاتورة مبيعات" : "فاتورة مشتريات"} onBack={onClose} />
         <form onSubmit={submit} className="space-y-4">
+          <DocSheet title={isSale ? "فاتورة مبيعات" : "فاتورة مشتريات"} number={invoice?.invoice_no} signatures={[]}>
+
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             <div className="col-span-2">
               <label className="text-xs font-medium block mb-1">{isSale ? "العميل" : "المورد"} *</label>
@@ -767,7 +768,7 @@ function InvoiceForm({ kind, invoice, onClose, onSaved }: { kind: Kind; invoice:
           <div className="border rounded-lg overflow-hidden">
             <div className="bg-muted/50 px-3 py-2 text-xs font-semibold flex items-center justify-between">
               <span className="flex items-center gap-1.5"><Package className="w-3.5 h-3.5" /> بنود الفاتورة</span>
-              <button type="button" onClick={addLine} className="flex items-center gap-1 text-primary hover:underline"><Plus className="w-3 h-3" /> إضافة سطر</button>
+              <Button variant="outline" type="button" onClick={addLine} className="flex items-center gap-1 text-primary hover:underline"><Plus className="w-3 h-3" /> إضافة سطر</Button>
             </div>
             <table className="w-full text-sm">
               <thead className="text-xs bg-muted/30">
@@ -777,7 +778,7 @@ function InvoiceForm({ kind, invoice, onClose, onSaved }: { kind: Kind; invoice:
                   <th className="text-start px-2 py-2 w-20">الكمية</th>
                   <th className="text-start px-2 py-2 w-24">السعر</th>
                   <th className="text-start px-2 py-2 w-28">الإجمالي</th>
-                  <th className="w-10"></th>
+                  <th className="doc-noprint w-10"></th>
                 </tr>
               </thead>
               <tbody>
@@ -802,8 +803,8 @@ function InvoiceForm({ kind, invoice, onClose, onSaved }: { kind: Kind; invoice:
                         <input type="number" step="0.01" value={l.unit_price} onChange={(e) => updateLine(idx, { unit_price: Number(e.target.value) })} className="w-full px-2 py-1.5 border rounded bg-background text-xs num" />
                       </td>
                       <td className="px-2 py-1.5 num font-medium">{(Number(l.quantity) * Number(l.unit_price)).toFixed(2)}</td>
-                      <td className="px-2 py-1.5">
-                        <button type="button" onClick={() => removeLine(idx)} className="p-1 text-destructive hover:bg-destructive/10 rounded"><Trash2 className="w-3.5 h-3.5" /></button>
+                      <td className="doc-noprint px-2 py-1.5">
+                        <Button variant="outline" type="button" onClick={() => removeLine(idx)} className="p-1 text-destructive hover:bg-destructive/10 rounded"><Trash2 className="w-3.5 h-3.5" /></Button>
                       </td>
                     </tr>
                   );
@@ -835,7 +836,7 @@ function InvoiceForm({ kind, invoice, onClose, onSaved }: { kind: Kind; invoice:
             </div>
           </div>
 
-          <details className="border rounded-md">
+          <details className="doc-noprint border rounded-md">
             <summary className="cursor-pointer px-3 py-2 text-xs font-semibold text-muted-foreground bg-muted/30">حسابات الترحيل التلقائي</summary>
             <div className="p-3 grid grid-cols-2 gap-3">
               <div><label className="text-xs font-medium block mb-1">حساب {isSale ? "العميل" : "المورد"}</label><AccountSelect accounts={accounts} value={form.partner_account_id} onChange={(v) => setForm({ ...form, partner_account_id: v })} /></div>
@@ -856,15 +857,16 @@ function InvoiceForm({ kind, invoice, onClose, onSaved }: { kind: Kind; invoice:
             <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={2} className="w-full px-3 py-2 border rounded-md bg-background" />
           </div>
 
-          <label className="flex items-center gap-2 text-sm bg-primary/5 border border-primary/20 rounded-md p-3">
+          <label className="doc-noprint flex items-center gap-2 text-sm bg-primary/5 border border-primary/20 rounded-md p-3">
             <input type="checkbox" checked={postNow} onChange={(e) => setPostNow(e.target.checked)} />
             <span>ترحيل الفاتورة تلقائياً إلى قيد يومية{isSale ? " + قيد تكلفة البضاعة" : ""}</span>
           </label>
 
-          <div className="flex gap-2 pt-2">
-            <button type="submit" disabled={saving} className="flex-1 bg-primary text-primary-foreground py-2.5 rounded-md text-sm font-semibold">{saving ? "..." : "حفظ"}</button>
-            <button type="button" onClick={onClose} className="px-4 py-2 border rounded-md text-sm">إلغاء</button>
+          <div className="doc-noprint flex gap-2 pt-2">
+            <Button variant="outline" type="submit" disabled={saving} className="flex-1 bg-primary text-primary-foreground py-2.5 rounded-md text-sm font-semibold">{saving ? "..." : "حفظ"}</Button>
+            <Button variant="outline" type="button" onClick={onClose} className="px-4 py-2 border rounded-md text-sm">إلغاء</Button>
           </div>
+          </DocSheet>
         </form>
       </div>
     </div>
@@ -938,9 +940,9 @@ function PaymentsTab({ kind, fmt }: { kind: Kind; fmt: (n: number) => string }) 
 
       <div className="flex justify-between items-center mb-3">
         <p className="text-sm text-muted-foreground">{payments.length} {isReceipt ? "إيصال قبض" : "إذن صرف"}</p>
-        <button onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium">
+        <Button variant="outline" onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium">
           <Plus className="w-4 h-4" /> {isReceipt ? "إيصال قبض" : "إذن صرف"}
-        </button>
+        </Button>
       </div>
 
       <div className="bg-card border rounded-lg overflow-hidden">
@@ -969,7 +971,7 @@ function PaymentsTab({ kind, fmt }: { kind: Kind; fmt: (n: number) => string }) 
                 <td className="px-4 py-2.5 num font-semibold">{fmt(Number(p.amount))}</td>
                 <td className="px-4 py-2.5">{p.journal_entry_id ? <StatusBadge status="posted" /> : <StatusBadge status="draft" />}</td>
                 <td className="px-4 py-2.5">
-                  <button onClick={() => del.mutate(p)} className="p-1.5 rounded hover:bg-destructive/10 text-destructive"><Trash2 className="w-3.5 h-3.5" /></button>
+                  <Button variant="outline" onClick={() => del.mutate(p)} className="p-1.5 rounded hover:bg-destructive/10 text-destructive"><Trash2 className="w-3.5 h-3.5" /></Button>
                 </td>
               </tr>
             ))}
@@ -1063,13 +1065,12 @@ function PaymentForm({ kind, onClose, onSaved }: { kind: Kind; onClose: () => vo
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-card rounded-lg max-w-xl w-full p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-semibold text-lg">{isReceipt ? "إيصال قبض" : "إذن صرف"}</h3>
-          <button onClick={onClose}><X className="w-5 h-5" /></button>
-        </div>
+    <div className="document-modal" role="dialog" aria-modal="true">
+      <div>
+        <DocToolbar title={isReceipt ? "إيصال قبض" : "إذن صرف"} onBack={onClose} />
         <form onSubmit={submit} className="space-y-3">
+          <DocSheet title={isReceipt ? "إيصال قبض" : "إذن صرف"} signatures={[]}>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-medium block mb-1">{isReceipt ? "العميل" : "المورد"} *</label>
@@ -1129,14 +1130,13 @@ function PaymentForm({ kind, onClose, onSaved }: { kind: Kind; onClose: () => vo
             <input value={form.reference} onChange={(e) => setForm({ ...form, reference: e.target.value })} className="w-full px-3 py-2 border rounded-md bg-background" />
           </div>
 
-          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-md p-3 text-xs text-emerald-700 dark:text-emerald-400">
-            ستتم إضافة قيد يومية تلقائياً عند الحفظ.
-          </div>
 
-          <div className="flex gap-2 pt-2">
-            <button type="submit" disabled={saving} className="flex-1 bg-primary text-primary-foreground py-2 rounded-md text-sm font-medium">{saving ? "..." : "حفظ وترحيل"}</button>
-            <button type="button" onClick={onClose} className="px-4 py-2 border rounded-md text-sm">إلغاء</button>
+
+          <div className="doc-noprint flex gap-2 pt-2">
+            <Button variant="outline" type="submit" disabled={saving} className="flex-1 bg-primary text-primary-foreground py-2 rounded-md text-sm font-medium">{saving ? "..." : "حفظ وترحيل"}</Button>
+            <Button variant="outline" type="button" onClick={onClose} className="px-4 py-2 border rounded-md text-sm">إلغاء</Button>
           </div>
+          </DocSheet>
         </form>
       </div>
     </div>
@@ -1146,8 +1146,8 @@ function PaymentForm({ kind, onClose, onSaved }: { kind: Kind; onClose: () => vo
 /* ============ UI helpers ============ */
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    draft: "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/30",
-    posted: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30",
+    draft: "bg-warning/10 text-warning-foreground border-warning/30",
+    posted: "bg-success/10 text-success border-success/30",
     cancelled: "bg-muted text-muted-foreground border-border",
   };
   const labels: Record<string, string> = { draft: "مسودة", posted: "مُرحّل", cancelled: "ملغى" };
