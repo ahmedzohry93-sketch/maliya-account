@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -8,7 +9,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/lib/i18n";
 import { logAudit } from "@/lib/audit";
 
-export const Route = createFileRoute("/_app/bank-accounts")({ component: BankAccountsPage });
+export const Route = createFileRoute("/_app/bank-accounts")({
+  head: () => pageMeta("الحسابات البنكية", "إدارة الحسابات البنكية وأرصدتها وبياناتها."), component: BankAccountsPage });
 
 type BA = {
   id: string;

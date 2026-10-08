@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -11,7 +12,8 @@ import { useI18n } from "@/lib/i18n";
 import { logAudit } from "@/lib/audit";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/_app/checks")({ component: ChecksPage });
+export const Route = createFileRoute("/_app/checks")({
+  head: () => pageMeta("الشيكات", "متابعة الشيكات الواردة والصادرة وتواريخ استحقاقها."), component: ChecksPage });
 
 type Direction = "incoming" | "outgoing";
 type Status = "pending" | "under_collection" | "cleared" | "returned" | "cancelled";

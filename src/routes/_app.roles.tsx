@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
@@ -5,7 +6,8 @@ import { toast } from "sonner";
 import { Plus, Trash2, ShieldCheck, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/_app/roles")({ component: RolesPage });
+export const Route = createFileRoute("/_app/roles")({
+  head: () => pageMeta("الأدوار والصلاحيات", "إدارة أدوار المستخدمين وصلاحيات الوصول."), component: RolesPage });
 
 type Role = { id: string; name: string; description: string | null; is_system: boolean };
 type Permission = { id: string; key: string; label: string; category: string };

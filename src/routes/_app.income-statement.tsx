@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -9,7 +10,8 @@ import {
 } from "@/lib/account-tree";
 import { prevRange, periodLabel, defaultPeriod } from "@/lib/report-period";
 
-export const Route = createFileRoute("/_app/income-statement")({ component: IncomeStatementPage });
+export const Route = createFileRoute("/_app/income-statement")({
+  head: () => pageMeta("قائمة الدخل", "الإيرادات والمصروفات وصافي الربح أو الخسارة خلال الفترة."), component: IncomeStatementPage });
 
 async function balancesFor(from: string, to: string) {
   let q = supabase

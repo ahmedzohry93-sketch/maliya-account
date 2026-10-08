@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -20,6 +21,7 @@ import { QuickActions } from "@/components/quick-actions";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/finance-dashboard")({
+  head: () => pageMeta("المتابعة المالية", "متابعة الأرصدة والاستحقاقات والمؤشرات المالية."),
   component: FinanceDashboard,
 });
 

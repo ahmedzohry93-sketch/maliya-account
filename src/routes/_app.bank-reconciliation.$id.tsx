@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -12,7 +13,8 @@ import { runAutoMatch, fetchJournalCandidates, type JournalCandidate, type State
 import { applyRules, fetchRules } from "@/lib/bank-recon/rules-engine";
 import { createEntryForStatementLine } from "@/lib/bank-recon/journal-generator";
 
-export const Route = createFileRoute("/_app/bank-reconciliation/$id")({ component: ReconWorkspace });
+export const Route = createFileRoute("/_app/bank-reconciliation/$id")({
+  head: () => pageMeta("تفاصيل التسوية البنكية", "مراجعة ومطابقة واعتماد حركة الحساب البنكي."), component: ReconWorkspace });
 
 type Recon = {
   id: string;

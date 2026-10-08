@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -7,7 +8,8 @@ import { DateRangeFields, ReportShell, StatementCard, BandRow, LineRow, TotalRow
 import { defaultPeriod } from "@/lib/report-period";
 
 
-export const Route = createFileRoute("/_app/cash-flow")({ component: CashFlowPage });
+export const Route = createFileRoute("/_app/cash-flow")({
+  head: () => pageMeta("التدفقات النقدية", "التدفقات النقدية التشغيلية والاستثمارية والتمويلية حسب الفترة."), component: CashFlowPage });
 
 type Acc = { id: string; code: string; name: string; type: string };
 

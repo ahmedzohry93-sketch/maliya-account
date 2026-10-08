@@ -1,8 +1,10 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/_app/audit-log")({ component: AuditPage });
+export const Route = createFileRoute("/_app/audit-log")({
+  head: () => pageMeta("سجل المراجعة", "مراجعة سجل العمليات والتعديلات في النظام المحاسبي."), component: AuditPage });
 
 function AuditPage() {
   const { data = [] } = useQuery({

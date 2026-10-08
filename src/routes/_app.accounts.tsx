@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -9,6 +10,7 @@ import { useI18n } from "@/lib/i18n";
 
 
 export const Route = createFileRoute("/_app/accounts")({
+  head: () => pageMeta("دليل الحسابات", "إدارة شجرة الحسابات ورموزها وتصنيفها المحاسبي."),
   component: AccountsPage,
   validateSearch: (s: Record<string, unknown>): { q?: string } => ({
     q: typeof s.q === "string" ? s.q : undefined,

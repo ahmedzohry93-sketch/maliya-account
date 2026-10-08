@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
@@ -7,6 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_app/journal")({
+  head: () => pageMeta("قيود اليومية", "استعراض قيود اليومية والحسابات وحالة الترحيل."),
   component: JournalPage,
   validateSearch: (s: Record<string, unknown>): { account?: string; from?: string; to?: string } => ({
     account: typeof s.account === "string" ? s.account : undefined,

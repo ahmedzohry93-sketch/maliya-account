@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -7,7 +8,8 @@ import { DateRangeFields, ReportShell, StatementCard, BandRow, LineRow, TotalRow
 import { buildAccountTree, pruneEmpty, totalOf, flattenTree, isRootAccount, type AccNode, type AccountRow } from "@/lib/account-tree";
 import { today } from "@/lib/report-period";
 
-export const Route = createFileRoute("/_app/balance-sheet")({ component: BalanceSheetPage });
+export const Route = createFileRoute("/_app/balance-sheet")({
+  head: () => pageMeta("الميزانية العمومية", "عرض الأصول والالتزامات وحقوق الملكية حسب الفترة."), component: BalanceSheetPage });
 
 function BalanceSheetPage() {
   const [from, setFrom] = useState("");

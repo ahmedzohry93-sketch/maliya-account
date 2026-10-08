@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -10,7 +11,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/lib/i18n";
 import { exportToExcel, exportToPDF, type Section } from "@/lib/export-utils";
 
-export const Route = createFileRoute("/_app/assets")({ component: AssetsPage });
+export const Route = createFileRoute("/_app/assets")({
+  head: () => pageMeta("الأصول الثابتة", "متابعة الأصول الثابتة وقيمها وجدول الإهلاك."), component: AssetsPage });
 
 type Acc = { id: string; code: string; name: string; type: string; is_active: boolean };
 

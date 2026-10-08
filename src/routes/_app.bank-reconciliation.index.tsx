@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -5,7 +6,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/lib/i18n";
 import { Landmark, Plus, Settings2, FileBarChart, CheckCircle2, AlertTriangle, TrendingUp } from "lucide-react";
 
-export const Route = createFileRoute("/_app/bank-reconciliation/")({ component: BankReconIndex });
+export const Route = createFileRoute("/_app/bank-reconciliation/")({
+  head: () => pageMeta("التسويات البنكية", "قائمة التسويات البنكية وحالة مطابقة الحركات."), component: BankReconIndex });
 
 type Recon = {
   id: string;

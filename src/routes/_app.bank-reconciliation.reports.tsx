@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -7,7 +8,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/lib/i18n";
 import { exportToPDF, exportToExcel, type Section } from "@/lib/export-utils";
 
-export const Route = createFileRoute("/_app/bank-reconciliation/reports")({ component: ReportsPage });
+export const Route = createFileRoute("/_app/bank-reconciliation/reports")({
+  head: () => pageMeta("تقارير التسوية البنكية", "متابعة فروق التسويات البنكية والمطابقات."), component: ReportsPage });
 
 const REPORTS = [
   "reconciliation_statement",
