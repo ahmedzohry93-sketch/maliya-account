@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
@@ -10,6 +11,7 @@ import { isRootAccount } from "@/lib/account-tree";
 type LedgerSearch = { account?: string; from?: string; to?: string };
 
 export const Route = createFileRoute("/_app/ledger")({
+  head: () => pageMeta("دفتر الأستاذ", "حركات الحسابات والأرصدة الافتتاحية والختامية حسب الفترة."),
   component: LedgerPage,
   validateSearch: (s: Record<string, unknown>): LedgerSearch => ({
     account: typeof s.account === "string" ? s.account : undefined,

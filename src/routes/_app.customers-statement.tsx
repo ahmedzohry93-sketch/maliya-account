@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { Fragment } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -10,12 +11,7 @@ import { defaultPeriod, periodLabel } from "@/lib/report-period";
 
 export const Route = createFileRoute("/_app/customers-statement")({
   component: Page,
-  head: () => ({
-    meta: [
-      { title: "كشف حساب الأطراف | Partner Statement" },
-      { name: "description", content: "عرض كشوفات حساب العملاء والموردين مع التفاصيل والأرصدة." },
-    ],
-  }),
+  head: () => pageMeta("كشوف حساب العملاء", "حركات العملاء والأرصدة وكشوف الحساب التفصيلية حسب الفترة."),
 });
 
 type Partner = { id: string; code: string | null; name: string; type: "customer" | "supplier" | "both"; phone: string | null; email: string | null };

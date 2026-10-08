@@ -1,9 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect, useMemo } from "react";
-import { DocToolbar } from "@/components/document-sheet";
 import { toast } from "sonner";
-  Printer,
 import {
   Plus,
   X,
@@ -316,7 +314,7 @@ function JournalEntryPage() {
               {readonly ? t("common.close") : t("common.cancel")}
             </Button>
 </>} />
-      <DocSheet title={t("journal.entry")} number={isNew ? undefined : entry?.entry_no} meta={[{label: t("journal.date"), value: date}, {label: t("journal.type"), value: t(`entry_type.${entryType}`)}, {label: t("journal.reference"), value: reference}]} totals={[{label: t("journal.debit"), value: fmt(totalDebit)}, {label: t("journal.credit"), value: fmt(totalCredit)}, {label: t("journal.difference"), value: fmt(diff), strong: true}]}>
+      <DocSheet title="قيد يومية" number={isNew ? undefined : entry?.entry_no} meta={[{label: t("journal.date"), value: date}, {label: t("journal.type"), value: t(`entry_type.${entryType}`)}, {label: t("journal.reference"), value: reference}]} totals={[{label: t("journal.debit"), value: fmt(totalDebit)}, {label: t("journal.credit"), value: fmt(totalCredit)}, {label: t("journal.difference"), value: fmt(diff), strong: true}]}>
       <div className="space-y-3">
         {/* Entry details */}
         <section className="py-2">

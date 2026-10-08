@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -8,7 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { createUser } from "@/lib/users.functions";
 import { useAuth } from "@/hooks/use-auth";
 
-export const Route = createFileRoute("/_app/users")({ component: UsersPage });
+export const Route = createFileRoute("/_app/users")({
+  head: () => pageMeta("المستخدمون", "إدارة مستخدمي النظام والحسابات المصرح لها."), component: UsersPage });
 
 function UsersPage() {
   const qc = useQueryClient();

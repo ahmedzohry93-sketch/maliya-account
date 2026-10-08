@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/_app/dashboard")({
+  head: () => pageMeta("الرئيسية", "نظرة عامة على الحسابات والفواتير والمؤشرات المالية."),
   component: Dashboard,
 });
 

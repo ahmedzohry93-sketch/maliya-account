@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -9,7 +10,8 @@ import { defaultPeriod, dayBefore, periodLabel } from "@/lib/report-period";
 import { isRootAccount } from "@/lib/account-tree";
 
 
-export const Route = createFileRoute("/_app/trial-balance")({ component: TrialBalancePage });
+export const Route = createFileRoute("/_app/trial-balance")({
+  head: () => pageMeta("ميزان المراجعة", "الأرصدة الافتتاحية والحركات والأرصدة الختامية للحسابات."), component: TrialBalancePage });
 
 function TrialBalancePage() {
   const dp = defaultPeriod();

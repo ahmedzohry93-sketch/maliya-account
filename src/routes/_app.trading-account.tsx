@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -8,7 +9,8 @@ import { useI18n } from "@/lib/i18n";
 import { DateRangeFields, ReportShell } from "@/components/report-shell";
 import { defaultPeriod } from "@/lib/report-period";
 
-export const Route = createFileRoute("/_app/trading-account")({ component: TradingAccountPage });
+export const Route = createFileRoute("/_app/trading-account")({
+  head: () => pageMeta("حساب المتاجرة", "المبيعات والمشتريات وتكلفة البضاعة ومجمل الربح."), component: TradingAccountPage });
 
 type AccountRow = { id: string; code: string; name: string; type: string; parent_id: string | null };
 

@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -11,7 +12,8 @@ import { useI18n } from "@/lib/i18n";
 import { logAudit } from "@/lib/audit";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/_app/recurring-obligations")({ component: ObligPage });
+export const Route = createFileRoute("/_app/recurring-obligations")({
+  head: () => pageMeta("الالتزامات المتكررة", "جدولة الالتزامات الدورية ومواعيد استحقاقها."), component: ObligPage });
 
 type Freq = "daily" | "weekly" | "monthly" | "quarterly" | "yearly";
 type Cat = "rent" | "loan" | "utility" | "payroll" | "insurance" | "subscription" | "fees" | "other";

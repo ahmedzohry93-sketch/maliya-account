@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -6,7 +7,8 @@ import { Plus, Trash2, Edit2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 
-export const Route = createFileRoute("/_app/partners")({ component: PartnersPage });
+export const Route = createFileRoute("/_app/partners")({
+  head: () => pageMeta("العملاء والموردون", "إدارة بيانات الأطراف من العملاء والموردين."), component: PartnersPage });
 
 type Partner = { id: string; code: string | null; name: string; type: "customer"|"supplier"|"both"; phone: string|null; email: string|null; is_active: boolean };
 

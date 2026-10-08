@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -7,7 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/lib/i18n";
 
-export const Route = createFileRoute("/_app/bank-matching-rules")({ component: RulesPage });
+export const Route = createFileRoute("/_app/bank-matching-rules")({
+  head: () => pageMeta("قواعد المطابقة البنكية", "إدارة قواعد المطابقة التلقائية للحركات البنكية."), component: RulesPage });
 
 type Category = "outstanding_check" | "deposit_in_transit" | "bank_charge" | "bank_interest" | "direct_deposit" | "returned_check" | "fx_difference" | "other";
 

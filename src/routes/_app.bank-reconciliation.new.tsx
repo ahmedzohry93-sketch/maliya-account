@@ -1,3 +1,4 @@
+import { pageMeta } from "@/lib/route-meta";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -7,7 +8,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/lib/i18n";
 import { logAudit } from "@/lib/audit";
 
-export const Route = createFileRoute("/_app/bank-reconciliation/new")({ component: NewRecon });
+export const Route = createFileRoute("/_app/bank-reconciliation/new")({
+  head: () => pageMeta("تسوية بنكية جديدة", "إنشاء تسوية جديدة للحساب البنكي وتحديد فترتها."), component: NewRecon });
 
 function NewRecon() {
   const { t } = useI18n();
