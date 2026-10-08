@@ -1,9 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect, useMemo } from "react";
-import { DocToolbar } from "@/components/document-sheet";
 import { toast } from "sonner";
-  Printer,
 import {
   Plus,
   X,
