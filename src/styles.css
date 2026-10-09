@@ -355,15 +355,22 @@
 .partner-workspace .rpt-sheet .rpt-sheet { padding:0; border:0; box-shadow:none; }
 .partner-workspace .rpt-sheet > div > div:has(>table) { border:0; overflow-x:auto; }
 .journal-document .rpt-sheet { overflow-x: auto; }
+.journal-document .doc-toolbar h1 { white-space:normal; overflow:visible; }
+@media (max-width: 640px) {
+  .journal-document .doc-toolbar > :first-child { flex-basis:100%; }
+  .journal-document .rpt-sheet > .rpt-block table { min-width:680px; }
+}
 @page { size: A4; margin: 8mm; }
 @media print {
   body * { visibility: hidden; }
   body:has(.rpt-sheet) { margin:0; }
   .rpt-sheet, .rpt-sheet * { visibility:visible; }
-  body:has(.document-modal) .partner-workspace > .document-viewport { display:none; }
+  body:has(.document-modal) .rpt-sheet, body:has(.document-modal) .rpt-sheet * { visibility:hidden; }
+  body:has(.document-modal) .document-modal .rpt-sheet, body:has(.document-modal) .document-modal .rpt-sheet * { visibility:visible; }
   .rpt-sheet { position:static; width:100%; min-width:0 !important; margin:0; box-shadow:none; padding:14px; }
   body:has(.rpt-sheet) :is(main, main > div, .document-viewport, .document-modal, .document-modal > div, .journal-document) { position:static !important; overflow:visible !important; max-height:none !important; height:auto !important; padding:0; }
   body:has(.rpt-sheet) :is(main > div > div, .document-modal > div > form) { margin:0; }
+  body:has(.document-modal) .document-modal { position:absolute !important; inset:0; width:100%; }
   .classic-app > div { max-width:none; }
   .classic-app .sticky, .classic-app .fixed:not(.document-modal), .doc-noprint { display:none !important; }
   body:has(.rpt-sheet) .min-h-screen > .sticky { display:none; }
@@ -375,4 +382,6 @@
   .rpt-sheet thead { display:table-header-group; }
   .rpt-sheet tr, .rpt-head, .rpt-foot, .document-signatures { break-inside:avoid; }
   .document-modal > div > .doc-toolbar { display:none; }
+  body:has(.document-modal) main.classic-app .document-modal { position:absolute !important; top:0; inset-inline:0; bottom:auto; margin:0; }
+  body:has(.document-modal) main.classic-app .document-modal > div { position:static !important; margin:0; max-width:none; }
 }

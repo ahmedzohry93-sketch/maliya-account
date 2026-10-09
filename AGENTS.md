@@ -8,5 +8,7 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
-- Documents (returns, stock vouchers, future invoices) render through `src/components/document-sheet.tsx` (DocToolbar + DocSheet) — one print/visual template for every document.
+- Documents, journal editors and partner workspaces use DocToolbar and DocSheet; reports reuse DocumentHeader and DocumentFooter — shared presentation keeps printed identities consistent.
+- Content routes use route-local head metadata, with pageMeta for standard entries — every page has its own descriptive sharing title.
+- Warehouse reports derive location balances from stock movements without changing posting logic — transfers remain location-specific and historical accounting stays intact.
 - Returns live in `invoice_returns`/`invoice_return_lines` (not new invoice types) so existing sales/purchase totals stay unaffected; posting logic is in `src/lib/inventory-docs.ts`.
