@@ -1,12 +1,12 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useRouter } from "@tanstack/react-router";
-import { Filter, Download, FileSpreadsheet, FileText, ChevronDown, ChevronLeft, ChevronsDownUp, ChevronsUpDown, MoreVertical, ArrowRight } from "lucide-react";
+import { Filter, Download, FileSpreadsheet, FileText, ChevronDown, ChevronLeft, ChevronsDownUp, ChevronsUpDown, MoreVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { AccNode } from "@/lib/account-tree";
 import { isRootAccount, pctChange } from "@/lib/account-tree";
 import { useCompanySettings } from "@/lib/company";
-import { DocumentHeader, DocumentFooter } from "@/components/document-sheet";
+import { DocumentHeader, DocumentFooter, DocumentBackButton } from "@/components/document-sheet";
 
 
 export function money(n: number) {
@@ -140,13 +140,7 @@ export function ReportShell({
     <div className="w-full min-w-0 px-2 md:px-4 py-3 md:py-5">
       <div className="mx-auto w-full max-w-[1000px] min-w-0 space-y-3">
         <div className="doc-toolbar doc-noprint">
-          <button
-            onClick={() => router.history.back()}
-            className="h-8 w-8 grid place-items-center rounded-none border text-muted-foreground hover:bg-muted shrink-0"
-            title="رجوع"
-          >
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          <DocumentBackButton onClick={() => router.history.back()} />
 
           <div className="min-w-0 flex-1">
             <h1 className="text-sm md:text-base font-bold truncate">{title}</h1>

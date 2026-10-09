@@ -23,14 +23,18 @@ export function DocumentFooter() {
 }
 
 /** Unified action bar used above every document (same look as the report toolbar). */
+export function DocumentBackButton({ onClick }: { onClick: () => void }) {
+  return <Button type="button" variant="outline" size="icon" onClick={onClick} className="doc-back" aria-label="رجوع" title="رجوع">
+    <ArrowRight className="h-4 w-4" />
+  </Button>;
+}
+
 export function DocToolbar({ title, onBack, actions }: { title: string; onBack?: () => void; actions?: ReactNode }) {
   return (
     <div className="doc-toolbar doc-noprint">
       <div className="flex min-w-0 items-center gap-2">
         {onBack && (
-          <Button type="button" variant="outline" onClick={onBack} className="doc-btn" aria-label="رجوع">
-            <ArrowRight className="h-4 w-4" />
-          </Button>
+          <DocumentBackButton onClick={onBack} />
         )}
         <h1 className="truncate text-base font-bold sm:text-lg">{title}</h1>
       </div>
