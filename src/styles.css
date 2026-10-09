@@ -360,10 +360,12 @@
   body * { visibility: hidden; }
   body:has(.rpt-sheet) { margin:0; }
   .rpt-sheet, .rpt-sheet * { visibility:visible; }
-  body:has(.document-modal) .partner-workspace > .document-viewport { display:none; }
+  body:has(.document-modal) .rpt-sheet, body:has(.document-modal) .rpt-sheet * { visibility:hidden; }
+  body:has(.document-modal) .document-modal .rpt-sheet, body:has(.document-modal) .document-modal .rpt-sheet * { visibility:visible; }
   .rpt-sheet { position:static; width:100%; min-width:0 !important; margin:0; box-shadow:none; padding:14px; }
   body:has(.rpt-sheet) :is(main, main > div, .document-viewport, .document-modal, .document-modal > div, .journal-document) { position:static !important; overflow:visible !important; max-height:none !important; height:auto !important; padding:0; }
   body:has(.rpt-sheet) :is(main > div > div, .document-modal > div > form) { margin:0; }
+  body:has(.document-modal) .document-modal { position:absolute !important; inset:0; width:100%; }
   .classic-app > div { max-width:none; }
   .classic-app .sticky, .classic-app .fixed:not(.document-modal), .doc-noprint { display:none !important; }
   body:has(.rpt-sheet) .min-h-screen > .sticky { display:none; }
