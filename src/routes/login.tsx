@@ -6,8 +6,10 @@ import { useI18n } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { Sun, Moon, Languages, Mail, Lock, ArrowRight, Eye, EyeOff, User, Info } from "lucide-react";
 import logoUrl from "@/assets/logo.png";
+import { pageMeta } from "@/lib/route-meta";
 
 export const Route = createFileRoute("/login")({
+  head: () => pageMeta("تسجيل الدخول", "تسجيل الدخول إلى مالية لإدارة الحسابات والفواتير والتقارير."),
   beforeLoad: async () => {
     if (typeof window === "undefined") return;
     const { data } = await supabase.auth.getSession();
