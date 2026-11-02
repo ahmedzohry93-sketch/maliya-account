@@ -72,15 +72,11 @@ export const resetTransactions = createServerFn({ method: "POST" })
     if (stockError) throw new Error(`فشل تصفير أرصدة الأصناف: ${stockError.message}`);
 
     // 6) Audit trail.
-    await supabaseAdmin.rpc("log_audit", {
-      _action: "reset_transactions",
-      _entity: "system",
-      _entity_id: null,
-      _details: { approved_by: signIn.user.id, requested_by: userId, tables: RESET_TABLES.length },
-      _old_value: null,
-      _new_value: null,
-      _device: null,
-      _ip_address: null,
+    await supabaseAdmin.from("audit_logs").insert({
+      user_id: userId,
+      action: "reset_transactions",
+      entity: "system",
+      details: { approved_by: signIn.user.id, requested_by: userId, tables: RESET_TABLES.length },
     });
 
     return { ok: true };
