@@ -5,8 +5,10 @@ import { useAuth } from "@/hooks/use-auth";
 import { useCompanySettings, getLogoDataUrl } from "@/lib/company";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
-import { Sun, Moon, Languages, User, Palette, Check, Building2, Upload, Trash2, ListTree, ArrowLeft } from "lucide-react";
+import { Sun, Moon, Languages, User, Palette, Check, Building2, Upload, Trash2, ListTree, ArrowLeft, AlertTriangle, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useServerFn } from "@tanstack/react-start";
+import { resetTransactions } from "@/lib/reset.functions";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -69,8 +71,114 @@ function SettingsPage() {
             </div>
           </div>
         </Section>
+
+        {permissions.has("users.manage") && <ResetSection />}
       </div>
     </div>
+  );
+}
+
+const CONFIRM_PHRASE = "إعادة تهيئة";
+
+function ResetSection() {
+  const qc = useQueryClient();
+  const runReset = useServerFn(resetTransactions);
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const ready = email.trim() !== "" && password !== "" && confirm.trim() === CONFIRM_PHRASE;
+
+  const submit = async () => {
+    if (!ready || busy) return;
+    setBusy(true);
+    try {
+      await runReset({ data: { email: email.trim(), password, confirm: confirm.trim() } });
+      toast.success("تمت إعادة تهيئة العمليات بنجاح");
+      setOpen(false);
+      setEmail(""); setPassword(""); setConfirm("");
+      qc.clear();
+    } catch (e) {
+      toast.error((e as Error)?.message || "فشلت إعادة التهيئة");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <section className="bg-card border border-destructive/40 rounded-xl p-5">
+      <div className="flex items-start gap-3 mb-4">
+        <div className="w-9 h-9 rounded-lg bg-destructive/10 text-destructive flex items-center justify-center">
+          <AlertTriangle className="w-4 h-4" />
+        </div>
+        <div>
+          <h2 className="font-semibold text-destructive">إعادة تهيئة النظام</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            حذف جميع العمليات (القيود، الفواتير، الدفعات، حركات المخزون، المرتجعات، السندات، الشيكات) مع الإبقاء على الحسابات والعملاء والموردين والأصناف والمستخدمين والإعدادات. لا يمكن التراجع.
+          </p>
+        </div>
+      </div>
+      <Button variant="destructive" onClick={() => setOpen(true)}>بدء إعادة التهيئة…</Button>
+
+      {open && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4" onClick={() => !busy && setOpen(false)}>
+          <div className="w-full max-w-md rounded-2xl border bg-card p-5 shadow-xl" onClick={(e) => e.stopPropagation()} dir="rtl">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 shrink-0 rounded-xl bg-destructive/10 text-destructive grid place-items-center">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold">تأكيد إعادة التهيئة</h3>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                  تتطلب هذه العملية تسجيل دخول مدير النظام. أدخل بريد المدير وكلمة مروره، ثم اكتب عبارة «{CONFIRM_PHRASE}».
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 space-y-3">
+              <label className="block">
+                <span className="block text-xs font-medium text-muted-foreground mb-1">بريد مدير النظام</span>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  dir="ltr"
+                  className="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-destructive/30"
+                />
+              </label>
+              <label className="block">
+                <span className="block text-xs font-medium text-muted-foreground mb-1">كلمة مرور مدير النظام</span>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  dir="ltr"
+                  className="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-destructive/30"
+                />
+              </label>
+              <label className="block">
+                <span className="block text-xs font-medium text-muted-foreground mb-1">عبارة التأكيد</span>
+                <input
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  placeholder={CONFIRM_PHRASE}
+                  className="w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-destructive/30"
+                />
+              </label>
+            </div>
+
+            <div className="mt-5 flex justify-end gap-2">
+              <Button variant="outline" disabled={busy} onClick={() => setOpen(false)}>إلغاء</Button>
+              <Button variant="destructive" disabled={!ready || busy} onClick={submit}>
+                {busy ? "جارٍ التنفيذ…" : "تنفيذ إعادة التهيئة"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
   );
 }
 
